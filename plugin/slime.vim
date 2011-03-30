@@ -1,13 +1,21 @@
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-function Send_to_Screen(text)
+function Send_to_Screen()
   if !exists("b:slime")
     call Screen_Vars()
   end
 
-  let escaped_text = substitute(shellescape(a:text), "\\\\\n", "\n", "g")
+  " save the old register
+  let old_r = @r
+  " copy the selected text to @r
+  normal! gv"ry
+
+  " you can directly use @r here
+  let escaped_text = substitute(shellescape(@r), "\\\\\n", "\n", "g")
   call system("screen -S " . b:slime["sessionname"] . " -p " . b:slime["windowname"] . " -X stuff " . escaped_text)
+  " restore the register
+  let @r = old_r
 endfunction
 
 function Screen_Session_Names(A,L,P)
@@ -25,7 +33,8 @@ endfunction
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-vmap <C-c><C-c> "ry :call Send_to_Screen(@r)<CR>
+" the space before the :call breaks a <space> mapping
+vmap <C-c><C-c> :call Send_to_Screen()<CR>
 nmap <C-c><C-c> vip<C-c><C-c>
 
 nmap <C-c>v :call Screen_Vars()<CR>
