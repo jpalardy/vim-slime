@@ -4,7 +4,7 @@
 " Description:   Pastes the paragraph to a gnu screen, comparable with Slime
 "                from Emacs
 " Author:        Jonathan Palardy
-" Webiste:       http://technotales.wordpress.com
+" Website:       http://technotales.wordpress.com
 " Last Modified: Wed 30 Mar 2011 09:15:23 PM CEST
 " Version:       1.1
 " Usage:         - Place the cursor inside the paragraph you want to be pasted
