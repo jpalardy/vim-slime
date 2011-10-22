@@ -41,5 +41,7 @@ nmap <C-c><C-c> vip<C-c><C-c>
 " Ctrl-C, Ctrl-S will compile coffee code and then send results to the
 " connected screen
 vmap <C-c><C-s> "ry:call Send_Coffee_to_NodeRepl_Screen(@r)<CR>
+nmap <C-c><C-s> vip<C-c><C-s>
+
 
 nmap <C-c>v :call Screen_Vars()<CR>
