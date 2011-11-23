@@ -33,42 +33,56 @@ function! TmuxConfig()
     end
 
     let b:slime_tmux["socket_name"] = input("tmux socket name: ", b:slime_tmux["socket_name"])
+    " TODO: allow more tmux options? like window #, pane #?
 endfunction
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Helpers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! _EscapeText(text)
     return substitute(shellescape(a:text), "\\\\\\n", "\n", "g")
+endfunction
+
+function! _GetMuxDef(mux_defs, mux_name)
+    if has_key(a:mux_defs, a:mux_name)
+        return a:mux_defs[a:mux_name]
+    else:
+        return {}
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Public interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" TODO: refactoring
 let g:slime_option = "tmux"
 
+let s:slime_muxes = {
+            \ "tmux":{"fn_config":"TmuxConfig", "fn_send":"TmuxSend", "config_var":"slime_tmux"},
+            \ "screen":{"fn_config":"ScreenConfig", "fn_send":"ScreenSend", "config_var":"slime_screen"}
+            \ }
+
 function! SlimeSend(text)
-    if g:slime_option ==# "tmux"
-        if !exists("b:slime_tmux")
-            call TmuxConfig()
-        end
-        call TmuxSend(b:slime_tmux, a:text)
-    elseif g:slime_option ==# "screen"
-        if !exists("b:slime_screen")
-            call ScreenConfig()
-        end
-        call ScreenSend(b:slime_screen, a:text)
-    else
+    let mux = _GetMuxDef(s:slime_muxes, g:slime_option)
+    if empty(mux)
         echom g:slime_option . " is not a valid slime_option"
-    endif
+    else
+        let Send = function(mux['fn_send'])
+        let Config = function(mux['fn_config'])
+        let config_var_name = mux['config_var']
+        if !exists("b:".config_var_name)
+            call Config()
+        end
+        call Send(eval("b:".config_var_name), a:text)
+    end
 endfunction
 
 function! SlimeConfig()
-    if g:slime_option ==# "tmux"
-        call TmuxConfig()
-    elseif g:slime_option ==# "screen"
-        call ScreenConfig()
-    else
+    let mux = _GetMuxDef(s:slime_muxes, g:slime_option)
+    if empty(mux)
         echom g:slime_option . " is not a valid slime_option"
-    endif
+    else
+        let Config = function(mux['fn_config'])
+        call Config()
+    end
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
