@@ -53,7 +53,9 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Public interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:slime_option = "tmux"
+if !exists("g:slime_option")
+    let g:slime_option = "tmux"
+end
 
 let s:slime_muxes = {
             \ "tmux":{"fn_config":"TmuxConfig", "fn_send":"TmuxSend", "config_var":"slime_tmux"},
