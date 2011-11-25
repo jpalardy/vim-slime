@@ -54,7 +54,7 @@ endfunction
 " Public interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if !exists("g:slime_option")
-    let g:slime_option = "tmux"
+    let g:slime_option = "screen"
 end
 
 let s:slime_muxes = {
