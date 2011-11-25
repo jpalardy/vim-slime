@@ -11,12 +11,12 @@ function! ScreenSessionNames(A,L,P)
 endfunction
 
 function! ScreenConfig()
-    if !exists("b:slime_screen")
-        let b:slime_screen = {"sessionname": "", "windowname": "0"}
+    if !exists("b:slime_config")
+        let b:slime_config = {"sessionname": "", "windowname": "0"}
     end
 
-    let b:slime_screen["sessionname"] = input("screen session name: ", b:slime_screen["sessionname"], "custom,ScreenSessionNames")
-    let b:slime_screen["windowname"]  = input("screen window name: ", b:slime_screen["windowname"])
+    let b:slime_config["sessionname"] = input("screen session name: ", b:slime_config["sessionname"], "custom,ScreenSessionNames")
+    let b:slime_config["windowname"]  = input("screen window name: ",  b:slime_config["windowname"])
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -28,11 +28,11 @@ function! TmuxSend(config, text)
 endfunction
 
 function! TmuxConfig()
-    if !exists("b:slime_tmux")
-        let b:slime_tmux = {"socket_name":""}
+    if !exists("b:slime_config")
+        let b:slime_config = {"socket_name": "default"}
     end
 
-    let b:slime_tmux["socket_name"] = input("tmux socket name: ", b:slime_tmux["socket_name"])
+    let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
     " TODO: allow more tmux options? like window #, pane #?
 endfunction
 
@@ -43,48 +43,28 @@ function! _EscapeText(text)
     return substitute(shellescape(a:text), "\\\\\\n", "\n", "g")
 endfunction
 
-function! _GetMuxDef(mux_defs, mux_name)
-    if has_key(a:mux_defs, a:mux_name)
-        return a:mux_defs[a:mux_name]
-    else:
-        return {}
-endfunction
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Public interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if !exists("g:slime_option")
-    let g:slime_option = "screen"
+if !exists("g:slime_target")
+    let g:slime_target = "screen"
 end
 
-let s:slime_muxes = {
-            \ "tmux":{"fn_config":"TmuxConfig", "fn_send":"TmuxSend", "config_var":"slime_tmux"},
-            \ "screen":{"fn_config":"ScreenConfig", "fn_send":"ScreenSend", "config_var":"slime_screen"}
-            \ }
-
 function! SlimeSend(text)
-    let mux = _GetMuxDef(s:slime_muxes, g:slime_option)
-    if empty(mux)
-        echom g:slime_option . " is not a valid slime_option"
-    else
-        let Send = function(mux['fn_send'])
-        let Config = function(mux['fn_config'])
-        let config_var_name = mux['config_var']
-        if !exists("b:".config_var_name)
-            call Config()
-        end
-        call Send(eval("b:".config_var_name), a:text)
+    if !exists("b:slime_config")
+        call SlimeDispatch('Config')
     end
+    call SlimeDispatch('Send', b:slime_config, a:text)
 endfunction
 
 function! SlimeConfig()
-    let mux = _GetMuxDef(s:slime_muxes, g:slime_option)
-    if empty(mux)
-        echom g:slime_option . " is not a valid slime_option"
-    else
-        let Config = function(mux['fn_config'])
-        call Config()
-    end
+    call SlimeDispatch('Config')
+endfunction
+
+" delegation
+function! SlimeDispatch(name, ...)
+    let target = substitute(tolower(g:slime_target), '\(.\)', '\u\1', '') " Capitalize
+    return call(target . a:name, a:000)
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
