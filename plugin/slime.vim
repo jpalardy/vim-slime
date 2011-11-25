@@ -6,16 +6,16 @@ function! ScreenSend(config, text)
     call system("screen -S " . a:config["sessionname"] . " -p " . a:config["windowname"] . " -X stuff " . escaped_text)
 endfunction
 
-" function! Screen_Session_Names(A,L,P)
-"   return system("screen -ls | awk '/Attached/ {print $1}'")
-" endfunction
+function! ScreenSessionNames(A,L,P)
+    return system("screen -ls | awk '/Attached/ {print $1}'")
+endfunction
 
 function! ScreenConfig()
     if !exists("b:slime_screen")
         let b:slime_screen = {"sessionname": "", "windowname": "0"}
     end
 
-    let b:slime_screen["sessionname"] = input("screen session name: ", b:slime_screen["sessionname"], "custom,Screen_Session_Names")
+    let b:slime_screen["sessionname"] = input("screen session name: ", b:slime_screen["sessionname"], "custom,ScreenSessionNames")
     let b:slime_screen["windowname"]  = input("screen window name: ", b:slime_screen["windowname"])
 endfunction
 
