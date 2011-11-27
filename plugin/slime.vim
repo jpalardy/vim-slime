@@ -1,3 +1,31 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Configuration
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+if !exists('g:slime_send_key')
+  let g:slime_send_key = '<C-c><C-c>'
+endif
+
+if !exists('g:slime_config_key')
+  let g:slime_config_key = '<C-c>v'
+endif
+
+if !exists("g:slime_target")
+  let g:slime_target = "screen"
+end
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Setup key bindings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+execute 'vmap ' . g:slime_send_key . " \"ry:call <SID>SlimeSend(@r)<CR>"
+execute 'nmap ' . g:slime_send_key . " vip" . g:slime_send_key
+execute 'nmap ' . g:slime_config_key . " :call <SID>SlimeConfig()<CR>"
+
+if exists('g:slime_loaded')
+  finish
+endif
+let g:slime_loaded = 1
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
@@ -8,6 +36,7 @@ function! s:ScreenSend(config, text)
   call system("screen -S " . a:config["sessionname"] . " -p " . a:config["windowname"] . " -X stuff " . escaped_text)
 endfunction
 
+" Leave this function exposed as it's called outside the plugin context
 function! ScreenSessionNames(A,L,P)
   return system("screen -ls | awk '/Attached/ {print $1}'")
 endfunction
@@ -51,10 +80,6 @@ endfunction
 " Public interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-if !exists("g:slime_target")
-  let g:slime_target = "screen"
-end
-
 function! s:SlimeSend(text)
   if !exists("b:slime_config")
     call s:SlimeDispatch('Config')
@@ -71,13 +96,3 @@ function! s:SlimeDispatch(name, ...)
   let target = substitute(tolower(g:slime_target), '\(.\)', '\u\1', '') " Capitalize
   return call("s:" . target . a:name, a:000)
 endfunction
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Setup key bindings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-vmap <C-c><C-c> "ry:call <SID>SlimeSend(@r)<CR>
-nmap <C-c><C-c> vip<C-c><C-c>
-
-nmap <C-c>v :call <SID>SlimeConfig()<CR>
-
