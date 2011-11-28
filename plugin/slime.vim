@@ -73,7 +73,16 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:_EscapeText(text)
-  return substitute(shellescape(a:text), "\\\\\\n", "\n", "g")
+  let transformed_text = a:text
+
+  if exists("&filetype")
+    let custom_escape = "_EscapeText_" . &filetype
+    if exists("*" . custom_escape)
+        let transformed_text = call(custom_escape, [a:text])
+    end
+  end
+
+  return substitute(shellescape(transformed_text), "\\\\\\n", "\n", "g")
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
