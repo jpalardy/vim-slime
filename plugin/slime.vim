@@ -56,16 +56,16 @@ endfunction
 
 function! s:TmuxSend(config, text)
   let escaped_text = s:_EscapeText(a:text)
-  call system("tmux -L " . a:config["socket_name"] . " send-keys " . escaped_text)
+  call system("tmux -L " . a:config["socket_name"] . " send-keys -t" . a:config["target_pane"] . " " . escaped_text)
 endfunction
 
 function! s:TmuxConfig()
   if !exists("b:slime_config")
-    let b:slime_config = {"socket_name": "default"}
+    let b:slime_config = {"socket_name": "default", "target_pane": ":"}
   end
 
   let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
-  " TODO: allow more tmux options? like window #, pane #?
+  let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"])
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
