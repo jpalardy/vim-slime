@@ -24,16 +24,42 @@ then simply copy and paste:
 
 If you like it the hard way, copy plugin/slime.vim from this repo into ~/.vim/plugin.
 
-Configuration
--------------
+Configuration (GNU Screen)
+--------------------------
 
-By default, GNU Screen is assumed. It is equivalent to:
+By default, GNU Screen is assumed, you don't have to do anything. If you want
+to be explicit, you can add this line to your .vimrc:
 
     let g:slime_target = "screen"
 
-If you would rather use tmux, use:
+When you invoke vim-slime for the first time (see below), you will be prompted for more configuration.
+
+screen session name
+
+    This is what you put in the -S flag, or one of the line of "screen -ls".
+
+screen window name
+
+    This is the window number or name, zero-based.
+
+Configuration (tmux)
+--------------------
+
+Tmux is *not* the default, to use it you will have to add this line to your .vimrc:
 
     let g:slime_target = "tmux"
+
+When you invoke vim-slime for the first time (see below), you will be prompted for more configuration.
+
+tmux socket name
+
+    This is what you put in the -L flag, it will be "default" if you didn't put anything.
+
+tmux target pane
+
+    ":" means current window, current pane (a reasonable default)
+    ":i" means the ith window, current pane
+    ":i.j" means the ith window, jth pane
 
 Key Bindings
 ------------
