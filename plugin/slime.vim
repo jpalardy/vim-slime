@@ -56,7 +56,8 @@ endfunction
 
 function! s:TmuxSend(config, text)
   let escaped_text = s:_EscapeText(a:text)
-  call system("tmux -L " . a:config["socket_name"] . " send-keys -t" . a:config["target_pane"] . " " . escaped_text)
+  call system("tmux -L " . a:config["socket_name"] . " set-buffer " . escaped_text)
+  call system("tmux -L " . a:config["socket_name"] . " paste-buffer -t " . a:config["target_pane"])
 endfunction
 
 function! s:TmuxConfig()
