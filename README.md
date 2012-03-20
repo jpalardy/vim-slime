@@ -64,6 +64,6 @@ tmux target pane
 Key Bindings
 ------------
 
-{Visual}<leader>s to send visually selected text.
-<leader>s{motion} to send motion text.
-<leader>ss to send the current line.
+    {Visual}<leader>s to send visually selected text.
+    <leader>s{motion} to send motion text.
+    <leader>ss to send the current line.
