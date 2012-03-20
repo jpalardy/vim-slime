@@ -31,8 +31,8 @@ execute 'nmap ' . g:slime_config_key . " :call <SID>SlimeConfig()<CR>"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:ScreenSend(config, text)
-  let escaped_text = s:_EscapeText(a:text)
-  call system("screen -S " . a:config["sessionname"] . " -p " . a:config["windowname"] . " -X stuff " . escaped_text)
+  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X readreg a -", a:text)
+  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X paste a")
 endfunction
 
 " Leave this function exposed as it's called outside the plugin context
@@ -54,9 +54,8 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:TmuxSend(config, text)
-  let escaped_text = s:_EscapeText(a:text)
-  call system("tmux -L " . a:config["socket_name"] . " set-buffer " . escaped_text)
-  call system("tmux -L " . a:config["socket_name"] . " paste-buffer -t " . a:config["target_pane"])
+  call system("tmux -L " . shellescape(a:config["socket_name"]) . " load-buffer -", a:text)
+  call system("tmux -L " . shellescape(a:config["socket_name"]) . " paste-buffer -t " . shellescape(a:config["target_pane"]))
 endfunction
 
 function! s:TmuxConfig()
@@ -82,7 +81,7 @@ function! s:_EscapeText(text)
     end
   end
 
-  return substitute(shellescape(transformed_text), "\\\\\\n", "\n", "g")
+  return transformed_text
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -93,7 +92,8 @@ function! s:SlimeSend(text)
   if !exists("b:slime_config")
     call s:SlimeDispatch('Config')
   end
-  call s:SlimeDispatch('Send', b:slime_config, a:text)
+  let transformed_text = s:_EscapeText(a:text)
+  call s:SlimeDispatch('Send', b:slime_config, transformed_text)
 endfunction
 
 function! s:SlimeConfig()
