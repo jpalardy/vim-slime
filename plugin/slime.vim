@@ -7,24 +7,9 @@ let g:loaded_slime = 1
 " Configuration
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-if !exists('g:slime_send_key')
-  let g:slime_send_key = '<C-c><C-c>'
-endif
-
-if !exists('g:slime_config_key')
-  let g:slime_config_key = '<C-c>v'
-endif
-
 if !exists("g:slime_target")
   let g:slime_target = "screen"
 end
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Setup key bindings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-execute 'vmap ' . g:slime_send_key . " \"ry:call <SID>SlimeSend(@r)<CR>"
-execute 'nmap ' . g:slime_send_key . " vip" . g:slime_send_key
-execute 'nmap ' . g:slime_config_key . " :call <SID>SlimeConfig()<CR>"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
@@ -39,7 +24,7 @@ function! s:ScreenSessionNames(A,L,P)
   return system("screen -ls | awk '/Attached/ {print $1}'")
 endfunction
 
-function! s:ScreenConfig()
+function! s:ScreenConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"sessionname": "", "windowname": "0"}
   end
@@ -52,19 +37,19 @@ endfunction
 " Tmux
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-function! s:TmuxPaneNames(A,L,P)
-  let format = '#{pane_id} #{pane_title} #{window_name} #{?pane_active, (active),}'
-  return system("tmux -L " . shellescape(b:slime_config['socket_name']) . " list-panes -a -F " . shellescape(format))
-endfunction
-
 function! s:TmuxSend(config, text)
   call system("tmux -L " . shellescape(a:config["socket_name"]) . " load-buffer -", a:text)
   call system("tmux -L " . shellescape(a:config["socket_name"]) . " paste-buffer -t " . shellescape(a:config["target_pane"]))
 endfunction
 
-function! s:TmuxConfig()
+function! s:TmuxPaneNames(A,L,P)
+  let format = '#{pane_id} #{pane_title} #{window_name} #{?pane_active, (active),}'
+  return system("tmux -L " . shellescape(b:slime_config['socket_name']) . " list-panes -a -F " . shellescape(format))
+endfunction
+
+function! s:TmuxConfig() abort
   if !exists("b:slime_config")
-    let b:slime_config = {"socket_name": "default", "target_pane": ":"}
+    let b:slime_config = { "socket_name": "default", "target_pane": ":"}
   end
 
   let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
@@ -95,20 +80,78 @@ function! s:_EscapeText(text)
   return transformed_text
 endfunction
 
+function! s:SlimeSendOp(type, ...) abort
+  if !exists("b:slime_config")
+    call s:SlimeDispatch('Config')
+  end
+
+  let sel_save = &selection
+  let &selection = "inclusive"
+  let rv = getreg('"')
+  let rt = getregtype('"')
+
+  if a:0  " Invoked from Visual mode, use '< and '> marks.
+    silent exe "normal! `<" . a:type . '`>y'
+  elseif a:type == 'line'
+    silent exe "normal! '[V']y"
+  elseif a:type == 'block'
+    silent exe "normal! `[\<C-V>`]\y"
+  else
+    silent exe "normal! `[v`]y"
+  endif
+
+  call setreg('"', @", 'V')
+  call s:SlimeSend(@")
+
+  let &selection = sel_save
+  call setreg('"', rv, rt)
+endfunction
+
+function! s:SlimeSendRange() range abort
+  if !exists("b:slime_config")
+    call s:SlimeDispatch('Config')
+  end
+
+  let rv = getreg('"')
+  let rt = getregtype('"')
+  sil exe a:firstline . ',' . a:lastline . 'yank'
+  call s:SlimeSend(@")
+  call setreg('"', rv, rt)
+endfunction
+
+function! s:SlimeSendLines(count) abort
+  if !exists("b:slime_config")
+    call s:SlimeDispatch('Config')
+  end
+
+  let rv = getreg('"')
+  let rt = getregtype('"')
+  exe "norm! " . a:count . "yy"
+  call s:SlimeSend(@")
+  call setreg('"', rv, rt)
+endfunction
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Public interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:SlimeSend(text)
   if !exists("b:slime_config")
-    call s:SlimeDispatch('Config')
+    let msg = "Slime is not configured for this buffer. Please run :SlimeConfig"
+		echohl ErrorMsg
+    echoerr msg
+    echohl None
+    let v:errmsg = 'slime: ' . msg
+    throw v:errmsg
   end
   let transformed_text = s:_EscapeText(a:text)
   call s:SlimeDispatch('Send', b:slime_config, transformed_text)
 endfunction
 
-function! s:SlimeConfig()
+function! s:SlimeConfig() abort
+  call inputsave()
   call s:SlimeDispatch('Config')
+  call inputrestore()
 endfunction
 
 " delegation
@@ -116,3 +159,28 @@ function! s:SlimeDispatch(name, ...)
   let target = substitute(tolower(g:slime_target), '\(.\)', '\u\1', '') " Capitalize
   return call("s:" . target . a:name, a:000)
 endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Setup key bindings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+command -bar -nargs=0 SlimeConfig call s:SlimeConfig()
+command -range -bar -nargs=0 SlimeSend <line1>,<line2>call s:SlimeSendRange()
+
+noremap <unique> <script> <silent> <Plug>SlimeRegionSend :<c-u>call <SID>SlimeSendOp(visualmode(), 1)<cr>
+noremap <unique> <script> <silent> <Plug>SlimeLineSend :<c-u>call <SID>SlimeSendLines(v:count1)<cr>
+noremap <unique> <script> <silent> <Plug>SlimeSend :<c-u>set opfunc=<SID>SlimeSendOp<cr>g@
+
+if !exists("g:slime_no_mappings") || !g:slime_no_mappings
+  if !hasmapto('<Plug>SlimeRegionSend', 'x')
+    xmap <leader>s <Plug>SlimeRegionSend
+  endif
+
+  if !hasmapto('<Plug>SlimeSend', 'n')
+    nmap <leader>s <Plug>SlimeSend
+  endif
+
+  if !hasmapto('<Plug>SlimeLineSend', 'n')
+    nmap <leader>ss <Plug>SlimeLineSend
+  endif
+endif
