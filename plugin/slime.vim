@@ -35,8 +35,7 @@ function! s:ScreenSend(config, text)
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X paste a")
 endfunction
 
-" Leave this function exposed as it's called outside the plugin context
-function! ScreenSessionNames(A,L,P)
+function! s:ScreenSessionNames(A,L,P)
   return system("screen -ls | awk '/Attached/ {print $1}'")
 endfunction
 
@@ -45,13 +44,18 @@ function! s:ScreenConfig()
     let b:slime_config = {"sessionname": "", "windowname": "0"}
   end
 
-  let b:slime_config["sessionname"] = input("screen session name: ", b:slime_config["sessionname"], "custom,ScreenSessionNames")
+  let b:slime_config["sessionname"] = input("screen session name: ", b:slime_config["sessionname"], "custom,<SNR>" . s:SID() . "_ScreenSessionNames")
   let b:slime_config["windowname"]  = input("screen window name: ",  b:slime_config["windowname"])
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tmux
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+function! s:TmuxPaneNames(A,L,P)
+  let format = '#{pane_id} #{pane_title} #{window_name} #{?pane_active, (active),}'
+  return system("tmux -L " . shellescape(b:slime_config['socket_name']) . " list-panes -a -F " . shellescape(format))
+endfunction
 
 function! s:TmuxSend(config, text)
   call system("tmux -L " . shellescape(a:config["socket_name"]) . " load-buffer -", a:text)
@@ -64,12 +68,19 @@ function! s:TmuxConfig()
   end
 
   let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
-  let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"])
+  let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
+  if b:slime_config["target_pane"] =~ '\s\+'
+    let b:slime_config["target_pane"] = split(b:slime_config["target_pane"])[0]
+  endif
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Helpers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+function! s:SID()
+  return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
+endfun
 
 function! s:_EscapeText(text)
   let transformed_text = a:text
