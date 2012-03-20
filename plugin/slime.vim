@@ -1,3 +1,8 @@
+if exists('g:loaded_slime') || &cp || v:version < 700
+  finish
+endif
+let g:loaded_slime = 1
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Configuration
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -20,12 +25,6 @@ end
 execute 'vmap ' . g:slime_send_key . " \"ry:call <SID>SlimeSend(@r)<CR>"
 execute 'nmap ' . g:slime_send_key . " vip" . g:slime_send_key
 execute 'nmap ' . g:slime_config_key . " :call <SID>SlimeConfig()<CR>"
-
-if exists('g:slime_loaded')
-  finish
-endif
-let g:slime_loaded = 1
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
