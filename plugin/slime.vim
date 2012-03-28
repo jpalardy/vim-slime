@@ -43,7 +43,7 @@ function! s:TmuxSend(config, text)
 endfunction
 
 function! s:TmuxPaneNames(A,L,P)
-  let format = '#{pane_id} #{pane_title} #{window_name} #{?pane_active, (active),}'
+  let format = '#{pane_id} #{session_name}:#{window_index}.#{pane_index} #{window_name}#{?window_active, (active),}'
   return system("tmux -L " . shellescape(b:slime_config['socket_name']) . " list-panes -a -F " . shellescape(format))
 endfunction
 
