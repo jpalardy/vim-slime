@@ -27,26 +27,18 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence,
 ==============================================================================
 1. Slime Usage 					*slime-usage*
 
-						*<Leader>s*
-<leader>s{motion}	Send {motion} text to screen/tmux. Slime will prompt
-			for configuration if slime is not configured for the
-			current buffer.
+						*CTRL-C_CTRL-C* *<c-c><c-c>*
+<c-c><c-c>		Send the  current paragraph text to screen/tmux. Slime
+			will prompt for configuration if slime is not
+			configured for the current buffer.
 
-			If you prefer to use <c-c><c-c> to send the current
-			paragraph then put the following mapping in your
-			|.vimrc| file. 
->
-			nmap <c-c><c-c> <leader>sip			
-<
-						*<Leader>ss*
-{count}<leader>ss	Send [count] lines of text to screen/tmux.
+						*v_CTRL-C_CTRL-C* *v_<c-c><c-c>*
+{Visual}<c-c><c-c>	Send highlighted text to screen/tmux.
 
-						*v_<Leader>s*
-{Visual}<leader>s	Send highlighted text to screen/tmux.
-
-						*:SlimeConfig*
-:SlimeConfig		Setup slime to use screen or tmux. You will be
-			prompted for information regarding how to target
+						*CTRL-C_v* *<c-c>v*
+						*:SlimeConfig* 
+<c-c>v			Setup slime to use screen or tmux. You will be
+:SlimeConfig		prompted for information regarding how to target
 			screen or tmux. See |slime-screen| or |slime-tmux| for
 			more information.
 
@@ -118,30 +110,37 @@ Mappings~
 Slime's default mappings can be overridden by setting up mappings in your
 |.vimrc| like so:
 >
-	xmap <leader>S <Plug>SlimeRegionSend
-	nmap <leader>S <Plug>SlimeSend
-	nmap <leader>SS <Plug>SlimeLineSend
+	xmap <leader>s <Plug>SlimeRegionSend
+	nmap <leader>s <Plug>SlimeParagraphSend
 <
 
-  <Plug>SlimeRegionSend		Send visual selected text. Use |xmap|.
-  <Plug>SlimeLineSend		Send line(s). Use |nmap|.
-  <Plug>SlimeSend		Send {motion}. Use |nmap|.
+The following special plugin mappings are provided by slime:
+
+  Used by the default mappings:
+  <Plug>SlimeRegionSend		Send {visual} text. Use |xmap|.
+  <Plug>SlimeParagraphSend	Send a paragraph. Use |nmap|.
+  <Plug>SlimeConfig		Call |:SlimeConfig|. Use |nmap|.
+
+  Optional mappings:
+  <Plug>SlimeLineSend		Send {count} line(s). Use |nmap|.
+  <Plug>SlimeMotionSend		Send {motion}. Use |nmap|.
 
 Disabling a mapping is as simple as creating a mapping that does not exist,
 for example:
 >
-	nmap <Plug>NoSlimeSend <Plug>SlimeSend
+	nmap <Plug>NoSlimeParagraphSend <Plug>SlimeParagraphSend
 <
 
-To use emacs like mappings use the following:
+To use vim like mappings instead of emacs keybindings use the following:
 >
 	let g:slime_no_mappings = 1
-	xmap <c-c><c-c> <Plug>SlimeRegionSend
-	nmap <c-c><c-c> <Plug>SlimeSendip
+	xmap <leader>s <Plug>SlimeRegionSend
+	nmap <leader>s <Plug>SlimeMotionSend
+	nmap <leader>ss <Plug>SlimeLineSend
 <
 
 ==============================================================================
-4. Slime Requirements 				*slime-requirements*
+5. Slime Requirements 				*slime-requirements*
 
 Slime requires either screen or tmux to be available and executable. Awk is
 used for completion of screen sessions.
