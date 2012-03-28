@@ -167,17 +167,19 @@ endfunction
 command -bar -nargs=0 SlimeConfig call s:SlimeConfig()
 command -range -bar -nargs=0 SlimeSend <line1>,<line2>call s:SlimeSendRange()
 
+noremap <SID>Operator :<c-u>set opfunc=<SID>SlimeSendOp<cr>g@
+
 noremap <unique> <script> <silent> <Plug>SlimeRegionSend :<c-u>call <SID>SlimeSendOp(visualmode(), 1)<cr>
 noremap <unique> <script> <silent> <Plug>SlimeLineSend :<c-u>call <SID>SlimeSendLines(v:count1)<cr>
-noremap <unique> <script> <silent> <Plug>SlimeSend :<c-u>set opfunc=<SID>SlimeSendOp<cr>g@
+noremap <unique> <script> <silent> <Plug>SlimeMotionSend <SID>Operator
 
 if !exists("g:slime_no_mappings") || !g:slime_no_mappings
   if !hasmapto('<Plug>SlimeRegionSend', 'x')
     xmap <leader>s <Plug>SlimeRegionSend
   endif
 
-  if !hasmapto('<Plug>SlimeSend', 'n')
-    nmap <leader>s <Plug>SlimeSend
+  if !hasmapto('<Plug>SlimeMotionSend', 'n')
+    nmap <leader>s <Plug>SlimeMotionSend
   endif
 
   if !hasmapto('<Plug>SlimeLineSend', 'n')
