@@ -172,17 +172,19 @@ noremap <SID>Operator :<c-u>set opfunc=<SID>SlimeSendOp<cr>g@
 noremap <unique> <script> <silent> <Plug>SlimeRegionSend :<c-u>call <SID>SlimeSendOp(visualmode(), 1)<cr>
 noremap <unique> <script> <silent> <Plug>SlimeLineSend :<c-u>call <SID>SlimeSendLines(v:count1)<cr>
 noremap <unique> <script> <silent> <Plug>SlimeMotionSend <SID>Operator
+noremap <unique> <script> <silent> <Plug>SlimeParagraphSend <SID>Operatorip
+noremap <unique> <script> <silent> <Plug>SlimeConfig :<c-u>SlimeConfig<cr>
 
 if !exists("g:slime_no_mappings") || !g:slime_no_mappings
   if !hasmapto('<Plug>SlimeRegionSend', 'x')
-    xmap <leader>s <Plug>SlimeRegionSend
+    xmap <c-c><c-c> <Plug>SlimeRegionSend
   endif
 
-  if !hasmapto('<Plug>SlimeMotionSend', 'n')
-    nmap <leader>s <Plug>SlimeMotionSend
+  if !hasmapto('<Plug>SlimeParagraphSend', 'n')
+    nmap <c-c><c-c> <Plug>SlimeParagraphSend
   endif
 
-  if !hasmapto('<Plug>SlimeLineSend', 'n')
-    nmap <leader>ss <Plug>SlimeLineSend
+  if !hasmapto('<Plug>SlimeConfig', 'n')
+    nmap <c-c>v <Plug>SlimeConfig
   endif
 endif
