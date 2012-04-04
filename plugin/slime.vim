@@ -138,7 +138,7 @@ endfunction
 function! s:SlimeSend(text)
   if !exists("b:slime_config")
     let msg = "Slime is not configured for this buffer. Please run :SlimeConfig"
-		echohl ErrorMsg
+    echohl ErrorMsg
     echoerr msg
     echohl None
     let v:errmsg = 'slime: ' . msg

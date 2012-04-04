@@ -36,7 +36,7 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence,
 {Visual}<c-c><c-c>	Send highlighted text to screen/tmux.
 
 						*CTRL-C_v* *<c-c>v*
-						*:SlimeConfig* 
+						*:SlimeConfig*
 <c-c>v			Setup slime to use screen or tmux. You will be
 :SlimeConfig		prompted for information regarding how to target
 			screen or tmux. See |slime-screen| or |slime-tmux| for
