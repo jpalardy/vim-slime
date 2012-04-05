@@ -32,8 +32,14 @@ let g:slime_loaded = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:ScreenSend(config, text)
+
+  call s:ExecFileTypeFn("_PreScreen_", [a:config["sessionname"], a:config["windowname"]])
+
   let escaped_text = s:_EscapeText(a:text)
   call system("screen -S " . a:config["sessionname"] . " -p " . a:config["windowname"] . " -X stuff " . escaped_text)
+
+  call s:ExecFileTypeFn("_PostScreen_", [a:config["socket_name"], a:config["target_pane"]])
+
 endfunction
 
 " Leave this function exposed as it's called outside the plugin context
