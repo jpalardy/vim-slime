@@ -32,8 +32,14 @@ let g:slime_loaded = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:ScreenSend(config, text)
+
+  call s:ExecFileTypeFn("_PreScreen_", [a:config["sessionname"], a:config["windowname"]])
+
   let escaped_text = s:_EscapeText(a:text)
   call system("screen -S " . a:config["sessionname"] . " -p " . a:config["windowname"] . " -X stuff " . escaped_text)
+
+  call s:ExecFileTypeFn("_PostScreen_", [a:config["socket_name"], a:config["target_pane"]])
+
 endfunction
 
 " Leave this function exposed as it's called outside the plugin context
@@ -55,9 +61,15 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:TmuxSend(config, text)
+
+  call s:ExecFileTypeFn("_PreTmux_", [a:config["socket_name"], a:config["target_pane"]])
+
   let escaped_text = s:_EscapeText(a:text)
   call system("tmux -L " . a:config["socket_name"] . " set-buffer " . escaped_text)
   call system("tmux -L " . a:config["socket_name"] . " paste-buffer -t " . a:config["target_pane"])
+
+  call s:ExecFileTypeFn("_PostTmux_", [a:config["socket_name"], a:config["target_pane"]])
+
 endfunction
 
 function! s:TmuxConfig()
@@ -84,6 +96,15 @@ function! s:_EscapeText(text)
   end
 
   return substitute(shellescape(transformed_text), "\\\\\\n", "\n", "g")
+endfunction
+
+function s:ExecFileTypeFn(fn_name, args)
+  if exists("&filetype")
+    let fullname = a:fn_name . &filetype
+    if exists("*" . fullname)
+      call call(fullname, a:args)
+    end
+  end
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
