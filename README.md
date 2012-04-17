@@ -64,11 +64,6 @@ tmux target pane
 Key Bindings
 ------------
 
-By default, the current paragraph will be sent. This is equivalent to typing *vip*. If you (visually) select text, that will be sent over:
-
-    C-c, C-c  --- the same as slime
-
-There will be a few questions, as to where you want to send your text, and the answers will be remembered. If you need to reconfigure:
-
-    C-c, v    --- mnemonic: "variables"
-
+    {Visual}<leader>s to send visually selected text.
+    <leader>s{motion} to send motion text.
+    <leader>ss to send the current line.
