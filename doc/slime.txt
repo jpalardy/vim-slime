@@ -1,0 +1,150 @@
+*slime.txt*   Grab some text and "send" it to a GNU Screen / tmux session.
+
+Author:  Jonathan Palardy                                    *slime-author*
+License: Same terms as Vim itself (see |license|)
+
+This plugin is only available if 'compatible' is not set.
+
+==============================================================================
+                                                               *slime*
+Grab some text and "send" it to a GNU Screen / tmux session.
+
+	VIM ---(text)---> screen / tmux~
+
+Presumably, your screen contains something interesting like, say, a Clojure
+REPL. But if it can receive typed text, it can receive it from vim-slime.
+
+The reason you're doing this? Because you want the benefits of a REPL and the
+benefits of using Vim (familiar environment, syntax highlighting, persistence,
+...).
+
+1. Usage				|slime-usage|
+2. Screen Configuration 		|slime-screen|
+3. Tmux Configuration			|slime-tmux|
+4. Slime Configuration			|slime-configuration|
+5. Slime Requirements			|slime-requirements|
+
+==============================================================================
+1. Slime Usage 					*slime-usage*
+
+						*CTRL-C_CTRL-C* *<c-c><c-c>*
+<c-c><c-c>		Send the  current paragraph text to screen/tmux. Slime
+			will prompt for configuration if slime is not
+			configured for the current buffer.
+
+						*v_CTRL-C_CTRL-C* *v_<c-c><c-c>*
+{Visual}<c-c><c-c>	Send highlighted text to screen/tmux.
+
+						*CTRL-C_v* *<c-c>v*
+						*:SlimeConfig*
+<c-c>v			Setup slime to use screen or tmux. You will be
+:SlimeConfig		prompted for information regarding how to target
+			screen or tmux. See |slime-screen| or |slime-tmux| for
+			more information.
+
+						*:SlimeSend*
+:<range>SlimeSend	Send a [range] of lines to screen or tmux. If no range
+			is provided the current line is sent.
+
+
+==============================================================================
+2. Screen Configuration 			*slime-screen*
+
+By default, GNU Screen is assumed, you don't have to do anything. If you want
+to be explicit, you can add this line to your |.vimrc|:
+>
+	let g:slime_target = "screen"
+<
+When you invoke vim-slime for the first time (see below), you will be prompted
+for more configuration.
+
+Screen session name~
+
+This is what you put in the -S flag, or one of the line of "screen -ls".
+
+Screen window name~
+
+This is the window number or name, zero-based.
+
+==============================================================================
+3. Tmux Configuration 				*slime-tmux*
+
+Tmux is not the default, to use it you will have to add this line to your
+|.vimrc|:
+>
+	let g:slime_target = "tmux"
+<
+When you invoke vim-slime for the first time (see below), you will be prompted
+for more configuration.
+
+Tmux socket name~
+
+This is what you put in the -L flag, it will be "default" if you didn't put
+anything.
+
+Tmux target pane~
+
+A tmux pane can be targeted with any of the following values:
+  - ":" means current window, current pane (a reasonable default)
+  - ":i" means the ith window, current pane
+  - ":i.j" means the ith window, jth pane
+  - "%i" means i refers the pane's unique id
+
+To get a list of all the available pane execute the following:
+>
+	tmux list-panes -a
+<
+
+==============================================================================
+4. Slime Configuration 				*slime-configuration*
+
+Global Variables~
+						*g:slime_target*
+g:slime_target		Set to either "screen" (default) or "tmux".
+
+						*g:slime_no_mappings*
+g:slime_no_mappings	Set to non zero value to disable the default mappings.
+
+Mappings~
+
+Slime's default mappings can be overridden by setting up mappings in your
+|.vimrc| like so:
+>
+	xmap <leader>s <Plug>SlimeRegionSend
+	nmap <leader>s <Plug>SlimeParagraphSend
+<
+
+The following special plugin mappings are provided by slime:
+
+  Used by the default mappings:
+  <Plug>SlimeRegionSend		Send {visual} text. Use |xmap|.
+  <Plug>SlimeParagraphSend	Send a paragraph. Use |nmap|.
+  <Plug>SlimeConfig		Call |:SlimeConfig|. Use |nmap|.
+
+  Optional mappings:
+  <Plug>SlimeLineSend		Send {count} line(s). Use |nmap|.
+  <Plug>SlimeMotionSend		Send {motion}. Use |nmap|.
+
+Disabling a mapping is as simple as creating a mapping that does not exist,
+for example:
+>
+	nmap <Plug>NoSlimeParagraphSend <Plug>SlimeParagraphSend
+<
+
+To use vim like mappings instead of emacs keybindings use the following:
+>
+	let g:slime_no_mappings = 1
+	xmap <leader>s <Plug>SlimeRegionSend
+	nmap <leader>s <Plug>SlimeMotionSend
+	nmap <leader>ss <Plug>SlimeLineSend
+<
+
+==============================================================================
+5. Slime Requirements 				*slime-requirements*
+
+Slime requires either screen or tmux to be available and executable. Awk is
+used for completion of screen sessions.
+
+==============================================================================
+
+ vim:tw=78:ts=8:ft=help:norl:
