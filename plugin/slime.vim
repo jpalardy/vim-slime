@@ -1,3 +1,4 @@
+
 if exists('g:loaded_slime') || &cp || v:version < 700
   finish
 endif
@@ -16,8 +17,8 @@ end
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:ScreenSend(config, text)
-  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X readreg a -", a:text)
-  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X paste a")
+  let escaped_text = substitute(shellescape(a:text), "\\\\\\n", "\n", "g")
+  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X stuff " . escaped_text)
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
@@ -49,7 +50,7 @@ endfunction
 
 function! s:TmuxConfig() abort
   if !exists("b:slime_config")
-    let b:slime_config = { "socket_name": "default", "target_pane": ":"}
+    let b:slime_config = {"socket_name": "default", "target_pane": ":"}
   end
 
   let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
@@ -188,3 +189,4 @@ if !exists("g:slime_no_mappings") || !g:slime_no_mappings
     nmap <c-c>v <Plug>SlimeConfig
   endif
 endif
+
