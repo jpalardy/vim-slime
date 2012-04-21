@@ -69,16 +69,24 @@ function! s:SID()
 endfun
 
 function! s:_EscapeText(text)
-  let transformed_text = a:text
-
   if exists("&filetype")
     let custom_escape = "_EscapeText_" . &filetype
     if exists("*" . custom_escape)
-        let transformed_text = call(custom_escape, [a:text])
+        let result = call(custom_escape, [a:text])
     end
   end
 
-  return transformed_text
+  " use a:text if the ftplugin didn't kick in
+  if !exists("result")
+    let result = a:text
+  end
+
+  " return an array, regardless
+  if type(result) == type("")
+    return [result]
+  else
+    return result
+  end
 endfunction
 
 function! s:SlimeSendOp(type, ...) abort
@@ -145,8 +153,14 @@ function! s:SlimeSend(text)
     let v:errmsg = 'slime: ' . msg
     throw v:errmsg
   end
-  let transformed_text = s:_EscapeText(a:text)
-  call s:SlimeDispatch('Send', b:slime_config, transformed_text)
+
+  " this used to return a string, but some receivers (coffee-script)
+  " will flush the rest of the buffer given a special sequence (ctrl-v)
+  " so we, possibly, send many strings -- but probably just one
+  let pieces = s:_EscapeText(a:text)
+  for piece in pieces
+    call s:SlimeDispatch('Send', b:slime_config, piece)
+  endfor
 endfunction
 
 function! s:SlimeConfig() abort
