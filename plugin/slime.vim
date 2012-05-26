@@ -18,7 +18,13 @@ end
 
 function! s:ScreenSend(config, text)
   let escaped_text = substitute(shellescape(a:text), "\\\\\\n", "\n", "g")
-  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X stuff " . escaped_text)
+  let buffer_size = 64
+  let i = 0
+  while i < len(escaped_text)
+    let text_buffer = strpart(escaped_text, i, buffer_size)
+    call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X stuff " . string(text_buffer))
+    let i += buffer_size
+  endwhile
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
