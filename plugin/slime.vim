@@ -12,13 +12,18 @@ if !exists("g:slime_target")
   let g:slime_target = "screen"
 end
 
+if !exists("g:slime_paste_file")
+  let g:slime_paste_file = "$HOME/.slime_paste"
+end
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:ScreenSend(config, text)
-  let escaped_text = substitute(shellescape(a:text), "\\\\\\n", "\n", "g")
-  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X stuff " . escaped_text)
+  call system("cat > " . g:slime_paste_file, a:text)
+  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X readreg p " . g:slime_paste_file)
+  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X paste p")
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
