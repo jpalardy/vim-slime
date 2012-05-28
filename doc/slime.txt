@@ -104,6 +104,8 @@ g:slime_target		Set to either "screen" (default) or "tmux".
 
 						*g:slime_no_mappings*
 g:slime_no_mappings	Set to non zero value to disable the default mappings.
+						*g:slime_paste_file*
+g:slime_paste_file	Used by GNU Screen to transfer data from vim to Screen. Set to "$HOME/.slime_paste" by default.
 
 Mappings~
 
