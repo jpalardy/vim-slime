@@ -1,4 +1,3 @@
-
 vim-slime
 =========
 
@@ -76,6 +75,8 @@ Key Bindings
 By default, the current paragraph will be sent. This is equivalent to typing *vip*. If you (visually) select text, that will be sent over:
 
     C-c, C-c  --- the same as slime
+    
+_You can just hold `Ctrl` and double-tap `c`._
 
 There will be a few questions, as to where you want to send your text, and the answers will be remembered. If you need to reconfigure:
 
