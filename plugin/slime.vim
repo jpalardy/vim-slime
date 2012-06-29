@@ -12,16 +12,12 @@ if !exists("g:slime_target")
   let g:slime_target = "screen"
 end
 
-if !exists("g:slime_paste_file")
-  let g:slime_paste_file = "$HOME/.slime_paste"
-end
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:ScreenSend(config, text)
-  call system("cat > " . g:slime_paste_file, a:text)
+  call s:WritePasteFile(a:text)
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X readreg p " . g:slime_paste_file)
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X paste p")
 endfunction
@@ -35,6 +31,11 @@ function! s:ScreenConfig() abort
     let b:slime_config = {"sessionname": "", "windowname": "0"}
   end
 
+  " screen needs a file, so set a default if not configured
+  if !exists("g:slime_paste_file")
+    let g:slime_paste_file = "$HOME/.slime_paste"
+  end
+
   let b:slime_config["sessionname"] = input("screen session name: ", b:slime_config["sessionname"], "custom,<SNR>" . s:SID() . "_ScreenSessionNames")
   let b:slime_config["windowname"]  = input("screen window name: ",  b:slime_config["windowname"])
 endfunction
@@ -44,8 +45,15 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:TmuxSend(config, text)
-  call system("tmux -L " . shellescape(a:config["socket_name"]) . " load-buffer -", a:text)
-  call system("tmux -L " . shellescape(a:config["socket_name"]) . " paste-buffer -t " . shellescape(a:config["target_pane"]))
+  let l:prefix = "tmux -L " . shellescape(a:config["socket_name"])
+  " use STDIN unless configured to use a file
+  if !exists("g:slime_paste_file")
+    call system(l:prefix . " load-buffer -", a:text)
+  else
+    call s:WritePasteFile(a:text)
+    call system(l:prefix . " load-buffer " . g:slime_paste_file)
+  end
+  call system(l:prefix . " paste-buffer -t " . shellescape(a:config["target_pane"]))
 endfunction
 
 function! s:TmuxPaneNames(A,L,P)
@@ -72,6 +80,11 @@ endfunction
 function! s:SID()
   return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
 endfun
+
+function! s:WritePasteFile(text)
+  " could check exists("*writefile")
+  call system("cat > " . g:slime_paste_file, a:text)
+endfunction
 
 function! s:_EscapeText(text)
   if exists("&filetype")
