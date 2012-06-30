@@ -69,6 +69,17 @@ tmux target pane
     ":i" means the ith window, current pane
     ":i.j" means the ith window, jth pane
 
+By default `STDIN` is used to pass the text to tmux.
+If you experience issues with this you may be able to work around them
+by configuring slime to use a file instead:
+
+    let g:slime_paste_file = "$HOME/.slime_paste"
+
+This file is not erased by the plugin and will always contain the last thing
+you sent over.  If this behavior is undesired one alternative is to use a temporary file:
+
+    let g:slime_paste_file = tempname()
+
 Key Bindings
 ------------
 
