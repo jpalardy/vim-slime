@@ -16,10 +16,17 @@ end
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" Creates the beginning of a screen command. The actually commands should be
+" concatenated to the returned string and each command must be wrapped in
+" quotes.
+function! s:ScreenBuildCommand(config)
+  return "screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X eval "
+endfunction
+
 function! s:ScreenSend(config, text)
   call s:WritePasteFile(a:text)
-  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X readreg p " . g:slime_paste_file)
-  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) . " -X paste p")
+  let screen_cmd = s:ScreenBuildCommand(a:config)
+  call system(screen_cmd . '"readreg p ' . g:slime_paste_file . '" "paste p"')
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
@@ -38,6 +45,9 @@ function! s:ScreenConfig() abort
 
   let b:slime_config["sessionname"] = input("screen session name: ", b:slime_config["sessionname"], "custom,<SNR>" . s:SID() . "_ScreenSessionNames")
   let b:slime_config["windowname"]  = input("screen window name: ",  b:slime_config["windowname"])
+
+  let screen_cmd = s:ScreenBuildCommand(b:slime_config)
+  call system(screen_cmd . '"msgwait 0"')
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
