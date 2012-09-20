@@ -1,3 +1,8 @@
 function! _EscapeText_ocaml(text)
-    return [a:text,";;\n"]
+    let trimmed = substitute(a:text, '\_s*$', '', '')
+    if match(trimmed,';;\n*$') > -1
+        return [trimmed,"\n"]
+    else 
+        return [trimmed,";;\n"]
+    endif
 endfunction
