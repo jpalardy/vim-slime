@@ -1,8 +1,8 @@
 function! _EscapeText_ocaml(text)
-    " We only append ';;' to text if text 
-    if match(a:text,';;\s*$') > -1
-        return [a:text]
+    let trimmed = substitute(a:text, '\_s*$', '', '')
+    if match(trimmed,';;\n*$') > -1
+        return [trimmed,"\n"]
     else 
-        return [a:text,";;\n"]
+        return [trimmed,";;\n"]
     endif
 endfunction
