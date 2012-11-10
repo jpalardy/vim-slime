@@ -88,7 +88,8 @@ A tmux pane can be targeted with any of the following values:
   - ":" means current window, current pane (a reasonable default)
   - ":i" means the ith window, current pane
   - ":i.j" means the ith window, jth pane
-  - "h:i.j" means the tmux session where h is the session identifier (either session name or number), the ith window and the jth pane
+  - "h:i.j" means the tmux session where h is the session identifier 
+    (either session name or number), the ith window and the jth pane
   - "%i" means i refers the pane's unique id
 
 To get a list of all the available pane execute the following:
