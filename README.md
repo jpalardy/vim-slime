@@ -68,6 +68,7 @@ tmux target pane
     ":" means current window, current pane (a reasonable default)
     ":i" means the ith window, current pane
     ":i.j" means the ith window, jth pane
+    "h:i.j" means the tmux session where h is the session identifier (either session name or number), the ith window and the jth pane 
 
 By default `STDIN` is used to pass the text to tmux.
 If you experience issues with this you may be able to work around them
