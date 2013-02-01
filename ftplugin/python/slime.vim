@@ -36,3 +36,9 @@ function! _EscapeText_python(text)
   end
 endfunction
 
+function s:lineIsIndented(line)
+    let matched = match(a:line, '^\s') "starts with whitespace
+    " 0 means it is indented
+    return matched == 0
+endfunction
+
