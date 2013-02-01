@@ -5,10 +5,32 @@ function! _EscapeText_python(text)
   else
     let no_empty_lines = substitute(a:text, '\n\s*\ze\n', "", "g")
 
-    "" add empty lines between definitions (functions, classes...)
-    let some_empty_lines = substitute(no_empty_lines, '\n\zs\ze\S', "\n", "g")
-    "" also add an empty line to the end, to end definitions
-    let some_empty_lines .= "\n"
+    let lines = split(no_empty_lines, "\n")
+    let edited_lines = []
+    let last_line_was_indented = 0
+
+    for line in lines
+        "" Add empty lines between definitions (functions, loops, classes...)
+        "" This is recognised by an indented line follow by an unindented one
+        if ! s:lineIsIndented(line) && last_line_was_indented
+            call add(edited_lines, "")
+        endif
+
+        call add(edited_lines, line)
+        let last_line_was_indented = s:lineIsIndented(line)
+    endfor
+
+    "" Add an extra empty line to the end, if the last line is indented
+    "" This closes the last definition
+    if s:lineIsIndented(lines[-1])
+        call add(edited_lines, "")
+    endif
+
+    "" An empty line at the end, so the cursor is on a new line
+    call add(edited_lines, "")
+
+    "" Now merge the list of strings back into a big string
+    let some_empty_lines = join(edited_lines, "\n")
 
     return substitute(some_empty_lines, "\n", "", "g")
   end
