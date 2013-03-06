@@ -1,4 +1,4 @@
-*slime.txt*   Grab some text and "send" it to a GNU Screen / tmux session.
+*slime.txt*   Grab some text and "send" it to a GNU Screen / tmux / whimrepl session.
 
 Author:  Jonathan Palardy                                    *slime-author*
 License: Same terms as Vim itself (see |license|)
@@ -7,9 +7,9 @@ This plugin is only available if 'compatible' is not set.
 
 ==============================================================================
                                                                *slime*
-Grab some text and "send" it to a GNU Screen / tmux session.
+Grab some text and "send" it to a GNU Screen / tmux / whimrepl session.
 
-	VIM ---(text)---> screen / tmux~
+	VIM ---(text)---> screen / tmux / whimrepl~
 
 Presumably, your screen contains something interesting like, say, a Clojure
 REPL. But if it can receive typed text, it can receive it from vim-slime.
@@ -21,30 +21,31 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence,
 1. Usage				|slime-usage|
 2. Screen Configuration 		|slime-screen|
 3. Tmux Configuration			|slime-tmux|
-4. Slime Configuration			|slime-configuration|
-5. Slime Requirements			|slime-requirements|
+4. whimrepl Configuration		|slime-whimrepl|
+5. Slime Configuration			|slime-configuration|
+6. Slime Requirements			|slime-requirements|
 
 ==============================================================================
 1. Slime Usage 					*slime-usage*
 
 						*CTRL-C_CTRL-C* *<c-c><c-c>*
-<c-c><c-c>		Send the  current paragraph text to screen/tmux. Slime
-			will prompt for configuration if slime is not
+<c-c><c-c>		Send the current paragraph text to screen/tmux/whimrepl.
+			Slime will prompt for configuration if slime is not
 			configured for the current buffer.
 
 						*v_CTRL-C_CTRL-C* *v_<c-c><c-c>*
-{Visual}<c-c><c-c>	Send highlighted text to screen/tmux.
+{Visual}<c-c><c-c>	Send highlighted text to screen/tmux/whimrepl.
 
 						*CTRL-C_v* *<c-c>v*
 						*:SlimeConfig*
-<c-c>v			Setup slime to use screen or tmux. You will be
-:SlimeConfig		prompted for information regarding how to target
-			screen or tmux. See |slime-screen| or |slime-tmux| for
-			more information.
+<c-c>v			Setup slime to use screen, tmux or whimrepl. You will
+:SlimeConfig		be prompted for information regarding how to target
+			screen, tmux or whimrepl. See |slime-screen|,
+			|slime-tmux| or |slime-whimrepl| for more information.
 
 						*:SlimeSend*
-:<range>SlimeSend	Send a [range] of lines to screen or tmux. If no range
-			is provided the current line is sent.
+:<range>SlimeSend	Send a [range] of lines to screen, tmux or whimrepl.
+			If no range is provided the current line is sent.
 
 
 ==============================================================================
@@ -98,11 +99,28 @@ To get a list of all the available pane execute the following:
 <
 
 ==============================================================================
-4. Slime Configuration 				*slime-configuration*
+4. whimrepl Configuration 			*slime-whimrepl*
+
+whimrepl is also not the default, to use it you will have to add this line to
+your |.vimrc|:
+>
+	let g:slime_target = "whimrepl"
+<
+When you invoke vim-slime for the first time (see below), you will be prompted
+for more configuration.
+
+whimrepl server name~
+
+This is the name of the whimrepl server that you wish to target.  whimrepl
+displays that name in its banner every time you start up an instance of
+whimrepl.
+
+==============================================================================
+5. Slime Configuration 				*slime-configuration*
 
 Global Variables~
 						*g:slime_target*
-g:slime_target		Set to either "screen" (default) or "tmux".
+g:slime_target		Set to either "screen" (default), "tmux" or "whimrepl".
 
 						*g:slime_no_mappings*
 g:slime_no_mappings	Set to non zero value to disable the default mappings.
@@ -113,6 +131,7 @@ g:slime_paste_file	Used to transfer data from vim to GNU Screen or tmux.
 			For tmux it is optional; If not set, STDIN will be
 			used. Setting this explicitly can work around some
 			occasional portability issues.
+			whimrepl does not require or support this setting.
 
 Mappings~
 
@@ -152,7 +171,8 @@ To use vim like mappings instead of emacs keybindings use the following:
 5. Slime Requirements 				*slime-requirements*
 
 Slime requires either screen or tmux to be available and executable. Awk is
-used for completion of screen sessions.
+used for completion of screen sessions.  whimrepl does not require any
+executables, only that 'lein whimrepl' was used to start the Leiningen REPL.
 
 ==============================================================================
 
