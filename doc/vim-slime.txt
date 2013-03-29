@@ -47,6 +47,11 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence,
 :<range>SlimeSend	Send a [range] of lines to screen, tmux or whimrepl.
 			If no range is provided the current line is sent.
 
+                                                *:SlimeSend1*
+:SlimeSend1 {text}      Send a single line of text, specified on the command
+                        line, to screen, tmux, or whimrepl. A carriage return
+                        is automatically appended.
+
 
 ==============================================================================
 2. Screen Configuration 			*slime-screen*
