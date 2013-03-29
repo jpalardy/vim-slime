@@ -215,6 +215,7 @@ endfunction
 
 command -bar -nargs=0 SlimeConfig call s:SlimeConfig()
 command -range -bar -nargs=0 SlimeSend <line1>,<line2>call s:SlimeSendRange()
+command -nargs=+ SlimeSend1 call s:SlimeSend(<q-args> . "\r")
 
 noremap <SID>Operator :<c-u>set opfunc=<SID>SlimeSendOp<cr>g@
 
