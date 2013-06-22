@@ -123,10 +123,18 @@ function! s:_EscapeText(text)
   end
 endfunction
 
-function! s:SlimeSendOp(type, ...) abort
+function! s:SlimeGetConfig()
   if !exists("b:slime_config")
-    call s:SlimeDispatch('Config')
+    if exists("g:slime_default_config")
+      let b:slime_config = g:slime_default_config
+    else
+      call s:SlimeDispatch('Config')
+    end
   end
+endfunction
+
+function! s:SlimeSendOp(type, ...) abort
+  call s:SlimeGetConfig()
 
   let sel_save = &selection
   let &selection = "inclusive"
@@ -151,9 +159,7 @@ function! s:SlimeSendOp(type, ...) abort
 endfunction
 
 function! s:SlimeSendRange() range abort
-  if !exists("b:slime_config")
-    call s:SlimeDispatch('Config')
-  end
+  call s:SlimeGetConfig()
 
   let rv = getreg('"')
   let rt = getregtype('"')
