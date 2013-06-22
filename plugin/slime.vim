@@ -36,8 +36,13 @@ function! s:ScreenConfig() abort
     let g:slime_paste_file = "$HOME/.slime_paste"
   end
 
-  let b:slime_config["sessionname"] = input("screen session name: ", b:slime_config["sessionname"], "custom,<SNR>" . s:SID() . "_ScreenSessionNames")
-  let b:slime_config["windowname"]  = input("screen window name: ",  b:slime_config["windowname"])
+  if !exists("g:slime_config")
+    let b:slime_config["sessionname"] = input("screen session name: ", b:slime_config["sessionname"], "custom,<SNR>" . s:SID() . "_ScreenSessionNames")
+    let b:slime_config["windowname"]  = input("screen window name: ",  b:slime_config["windowname"])
+  else
+    let b:slime_config = g:slime_config
+  end
+
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -66,8 +71,13 @@ function! s:TmuxConfig() abort
     let b:slime_config = {"socket_name": "default", "target_pane": ":"}
   end
 
-  let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
-  let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
+  if !exists("g:slime_config")
+    let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
+    let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
+  else
+    let b:slime_config = g:slime_config
+  end
+
   if b:slime_config["target_pane"] =~ '\s\+'
     let b:slime_config["target_pane"] = split(b:slime_config["target_pane"])[0]
   endif
@@ -86,7 +96,12 @@ function! s:WhimreplConfig() abort
     let b:slime_config = {"server_name": "whimrepl"}
   end
 
-  let b:slime_config["server_name"] = input("whimrepl server name: ", b:slime_config["server_name"])
+  if !exists("g:slime_config")
+    let b:slime_config["server_name"] = input("whimrepl server name: ", b:slime_config["server_name"])
+  else
+    let b:slime_config = g:slime_config
+  end
+
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
