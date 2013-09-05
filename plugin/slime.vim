@@ -169,9 +169,7 @@ function! s:SlimeSendRange() range abort
 endfunction
 
 function! s:SlimeSendLines(count) abort
-  if !exists("b:slime_config")
-    call s:SlimeDispatch('Config')
-  end
+  call s:SlimeGetConfig()
 
   let rv = getreg('"')
   let rt = getregtype('"')
