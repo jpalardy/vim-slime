@@ -106,7 +106,7 @@ function! s:_EscapeText(text)
   if exists("&filetype")
     let custom_escape = "_EscapeText_" . &filetype
     if exists("*" . custom_escape)
-        let result = call(custom_escape, [a:text])
+      let result = call(custom_escape, [a:text])
     end
   end
 
@@ -183,14 +183,7 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:SlimeSend(text)
-  if !exists("b:slime_config")
-    let msg = "Slime is not configured for this buffer. Please run :SlimeConfig"
-    echohl ErrorMsg
-    echoerr msg
-    echohl None
-    let v:errmsg = 'slime: ' . msg
-    throw v:errmsg
-  end
+  call s:SlimeGetConfig()
 
   " this used to return a string, but some receivers (coffee-script)
   " will flush the rest of the buffer given a special sequence (ctrl-v)
