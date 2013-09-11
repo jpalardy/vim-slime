@@ -68,7 +68,7 @@ tmux target pane
     ":" means current window, current pane (a reasonable default)
     ":i" means the ith window, current pane
     ":i.j" means the ith window, jth pane
-    "h:i.j" means the tmux session where h is the session identifier (either session name or number), the ith window and the jth pane 
+    "h:i.j" means the tmux session where h is the session identifier (either session name or number), the ith window and the jth pane
 
 By default `STDIN` is used to pass the text to tmux.
 If you experience issues with this you may be able to work around them
@@ -77,7 +77,7 @@ by configuring slime to use a file instead:
     let g:slime_paste_file = "$HOME/.slime_paste"
 
 This file is not erased by the plugin and will always contain the last thing
-you sent over.  If this behavior is undesired one alternative is to use a temporary file:
+you sent over.  If this behavior is undesired, one alternative is to use a temporary file:
 
     let g:slime_paste_file = tempname()
 
@@ -85,7 +85,7 @@ If you do not want vim-slime to prompt for every buffer, you can set a default c
 
     let g:slime_default_config = {"socket_name": "default", "target_pane": "1"}
 
-If this default config is not appropriate for a given buffer, you can call `:SlimeConfig` 
+If this default config is not appropriate for a given buffer, you can call `:SlimeConfig`
 to reset it.
 
 Configuration (whimrepl)
@@ -104,13 +104,13 @@ whimrepl server name
 Key Bindings
 ------------
 
-By default, the current paragraph will be sent. This is equivalent to typing *vip*. If you (visually) select text, that will be sent over:
+By default, the current paragraph will be sent. This is equivalent to typing `vip`. If you (visually) select text, that will be sent over:
 
     C-c, C-c  --- the same as slime
-    
+
 _You can just hold `Ctrl` and double-tap `c`._
 
-There will be a few questions, as to where you want to send your text, and the answers will be remembered. If you need to reconfigure:
+There will be a few questions, as to where you want to send your text, but the answers will be remembered. If you need to reconfigure:
 
     C-c, v    --- mnemonic: "variables"
 
