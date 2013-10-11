@@ -53,7 +53,7 @@ function! s:TmuxSend(config, text)
     call s:WritePasteFile(a:text)
     call system(l:prefix . " load-buffer " . g:slime_paste_file)
   end
-  call system(l:prefix . " paste-buffer -t " . shellescape(a:config["target_pane"]))
+  call system(l:prefix . " paste-buffer -d -t " . shellescape(a:config["target_pane"]))
 endfunction
 
 function! s:TmuxPaneNames(A,L,P)
