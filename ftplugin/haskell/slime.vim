@@ -16,18 +16,40 @@ function! Perhaps_prepend_let(lines)
     return l:lines
 endfunction
 
+" guess correct number of spaces to indent
+" (tabs are not allowed)
+function! Get_indent_string()
+    if &tabstop > 0
+        let l:n = &tabstop
+    elseif &softtabstop > 0
+        let l:n = &softtabstop
+    elseif &shiftwidth > 0
+        let l:n = &shiftwidth
+    else
+        let l:n = 4
+    endif
+    return repeat(" ", l:n)
+endfunction
+
 " indent lines except for first one
-" Todo: use indent settings from file
-" to check if already indented and indent properly
 function! Indent_lines(lines)
     let l:lines = a:lines
+    let l:indent = Get_indent_string()
     let l:i = 1
     let l:len = len(l:lines)
     while l:i < l:len
-        let l:lines[l:i] = "    " . l:lines[l:i]
+        " only indent if not starting with space
+        if l:lines[l:i][0] != " "
+            let l:lines[l:i] = l:indent . l:lines[l:i]
+        endif
         let l:i += 1
     endwhile
     return l:lines
+endfunction
+
+" replace tabs by spaces
+function! Tab_to_spaces(text)
+    return substitute(a:text, "	", Get_indent_string(), "g")
 endfunction
 
 " Wrap in :{ :} if there's more than one line
@@ -51,7 +73,7 @@ endfunction
 
 " vim slime handler
 function! _EscapeText_haskell(text)
-    let l:lines = Lines(a:text)
+    let l:lines = Lines(Tab_to_spaces(a:text))
     let l:lines = Perhaps_prepend_let(l:lines)
     let l:lines = Indent_lines(l:lines)
     let l:lines = Wrap_if_multi(l:lines)
