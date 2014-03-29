@@ -1,7 +1,5 @@
 let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#" ]
 
-let g:slime_default_config = {"socket_name": "default", "target_pane": "2:0.0"}
-
 " Prepend certain statements with 'let'
 function! Perhaps_prepend_let(lines)
     let l:lines = a:lines
