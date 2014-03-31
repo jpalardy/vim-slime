@@ -1,20 +1,21 @@
 let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#", "--"]
 
-
-    let g:slime_default_config = {"socket_name": "default", "target_pane": "3:0.0"}
-
 " Prepend certain statements with 'let'
 function! Perhaps_prepend_let(lines)
-    let l:lines = a:lines
-    let l:word  = split(l:lines[0], " ")[0]
+    if len(a:lines) > 0
+        let l:lines = a:lines
+        let l:word  = split(l:lines[0], " ")[0]
 
-    " if first line is prefixable, prefix with let
-    " (taken from Cumino code)
-    if index(s:not_prefixable_keywords, l:word) < 0
-        let l:lines[0] = "let " . l:lines[0]
+        " if first line is prefixable, prefix with let
+        " (taken from Cumino code)
+        if index(s:not_prefixable_keywords, l:word) < 0
+            let l:lines[0] = "let " . l:lines[0]
+        endif
+
+        return l:lines
+    else
+        return a:lines
     endif
-
-    return l:lines
 endfunction
 
 " guess correct number of spaces to indent
@@ -59,7 +60,7 @@ function! Is_comment(line)
 endfunction
 
 " Remove commented out lines
-function Remove_line_comments(lines)
+function! Remove_line_comments(lines)
     let l:i = 0
     let l:len = len(a:lines)
     let l:ret = []
