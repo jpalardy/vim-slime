@@ -1,5 +1,7 @@
 let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#", "--"]
 
+" let g:slime_default_config = {"socket_name": "default", "target_pane": "3:0.0"}
+
 " Prepend certain statements with 'let'
 function! Perhaps_prepend_let(lines)
     if len(a:lines) > 0
@@ -109,6 +111,16 @@ function! _EscapeText_haskell(text)
     let l:lines = Lines(Tab_to_spaces(l:text))
     let l:lines = Remove_line_comments(l:lines)
     let l:lines = Perhaps_prepend_let(l:lines)
+    let l:lines = Indent_lines(l:lines)
+    let l:lines = Wrap_if_multi(l:lines)
+    return Unlines(l:lines)
+endfunction
+
+function! _EscapeText_haskell_script(text)
+    echo "ok"
+    let l:text  = Remove_block_comments(a:text)
+    let l:lines = Lines(Tab_to_spaces(l:text))
+    let l:lines = Remove_line_comments(l:lines)
     let l:lines = Indent_lines(l:lines)
     let l:lines = Wrap_if_multi(l:lines)
     return Unlines(l:lines)
