@@ -1,17 +1,23 @@
-let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#" ]
+let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#", "--"]
+
+" let g:slime_default_config = {"socket_name": "default", "target_pane": "3:0.0"}
 
 " Prepend certain statements with 'let'
 function! Perhaps_prepend_let(lines)
-    let l:lines = a:lines
-    let l:word  = split(l:lines[0], " ")[0]
+    if len(a:lines) > 0
+        let l:lines = a:lines
+        let l:word  = split(l:lines[0], " ")[0]
 
-    " if first line is prefixable, prefix with let
-    " (taken from Cumino code)
-    if index(s:not_prefixable_keywords, l:word) < 0
-        let l:lines[0] = "let " . l:lines[0]
+        " if first line is prefixable, prefix with let
+        " (taken from Cumino code)
+        if index(s:not_prefixable_keywords, l:word) < 0
+            let l:lines[0] = "let " . l:lines[0]
+        endif
+
+        return l:lines
+    else
+        return a:lines
     endif
-
-    return l:lines
 endfunction
 
 " guess correct number of spaces to indent
@@ -50,6 +56,36 @@ function! Tab_to_spaces(text)
     return substitute(a:text, "	", Get_indent_string(), "g")
 endfunction
 
+" Check if line is commented out
+function! Is_comment(line)
+    return (match(a:line, "^[ \t]*--.*") >= 0)
+endfunction
+
+" Remove commented out lines
+function! Remove_line_comments(lines)
+    let l:i = 0
+    let l:len = len(a:lines)
+    let l:ret = []
+    while l:i < l:len
+        if !Is_comment(a:lines[l:i])
+            call add(l:ret, a:lines[l:i])
+        endif
+        let l:i += 1
+    endwhile
+    return l:ret
+endfunction
+
+" remove block comments
+function! Remove_block_comments(text)
+    return substitute(a:text, "{-.*-}", "", "g")
+endfunction
+
+" remove line comments
+" todo: fix this! it only removes one occurence whilst it should remove all.
+" function! Remove_line_comments(text)
+"     return substitute(a:text, "^[ \t]*--[^\n]*\n", "", "g")
+" endfunction
+
 " Wrap in :{ :} if there's more than one line
 function! Wrap_if_multi(lines)
     if len(a:lines) > 1
@@ -71,9 +107,19 @@ endfunction
 
 " vim slime handler
 function! _EscapeText_haskell(text)
-    let l:lines = Lines(Tab_to_spaces(a:text))
+    let l:text  = Remove_block_comments(a:text)
+    let l:lines = Lines(Tab_to_spaces(l:text))
+    let l:lines = Remove_line_comments(l:lines)
     let l:lines = Perhaps_prepend_let(l:lines)
     let l:lines = Indent_lines(l:lines)
     let l:lines = Wrap_if_multi(l:lines)
+    return Unlines(l:lines)
+endfunction
+
+function! _EscapeText_haskell_script(text)
+    echo "ok"
+    let l:text  = Remove_block_comments(a:text)
+    let l:lines = Lines(Tab_to_spaces(l:text))
+    let l:lines = Remove_line_comments(l:lines)
     return Unlines(l:lines)
 endfunction
