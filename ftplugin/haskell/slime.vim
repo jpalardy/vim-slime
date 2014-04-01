@@ -1,6 +1,16 @@
 let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#", "--"]
 
-" let g:slime_default_config = {"socket_name": "default", "target_pane": "3:0.0"}
+" indent lines except for first one
+function! Indent_lines(lines)
+    let l:lines = a:lines
+    let l:i = 1
+    let l:len = len(l:lines)
+    while l:i < l:len
+        let l:lines[l:i] = "    " . l:lines[l:i]
+        let l:i += 1
+    endwhile
+    return l:lines
+endfunction
 
 " Prepend certain statements with 'let'
 function! Perhaps_prepend_let(lines)
@@ -12,6 +22,7 @@ function! Perhaps_prepend_let(lines)
         " (taken from Cumino code)
         if index(s:not_prefixable_keywords, l:word) < 0
             let l:lines[0] = "let " . l:lines[0]
+            let l:lines = Indent_lines(l:lines)
         endif
 
         return l:lines
@@ -33,22 +44,6 @@ function! Get_indent_string()
         let l:n = 4
     endif
     return repeat(" ", l:n)
-endfunction
-
-" indent lines except for first one
-function! Indent_lines(lines)
-    let l:lines = a:lines
-    let l:indent = Get_indent_string()
-    let l:i = 1
-    let l:len = len(l:lines)
-    while l:i < l:len
-        " only indent if not starting with space
-        if l:lines[l:i][0] != " "
-            let l:lines[l:i] = l:indent . l:lines[l:i]
-        endif
-        let l:i += 1
-    endwhile
-    return l:lines
 endfunction
 
 " replace tabs by spaces
@@ -111,7 +106,6 @@ function! _EscapeText_haskell(text)
     let l:lines = Lines(Tab_to_spaces(l:text))
     let l:lines = Remove_line_comments(l:lines)
     let l:lines = Perhaps_prepend_let(l:lines)
-    let l:lines = Indent_lines(l:lines)
     let l:lines = Wrap_if_multi(l:lines)
     return Unlines(l:lines)
 endfunction
