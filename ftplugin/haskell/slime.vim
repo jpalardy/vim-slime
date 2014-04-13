@@ -1,4 +1,4 @@
-let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#", "--"]
+let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#", "type", "case", "do", "let", "default", "foreign", "--"]
 
 " indent lines except for first one
 function! Indent_lines(lines)
