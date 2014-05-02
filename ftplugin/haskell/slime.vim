@@ -43,7 +43,9 @@ function! Indent_lines(lines)
     let l:len = len(l:lines)
     while l:i < l:len
         " only indent if not starting with space
-        if l:lines[l:i][0] != " "
+        let l:has_guard = match(l:lines[l:i], "\\ \\+|")
+
+        if l:lines[l:i][0] != " " || l:has_guard == 0
             let l:lines[l:i] = l:indent . l:lines[l:i]
         endif
         let l:i += 1
