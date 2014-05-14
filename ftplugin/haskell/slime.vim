@@ -34,16 +34,7 @@ endfunction
 " guess correct number of spaces to indent
 " (tabs are not allowed)
 function! Get_indent_string()
-    if &tabstop > 0
-        let l:n = &tabstop
-    elseif &softtabstop > 0
-        let l:n = &softtabstop
-    elseif &shiftwidth > 0
-        let l:n = &shiftwidth
-    else
-        let l:n = 4
-    endif
-    return repeat(" ", l:n)
+    return repeat(" ", 4)
 endfunction
 
 " replace tabs by spaces
@@ -69,6 +60,8 @@ function! Remove_line_comments(lines)
     endwhile
     return l:ret
 endfunction
+
+
 
 " remove block comments
 function! Remove_block_comments(text)
