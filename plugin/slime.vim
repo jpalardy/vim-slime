@@ -12,6 +12,10 @@ if !exists("g:slime_target")
   let g:slime_target = "screen"
 end
 
+if !exists("g:slime_preserve_curpos")
+  let g:slime_preserve_curpos = 0
+end
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -156,6 +160,8 @@ function! s:SlimeSendOp(type, ...) abort
 
   let &selection = sel_save
   call setreg('"', rv, rt)
+
+  call s:SlimeRestoreCurPos()
 endfunction
 
 function! s:SlimeSendRange() range abort
@@ -176,6 +182,18 @@ function! s:SlimeSendLines(count) abort
   exe "norm! " . a:count . "yy"
   call s:SlimeSend(@")
   call setreg('"', rv, rt)
+endfunction
+
+function! s:SlimeStoreCurPos()
+  if g:slime_preserve_curpos == 1
+    let s:cur = getcurpos()
+  endif
+endfunction
+
+function! s:SlimeRestoreCurPos()
+  if g:slime_preserve_curpos == 1
+    call setpos('.', s:cur)
+  endif
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -214,7 +232,7 @@ command -bar -nargs=0 SlimeConfig call s:SlimeConfig()
 command -range -bar -nargs=0 SlimeSend <line1>,<line2>call s:SlimeSendRange()
 command -nargs=+ SlimeSend1 call s:SlimeSend(<q-args> . "\r")
 
-noremap <SID>Operator :<c-u>set opfunc=<SID>SlimeSendOp<cr>g@
+noremap <SID>Operator :<c-u>call <SID>SlimeStoreCurPos()<cr>:set opfunc=<SID>SlimeSendOp<cr>g@
 
 noremap <unique> <script> <silent> <Plug>SlimeRegionSend :<c-u>call <SID>SlimeSendOp(visualmode(), 1)<cr>
 noremap <unique> <script> <silent> <Plug>SlimeLineSend :<c-u>call <SID>SlimeSendLines(v:count1)<cr>
