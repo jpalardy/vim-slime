@@ -138,6 +138,10 @@ g:slime_paste_file	Used to transfer data from vim to GNU Screen or tmux.
 			occasional portability issues.
 			whimrepl does not require or support this setting.
 
+						*g:slime_python_ipython*
+g:slime_python_ipython	Set to non zero value when using IPython to enable
+			%cpaste support in Python buffers.
+
 Mappings~
 
 Slime's default mappings can be overridden by setting up mappings in your
