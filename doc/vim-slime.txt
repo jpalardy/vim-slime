@@ -138,6 +138,10 @@ g:slime_paste_file	Used to transfer data from vim to GNU Screen or tmux.
 			occasional portability issues.
 			whimrepl does not require or support this setting.
 
+						*g:slime_python_ipython*
+g:slime_python_ipython	Set to non zero value when using IPython to enable
+			%cpaste support in Python buffers.
+
 Mappings~
 
 Slime's default mappings can be overridden by setting up mappings in your
@@ -173,7 +177,7 @@ To use vim like mappings instead of emacs keybindings use the following:
 <
 
 ==============================================================================
-5. Slime Requirements 				*slime-requirements*
+6. Slime Requirements 				*slime-requirements*
 
 Slime requires either screen or tmux to be available and executable. Awk is
 used for completion of screen sessions.  whimrepl does not require any
