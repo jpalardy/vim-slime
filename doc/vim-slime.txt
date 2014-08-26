@@ -173,7 +173,7 @@ To use vim like mappings instead of emacs keybindings use the following:
 <
 
 ==============================================================================
-5. Slime Requirements 				*slime-requirements*
+6. Slime Requirements 				*slime-requirements*
 
 Slime requires either screen or tmux to be available and executable. Awk is
 used for completion of screen sessions.  whimrepl does not require any
