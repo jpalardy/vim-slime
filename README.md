@@ -23,8 +23,10 @@ then simply copy and paste:
 
 If you like it the hard way, copy plugin/slime.vim from this repo into ~/.vim/plugin.
 
-Configuration (GNU Screen)
---------------------------
+Configuration
+-------------
+
+### GNU Screen
 
 By default, GNU Screen is assumed, you don't have to do anything. If you want
 to be explicit, you can add this line to your .vimrc:
@@ -50,8 +52,7 @@ screen window name
 
     This is the window number or name, zero-based.
 
-Configuration (tmux)
---------------------
+### tmux
 
 Tmux is *not* the default, to use it you will have to add this line to your .vimrc:
 
@@ -88,8 +89,7 @@ If you do not want vim-slime to prompt for every buffer, you can set a default c
 If this default config is not appropriate for a given buffer, you can call `:SlimeConfig`
 to reset it.
 
-Configuration (whimrepl)
-------------------------
+### whimrepl
 
 whimrepl is also not the default, to use it you will have to add this line to your .vimrc:
 
@@ -114,9 +114,10 @@ There will be a few questions, as to where you want to send your text, but the a
 
     C-c, v    --- mnemonic: "variables"
 
+File types
+----------
 
-Haskell
--------
+### Haskell
 
 This plugin has support for sending haskell source code to the `ghci`. Syntax differences between `ghci`
 are automatically detected and fixed and comments (which aren't allowed in `ghci`) are filtered. Try
