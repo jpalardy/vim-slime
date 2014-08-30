@@ -28,7 +28,7 @@ endfunction
 
 function! s:ScreenConfig() abort
   if !exists("b:slime_config")
-    let b:slime_config = {"sessionname": "", "windowname": "0"}
+    let b:slime_config = {"sessionname": $STY, "windowname": "0"}
   end
 
   " screen needs a file, so set a default if not configured
