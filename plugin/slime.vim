@@ -127,9 +127,8 @@ function! s:SlimeGetConfig()
   if !exists("b:slime_config")
     if exists("g:slime_default_config")
       let b:slime_config = g:slime_default_config
-    else
-      call s:SlimeDispatch('Config')
     end
+    call s:SlimeDispatch('Config')
   end
 endfunction
 
