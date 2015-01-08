@@ -24,22 +24,15 @@ function! Get_indent_string()
     return repeat(" ", 4)
 endfunction
 
-" indent lines except for first one
+" indent lines except for first one.
+" lines are indented equally, so indentation is preserved.
 function! Indent_lines(lines)
     let l:lines = a:lines
     let l:indent = Get_indent_string()
     let l:i = 1
     let l:len = len(l:lines)
-    let l:seen_where = 0
     while l:i < l:len
-        " only indent if not starting with space
-        let l:has_guard = match(l:lines[l:i], "\\ \\+|") == 0
-        let l:has_where = match(l:lines[l:i], "\\ \\+where") == 0
-        let l:seen_where = l:seen_where || l:has_where
-
-        if l:lines[l:i][0] != " " || l:has_guard || l:seen_where
-            let l:lines[l:i] = l:indent . l:lines[l:i]
-        endif
+        let l:lines[l:i] = l:indent . l:lines[l:i]
         let l:i += 1
     endwhile
     return l:lines
