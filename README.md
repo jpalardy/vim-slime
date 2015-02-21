@@ -82,7 +82,7 @@ you sent over.  If this behavior is undesired, one alternative is to use a tempo
 
     let g:slime_paste_file = tempname()
 
-If you do not want vim-slime to prompt for every buffer, you can set a default configuration
+If you want vim-slime to prefill the prompt answers, you can set a default configuration
 
     let g:slime_default_config = {"socket_name": "default", "target_pane": "1"}
 
