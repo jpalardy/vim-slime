@@ -208,7 +208,7 @@ endfunction
 function! s:SlimeRunCell() abort
     " Run a cell delimited by g:cell_delimiter
     call s:SlimeGetConfig()
-    execute ":?" . g:slime_cell_delimiter . "?,/" . g.slime_cell_delimiter . "/y a"
+    execute "silent :?" . g:slime_cell_delimiter . "?;/" . g:slime_cell_delimiter . "/y a"
     "silent :?##?;/##/y a
     ']
     execute "normal! j"
