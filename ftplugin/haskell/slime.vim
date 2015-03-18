@@ -1,5 +1,10 @@
 let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#", "type", "case", "do", "let", "default", "foreign", "--"]
 
+" Remove '>' on line beginning in literate haskell
+function! Remove_initial_gt(lines)
+    return map(copy(a:lines), "substitute(v:val, '^>[ \t]*', '', 'g')")
+endfunction
+
 " Prepend certain statements with 'let'
 function! Perhaps_prepend_let(lines)
     if len(a:lines) > 0
@@ -50,16 +55,7 @@ endfunction
 
 " Remove commented out lines
 function! Remove_line_comments(lines)
-    let l:i = 0
-    let l:len = len(a:lines)
-    let l:ret = []
-    while l:i < l:len
-        if !Is_comment(a:lines[l:i])
-            call add(l:ret, a:lines[l:i])
-        endif
-        let l:i += 1
-    endwhile
-    return l:ret
+    return filter(copy(a:lines), "!Is_comment(v:val)")
 endfunction
 
 " remove block comments
@@ -93,6 +89,17 @@ function! Unlines(lines)
 endfunction
 
 " vim slime handler
+function! _EscapeText_lhaskell(text)
+    let l:text  = Remove_block_comments(a:text)
+    let l:lines = Lines(Tab_to_spaces(l:text))
+    let l:lines = Remove_initial_gt(l:lines)
+    let l:lines = Remove_line_comments(l:lines)
+    let l:lines = Perhaps_prepend_let(l:lines)
+    let l:lines = Indent_lines(l:lines)
+    let l:lines = Wrap_if_multi(l:lines)
+    return Unlines(l:lines)
+endfunction
+
 function! _EscapeText_haskell(text)
     let l:text  = Remove_block_comments(a:text)
     let l:lines = Lines(Tab_to_spaces(l:text))
