@@ -50,16 +50,7 @@ endfunction
 
 " Remove commented out lines
 function! Remove_line_comments(lines)
-    let l:i = 0
-    let l:len = len(a:lines)
-    let l:ret = []
-    while l:i < l:len
-        if !Is_comment(a:lines[l:i])
-            call add(l:ret, a:lines[l:i])
-        endif
-        let l:i += 1
-    endwhile
-    return l:ret
+    return filter(copy(a:lines), "Is_comment(v:val)")
 endfunction
 
 " remove block comments
