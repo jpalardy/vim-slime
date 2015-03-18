@@ -1,7 +1,7 @@
 let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#", "type", "case", "do", "let", "default", "foreign", "--"]
 
 function! Remove_initial_gt(lines)
-    return map(copy(a:lines), "substitute(v:val, '^>[ \t]', '', 'g')")
+    return map(copy(a:lines), "substitute(v:val, '^>[ \t]*', '', 'g')")
 endfunction
 
 " Prepend certain statements with 'let'
@@ -54,7 +54,7 @@ endfunction
 
 " Remove commented out lines
 function! Remove_line_comments(lines)
-    return filter(copy(a:lines), "Is_comment(v:val)")
+    return filter(copy(a:lines), "!Is_comment(v:val)")
 endfunction
 
 " remove block comments

@@ -50,7 +50,7 @@ endfunction
 
 " Remove commented out lines
 function! Remove_line_comments(lines)
-    return filter(copy(a:lines), "Is_comment(v:val)")
+    return filter(copy(a:lines), "!Is_comment(v:val)")
 endfunction
 
 " remove block comments
