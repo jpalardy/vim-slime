@@ -10,10 +10,11 @@ function! Perhaps_prepend_let(lines)
     if len(a:lines) > 0
         let l:lines = a:lines
         let l:word  = split(l:lines[0], " ")[0]
+        let l:char  = strpart(l:word, 0, 1)
 
         " if first line is prefixable, prefix with let
         " (taken from Cumino code)
-        if index(s:not_prefixable_keywords, l:word) < 0
+        if index(s:not_prefixable_keywords, l:word) < 0 && l:char != ":"
             let l:lines[0] = "let " . l:lines[0]
         endif
 
