@@ -205,6 +205,16 @@ function! s:SlimeDispatch(name, ...)
   return call("s:" . target . a:name, a:000)
 endfunction
 
+function! s:SlimeRunCell() abort
+    " Run a cell delimited by g:cell_delimiter
+    call s:SlimeGetConfig()
+    execute "silent :?" . g:slime_cell_delimiter . "?;/" . g:slime_cell_delimiter . "/y a"
+    "silent :?##?;/##/y a
+    ']
+    execute "normal! j"
+    call s:SlimeSend(@a)
+endfunction
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Setup key bindings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -212,6 +222,7 @@ endfunction
 command -bar -nargs=0 SlimeConfig call s:SlimeConfig()
 command -range -bar -nargs=0 SlimeSend <line1>,<line2>call s:SlimeSendRange()
 command -nargs=+ SlimeSend1 call s:SlimeSend(<q-args> . "\r")
+command -nargs=0 SlimeRunCell call s:SlimeRunCell()
 
 noremap <SID>Operator :<c-u>set opfunc=<SID>SlimeSendOp<cr>g@
 
@@ -220,8 +231,14 @@ noremap <unique> <script> <silent> <Plug>SlimeLineSend :<c-u>call <SID>SlimeSend
 noremap <unique> <script> <silent> <Plug>SlimeMotionSend <SID>Operator
 noremap <unique> <script> <silent> <Plug>SlimeParagraphSend <SID>Operatorip
 noremap <unique> <script> <silent> <Plug>SlimeConfig :<c-u>SlimeConfig<cr>
+noremap <unique> <script> <silent> <Plug>SlimeRunCell :<c-u>call <SID>SlimeRunCell()<cr>
 
 if !exists("g:slime_no_mappings") || !g:slime_no_mappings
+  "exists("g:slime_cell_delimiter") 
+  if !hasmapto('<Plug>SlimeRunCell', 'n')
+      nmap <c-c><Enter> <Plug>SlimeRunCell
+  endif
+
   if !hasmapto('<Plug>SlimeRegionSend', 'x')
     xmap <c-c><c-c> <Plug>SlimeRegionSend
   endif

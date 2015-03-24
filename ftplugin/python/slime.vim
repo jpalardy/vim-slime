@@ -8,3 +8,4 @@ function! _EscapeText_python(text)
   end
 endfunction
 
+let g:slime_cell_delimiter = "##"
