@@ -158,6 +158,8 @@ function! s:SlimeSendOp(type, ...) abort
 endfunction
 
 function! s:SlimeSendRange() range abort
+  execute "normal! mq"
+
   call s:SlimeGetConfig()
 
   let rv = getreg('"')
@@ -165,9 +167,13 @@ function! s:SlimeSendRange() range abort
   sil exe a:firstline . ',' . a:lastline . 'yank'
   call s:SlimeSend(@")
   call setreg('"', rv, rt)
+
+  execute "`q"
 endfunction
 
 function! s:SlimeSendLines(count) abort
+  execute "normal! mq"
+
   call s:SlimeGetConfig()
 
   let rv = getreg('"')
@@ -175,6 +181,8 @@ function! s:SlimeSendLines(count) abort
   exe "norm! " . a:count . "yy"
   call s:SlimeSend(@")
   call setreg('"', rv, rt)
+
+  execute "`q"
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -234,7 +242,7 @@ noremap <unique> <script> <silent> <Plug>SlimeConfig :<c-u>SlimeConfig<cr>
 noremap <unique> <script> <silent> <Plug>SlimeRunCell :<c-u>call <SID>SlimeRunCell()<cr>
 
 if !exists("g:slime_no_mappings") || !g:slime_no_mappings
-  "exists("g:slime_cell_delimiter") 
+  "exists("g:slime_cell_delimiter")
   if !hasmapto('<Plug>SlimeRunCell', 'n')
       nmap <c-c><Enter> <Plug>SlimeRunCell
   endif
@@ -251,4 +259,3 @@ if !exists("g:slime_no_mappings") || !g:slime_no_mappings
     nmap <c-c>v <Plug>SlimeConfig
   endif
 endif
-
