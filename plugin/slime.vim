@@ -158,8 +158,6 @@ function! s:SlimeSendOp(type, ...) abort
 endfunction
 
 function! s:SlimeSendRange() range abort
-  execute "normal! mq"
-
   call s:SlimeGetConfig()
 
   let rv = getreg('"')
@@ -168,12 +166,10 @@ function! s:SlimeSendRange() range abort
   call s:SlimeSend(@")
   call setreg('"', rv, rt)
 
-  execute "`q"
+  execute "normal! }j"
 endfunction
 
 function! s:SlimeSendLines(count) abort
-  execute "normal! mq"
-
   call s:SlimeGetConfig()
 
   let rv = getreg('"')
@@ -182,7 +178,7 @@ function! s:SlimeSendLines(count) abort
   call s:SlimeSend(@")
   call setreg('"', rv, rt)
 
-  execute "`q"
+  execute "normal! }j"
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -234,10 +230,10 @@ command -nargs=0 SlimeRunCell call s:SlimeRunCell()
 
 noremap <SID>Operator :<c-u>set opfunc=<SID>SlimeSendOp<cr>g@
 
-noremap <unique> <script> <silent> <Plug>SlimeRegionSend :<c-u>call <SID>SlimeSendOp(visualmode(), 1)<cr>
-noremap <unique> <script> <silent> <Plug>SlimeLineSend :<c-u>call <SID>SlimeSendLines(v:count1)<cr>
+noremap <unique> <script> <silent> <Plug>SlimeRegionSend :<c-u>call <SID>SlimeSendOp(visualmode(), 1)<cr>}j
+noremap <unique> <script> <silent> <Plug>SlimeLineSend :<c-u>call <SID>SlimeSendLines(v:count1)<cr>}j
 noremap <unique> <script> <silent> <Plug>SlimeMotionSend <SID>Operator
-noremap <unique> <script> <silent> <Plug>SlimeParagraphSend <SID>Operatorip
+noremap <unique> <script> <silent> <Plug>SlimeParagraphSend <SID>Operatorip}j
 noremap <unique> <script> <silent> <Plug>SlimeConfig :<c-u>SlimeConfig<cr>
 noremap <unique> <script> <silent> <Plug>SlimeRunCell :<c-u>call <SID>SlimeRunCell()<cr>
 
@@ -248,11 +244,11 @@ if !exists("g:slime_no_mappings") || !g:slime_no_mappings
   endif
 
   if !hasmapto('<Plug>SlimeRegionSend', 'x')
-    xmap <c-c><c-c> <Plug>SlimeRegionSend
+    xmap <c-c><c-c> <Plug>SlimeRegionSend }j
   endif
 
   if !hasmapto('<Plug>SlimeParagraphSend', 'n')
-    nmap <c-c><c-c> <Plug>SlimeParagraphSend
+    nmap <c-c><c-c> <Plug>SlimeParagraphSend }j
   endif
 
   if !hasmapto('<Plug>SlimeConfig', 'n')
