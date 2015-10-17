@@ -86,6 +86,10 @@ If you want vim-slime to prefill the prompt answers, you can set a default confi
 
     let g:slime_default_config = {"socket_name": "default", "target_pane": "1"}
 
+If you want vim-slime to bypass the prompt and use the specified default configuration options, set the `slime_dont_ask_default` option to `"true"`
+
+    let g:slime_default_config = {"socket_name": "default", "target_pane": "1", "slime_dont_ask_default": "true"}
+
 If this default config is not appropriate for a given buffer, you can call `:SlimeConfig`
 to reset it.
 
