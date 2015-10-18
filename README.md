@@ -1,6 +1,15 @@
 vim-slime
 =========
 
+Demo
+------------
+
+![vim-slime session with R](assets/vim-slime.gif)
+
+
+What is Vim-Slime?
+------------------
+
 Context for [SLIME](https://en.wikipedia.org/wiki/SLIME):
 
     SLIME is an Emacs plugin to turn Emacs into a Lisp IDE. You can type text
@@ -19,12 +28,6 @@ Presumably, your session contains a [REPL](http://en.wikipedia.org/wiki/REPL), m
 The reason you're doing this? Because you want the benefits of a REPL and the benefits of using Vim (familiar environment, syntax highlighting, persistence ...).
 
 More details in the [blog post](http://technotales.wordpress.com/2007/10/03/like-slime-for-vim/).
-
-
-Demo
-------------
-
-![vim-slime session with R](assets/vim-slime.gif)
 
 
 Installation
