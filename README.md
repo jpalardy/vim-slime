@@ -21,6 +21,12 @@ The reason you're doing this? Because you want the benefits of a REPL and the be
 More details in the [blog post](http://technotales.wordpress.com/2007/10/03/like-slime-for-vim/).
 
 
+Demo
+------------
+
+![vim-slime session with R](assets/vim-slime.gif)
+
+
 Installation
 ------------
 
