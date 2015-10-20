@@ -142,7 +142,7 @@ g:slime_paste_file	Used to transfer data from vim to GNU Screen or tmux.
 g:slime_python_ipython	Set to non zero value when using IPython to enable
 			%cpaste support in Python buffers.
 
-                                                g:slime_matlab_eval
+                                                *g:slime_matlab_eval*
 g:slime_matlab_eval     Set to non zero value when using matlab to enable
                         pasting inside eval() function. Allows to distinguish between the
                         sent code and an output it produces for easier
