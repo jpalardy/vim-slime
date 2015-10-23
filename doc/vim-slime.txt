@@ -11,11 +11,11 @@ Grab some text and "send" it to a GNU Screen / tmux / whimrepl session.
 
 	VIM ---(text)---> screen / tmux / whimrepl~
 
-Presumably, your screen contains something interesting like, say, a Clojure
-REPL. But if it can receive typed text, it can receive it from vim-slime.
+Presumably, your session contains a REPL, maybe Clojure, R or python. If you
+can type text into it, vim-slime can send text to it.
 
 The reason you're doing this? Because you want the benefits of a REPL and the
-benefits of using Vim (familiar environment, syntax highlighting, persistence,
+benefits of using Vim (familiar environment, syntax highlighting, persistence
 ...).
 
 1. Usage				|slime-usage|
@@ -106,7 +106,7 @@ To get a list of all the available pane execute the following:
 ==============================================================================
 4. whimrepl Configuration 			*slime-whimrepl*
 
-whimrepl is also not the default, to use it you will have to add this line to
+whimrepl is not the default, to use it you will have to add this line to
 your |.vimrc|:
 >
 	let g:slime_target = "whimrepl"
@@ -138,9 +138,13 @@ g:slime_paste_file	Used to transfer data from vim to GNU Screen or tmux.
 			occasional portability issues.
 			whimrepl does not require or support this setting.
 
-						*g:slime_python_ipython*
-g:slime_python_ipython	Set to non zero value when using IPython to enable
-			%cpaste support in Python buffers.
+						*g:slime_default_config*
+g:slime_default_config	Set to dictionary of pre-filled prompt answer. See
+			the README for details: https://github.com/jpalardy/vim-slime
+
+						*g:slime_dont_ask_default*
+g:slime_dont_ask_default	Works with g:slime_default_config. See
+			the README for details: https://github.com/jpalardy/vim-slime
 
 Mappings~
 

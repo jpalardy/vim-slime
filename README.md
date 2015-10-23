@@ -116,6 +116,7 @@ tmux target pane:
     ":i.j"  means the ith window, jth pane
     "h:i.j" means the tmux session where h is the session identifier
             (either session name or number), the ith window and the jth pane
+    "%i"    means i refers the pane's unique id
 
 By default `STDIN` is used to pass the text to tmux. If you experience issues
 with this you may be able to work around them by configuring slime to use a
