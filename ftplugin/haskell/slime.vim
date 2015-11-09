@@ -1,4 +1,4 @@
-let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#", "type", "case", "do", "let", "default", "newtype", "foreign", "--"]
+let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#", "type", "case", "do", "let", "default", "newtype", "foreign", "--", "main"]
 
 " Remove '>' on line beginning in literate haskell
 function! Remove_initial_gt(lines)
