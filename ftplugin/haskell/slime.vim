@@ -1,5 +1,3 @@
-let s:not_prefixable_keywords = [ "import", "data", "instance", "class", "{-#", "type", "case", "do", "let", "default", "newtype", "foreign", "--", "main"]
-
 " Remove '>' on line beginning in literate haskell
 function! Remove_initial_gt(lines)
     return map(copy(a:lines), "substitute(v:val, '^>[ \t]*', '', 'g')")
@@ -9,12 +7,10 @@ endfunction
 function! Perhaps_prepend_let(lines)
     if len(a:lines) > 0
         let l:lines = a:lines
-        let l:word  = split(l:lines[0], " ")[0]
-        let l:char  = strpart(l:word, 0, 1)
+        let l:line  = l:lines[0]
 
-        " if first line is prefixable, prefix with let
-        " (taken from Cumino code)
-        if index(s:not_prefixable_keywords, l:word) < 0 && l:char != ":"
+        " Prepend let if the line is an assignment
+        if l:line =~ "="
             let l:lines[0] = "let " . l:lines[0]
         endif
 
