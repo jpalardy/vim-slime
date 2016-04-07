@@ -3,6 +3,6 @@ function! _EscapeText_ocaml(text)
     if match(trimmed,';;\n*$') > -1
         return [trimmed,"\n"]
     else 
-        return [trimmed,";;\n"]
+        return [trimmed . ";;","\n"]
     endif
 endfunction
