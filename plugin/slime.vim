@@ -74,6 +74,27 @@ function! s:TmuxConfig() abort
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Conemu
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+function! s:ConemuSend(config, text)
+  let l:prefix = "conemuc -guimacro:" . a:config["HWND"]
+  " use STDIN unless configured to use a file
+  let tmp = @*
+  let @* = a:text
+  call system(l:prefix . " print")
+  let @* = tmp
+endfunction
+
+function! s:ConemuConfig() abort
+  if !exists("b:slime_config")
+    let b:slime_config = {"HWND": "0"}
+  end
+
+  let b:slime_config["HWND"] = input("Console server HWND: ", b:slime_config["HWND"])
+endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " whimrepl
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
