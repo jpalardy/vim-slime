@@ -19,7 +19,7 @@ Context for [SLIME](https://en.wikipedia.org/wiki/SLIME):
     Vim-slime is a humble attempt at getting _some_ of these features into Vim.
     It works with any REPL and isn't tied to Lisp.
 
-Grab some text and send it to a [GNU Screen](http://www.gnu.org/software/screen/) / [tmux](http://tmux.sourceforge.net/) / [whimrepl](https://github.com/malyn/lein-whimrepl) session.
+Grab some text and send it to a [GNU Screen](http://www.gnu.org/software/screen/) / [tmux](https://tmux.github.io/) / [whimrepl](https://github.com/malyn/lein-whimrepl) session.
 
     VIM ---(text)---> screen / tmux / whimrepl
 
