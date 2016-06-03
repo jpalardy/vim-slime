@@ -19,9 +19,9 @@ Context for [SLIME](https://en.wikipedia.org/wiki/SLIME):
     Vim-slime is a humble attempt at getting _some_ of these features into Vim.
     It works with any REPL and isn't tied to Lisp.
 
-Grab some text and send it to a [GNU Screen](http://www.gnu.org/software/screen/) / [tmux](http://tmux.sourceforge.net/) / [whimrepl](https://github.com/malyn/lein-whimrepl) session.
+Grab some text and send it to a [GNU Screen](http://www.gnu.org/software/screen/) / [tmux](http://tmux.sourceforge.net/) / [whimrepl](https://github.com/malyn/lein-whimrepl) / [ConEmu](http://conemu.github.io/) session.
 
-    VIM ---(text)---> screen / tmux / whimrepl
+    VIM ---(text)---> screen / tmux / whimrepl / ConEmu
 
 Presumably, your session contains a [REPL](http://en.wikipedia.org/wiki/REPL), maybe Clojure, R or python. If you can type text into it, vim-slime can send text to it.
 
@@ -144,6 +144,23 @@ whimrepl server name
     displays that name in its banner every time you start up an instance of
     whimrepl.
 
+### ConEmu
+
+ConEmu is *not* the default, to use it you will have to add this line to your .vimrc:
+
+    let g:slime_target = "conemu"
+
+When you invoke vim-slime for the first time, you will be prompted for more
+configuration.
+
+ConEmu console server HWND
+
+    This is what you put in the -GuiMacro flag. It will be "0" if you didn't put
+    anything, adressing the active tab/split of the first found ConEmu window.
+
+By default the windows clipboard is used to pass the text to ConEmu. If you
+experience issues with this, make sure the `conemuc` executable is in your
+`path`.
 
 Advanced Configuration
 ----------------------
@@ -190,4 +207,3 @@ might tweak the text without explicit configuration:
   * python / ipython -- [README](ftplugin/python)
   * scala
   * sml
-
