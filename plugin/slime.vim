@@ -223,8 +223,9 @@ function! s:SlimeStoreCurPos()
 endfunction
 
 function! s:SlimeRestoreCurPos()
-  if g:slime_preserve_curpos == 1
+  if g:slime_preserve_curpos == 1 && exists("s:cur")
     call setpos('.', s:cur)
+    unlet s:cur
   endif
 endfunction
 
