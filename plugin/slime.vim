@@ -13,7 +13,7 @@ if !exists("g:slime_target")
 end
 
 if !exists("g:slime_preserve_curpos")
-  let g:slime_preserve_curpos = 0
+  let g:slime_preserve_curpos = 1
 end
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

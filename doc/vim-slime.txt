@@ -139,7 +139,7 @@ g:slime_paste_file	Used to transfer data from vim to GNU Screen or tmux.
 			whimrepl does not require or support this setting.
 						*g:slime_preserve_curpos*
 g:slime_preserve_curpos	Set to non zero value to preserve cursor position when
-			sending a line or paragraph. Default is zero.
+			sending a line or paragraph. Default is 1.
 
 
 						*g:slime_default_config*
