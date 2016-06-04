@@ -189,6 +189,9 @@ If you want vim-slime to bypass the prompt and use the specified default configu
 
     let g:slime_dont_ask_default = 1
 
+By default, vim-slime will try to restore your cursor position after it runs. If you don't want that behavior, unset the `g:slime_preserve_curpos` option:
+
+    let g:slime_preserve_curpos = 0
 
 
 Language Support
