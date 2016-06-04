@@ -218,7 +218,13 @@ endfunction
 
 function! s:SlimeStoreCurPos()
   if g:slime_preserve_curpos == 1
-    let s:cur = getcurpos()
+    let has_getcurpos = exists("*getcurpos")
+    if has_getcurpos
+      " getcurpos() doesn't exist before 7.4.313.
+      let s:cur = getcurpos()
+    else
+      let s:cur = getpos('.')
+    endif
   endif
 endfunction
 
