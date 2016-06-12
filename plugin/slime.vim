@@ -48,26 +48,34 @@ endfunction
 " Tmux
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+function! s:TmuxSocket()
+  " The socket path is the first value in the comma-separated list of $TMUX.
+  return split($TMUX, ',')[0]
+endfunction
+
+function! s:TmuxCommand(args)
+  return 'tmux -S ' . s:TmuxSocket() . ' ' . a:args
+endfunction
+
 function! s:TmuxSend(config, text)
-  let l:prefix = "tmux -L " . shellescape(a:config["socket_name"])
   " use STDIN unless configured to use a file
   if !exists("g:slime_paste_file")
-    call system(l:prefix . " load-buffer -", a:text)
+    call system(s:TmuxCommand("load-buffer -"), a:text)
   else
     call s:WritePasteFile(a:text)
-    call system(l:prefix . " load-buffer " . g:slime_paste_file)
+    call system(s:TmuxCommand("load-buffer " . g:slime_paste_file))
   end
-  call system(l:prefix . " paste-buffer -d -t " . shellescape(a:config["target_pane"]))
+  call system(s:TmuxCommand("paste-buffer -d -t " . shellescape(a:config["target_pane"])))
 endfunction
 
 function! s:TmuxPaneNames(A,L,P)
   let format = '#{pane_id} #{session_name}:#{window_index}.#{pane_index} #{window_name}#{?window_active, (active),}'
-  return system("tmux -L " . shellescape(b:slime_config['socket_name']) . " list-panes -a -F " . shellescape(format))
+  return system(s:TmuxCommand("list-panes -a -F " . shellescape(format)))
 endfunction
 
 function! s:TmuxConfig() abort
   if !exists("b:slime_config")
-    let b:slime_config = {"socket_name": "default", "target_pane": ":"}
+    let b:slime_config = {"socket_name": s:TmuxSocket(), "target_pane": ":.2"}
   end
 
   let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
