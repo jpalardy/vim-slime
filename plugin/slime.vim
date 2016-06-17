@@ -16,6 +16,11 @@ if !exists("g:slime_preserve_curpos")
   let g:slime_preserve_curpos = 1
 end
 
+" screen and tmux need a file, so set a default if not configured
+if !exists("g:slime_paste_file")
+  let g:slime_paste_file = "$HOME/.slime_paste"
+end
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -34,12 +39,6 @@ function! s:ScreenConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"sessionname": "", "windowname": "0"}
   end
-
-  " screen needs a file, so set a default if not configured
-  if !exists("g:slime_paste_file")
-    let g:slime_paste_file = "$HOME/.slime_paste"
-  end
-
   let b:slime_config["sessionname"] = input("screen session name: ", b:slime_config["sessionname"], "custom,<SNR>" . s:SID() . "_ScreenSessionNames")
   let b:slime_config["windowname"]  = input("screen window name: ",  b:slime_config["windowname"])
 endfunction
@@ -49,15 +48,9 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:TmuxSend(config, text)
-  let l:prefix = "tmux -L " . shellescape(a:config["socket_name"])
-  " use STDIN unless configured to use a file
-  if !exists("g:slime_paste_file")
-    call system(l:prefix . " load-buffer -", a:text)
-  else
-    call s:WritePasteFile(a:text)
-    call system(l:prefix . " load-buffer " . g:slime_paste_file)
-  end
-  call system(l:prefix . " paste-buffer -d -t " . shellescape(a:config["target_pane"]))
+  call s:WritePasteFile(a:text)
+  call system("tmux -L " . shellescape(a:config["socket_name"]) . " load-buffer " . g:slime_paste_file)
+  call system("tmux -L " . shellescape(a:config["socket_name"]) . " paste-buffer -d -t " . shellescape(a:config["target_pane"]))
 endfunction
 
 function! s:TmuxPaneNames(A,L,P)
@@ -69,7 +62,6 @@ function! s:TmuxConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"socket_name": "default", "target_pane": ":"}
   end
-
   let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
   let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
   if b:slime_config["target_pane"] =~ '\s\+'
@@ -114,7 +106,6 @@ function! s:WhimreplConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"server_name": "whimrepl"}
   end
-
   let b:slime_config["server_name"] = input("whimrepl server name: ", b:slime_config["server_name"])
 endfunction
 
