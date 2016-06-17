@@ -84,7 +84,7 @@ The name of the file used can be configured through a variable:
     let g:slime_paste_file = tempname()
 
 WARNING: This file is not erased by the plugin and will always contain the last thing
-you sent over. If you're worried about this, you might consider switching to tmux.
+you sent over.
 
 When you invoke vim-slime for the first time, you will be prompted for more configuration.
 
@@ -103,6 +103,18 @@ Tmux is *not* the default, to use it you will have to add this line to your .vim
 
     let g:slime_target = "tmux"
 
+Before tmux 2.2, tmux accepted input from STDIN. This doesn't work anymore. To
+make it work out without explicit config, the default was changed to use a file
+like screen. By default this file is set to `$HOME/.slime_paste`. The name of
+the file used can be configured through a variable:
+
+    let g:slime_paste_file = "$HOME/.slime_paste"
+    " or maybe...
+    let g:slime_paste_file = tempname()
+
+WARNING: This file is not erased by the plugin and will always contain the last thing
+you sent over.
+
 When you invoke vim-slime for the first time, you will be prompted for more configuration.
 
 tmux socket name:
@@ -117,17 +129,6 @@ tmux target pane:
     "h:i.j" means the tmux session where h is the session identifier
             (either session name or number), the ith window and the jth pane
     "%i"    means i refers the pane's unique id
-
-By default `STDIN` is used to pass the text to tmux. If you experience issues
-with this you may be able to work around them by configuring slime to use a
-file instead:
-
-    let g:slime_paste_file = "$HOME/.slime_paste"
-    " or maybe...
-    let g:slime_paste_file = tempname()
-
-WARNING: This file is not erased by the plugin and will always contain the last thing
-you sent over.
 
 
 ### whimrepl
