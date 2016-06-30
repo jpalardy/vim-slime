@@ -3,6 +3,13 @@ function! Remove_initial_gt(lines)
     return map(copy(a:lines), "substitute(v:val, '^>[ \t]*', '', 'g')")
 endfunction
 
+function! Is_type_declaration(line)
+  let l:isNewType = a:line =~ "newtype"
+  let l:isTypeAlias = a:line =~ "type"
+  let l:isData = a:line =~ "data"
+  return l:isNewtype || l:isTypeAlias || l:isData
+endfunction
+
 " Prepend certain statements with 'let'
 function! Perhaps_prepend_let(lines)
     if len(a:lines) > 0
@@ -10,7 +17,7 @@ function! Perhaps_prepend_let(lines)
         let l:line  = l:lines[0]
 
         " Prepend let if the line is an assignment
-        if l:line =~ "=" || l:line =~ "::"
+        if (l:line =~ "=" || l:line =~ "::") && !Is_type_declaration(l:line)
             let l:lines[0] = "let " . l:lines[0]
         endif
 
