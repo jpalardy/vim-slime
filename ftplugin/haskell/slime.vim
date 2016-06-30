@@ -7,7 +7,7 @@ function! Is_type_declaration(line)
   let l:isNewType = a:line =~ "newtype"
   let l:isTypeAlias = a:line =~ "type"
   let l:isData = a:line =~ "data"
-  return l:isNewtype || l:isTypeAlias || l:isData
+  return l:isNewType || l:isTypeAlias || l:isData
 endfunction
 
 " Prepend certain statements with 'let'
