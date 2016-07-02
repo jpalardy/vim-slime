@@ -130,6 +130,21 @@ tmux target pane:
             (either session name or number), the ith window and the jth pane
     "%i"    means i refers the pane's unique id
 
+#### Get Difference
+
+This is an experimental feature for putting the evaluation results back into the current vim buffer, analogous to supplying a prefix argument for evaluation in SLIME or Geiser. Enable with:
+
+    let g:slime_take_snapshot = 1
+
+`<C-c><C-d>` will put the difference between what was in the target buffer before the last time text was sent (`<C-c><C-c>`), and the current state.
+
+The following parameters are configurable:
+
+* `g:slime_snapshot_file` (defaults to `~/.slime_snapshot`): file to hold the contents of target buffer pre-evaluation
+* `g:slime_current_file` (defaults to `~/.slime_current`): file to hold the current contents of target buffer
+* `g:slime_default_config["difference_trim"]` (defaults to 1): the number of lines ignored from the tail of the difference (the last lines in the target buffer will most likely be the interpreter/shell prompt or newlines, which can be discarded).
+
+WARNING: Enabling this feature will cause the history of the target pane to be erased every time `<C-c><C-c>` is used.
 
 ### whimrepl
 

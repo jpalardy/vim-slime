@@ -77,7 +77,7 @@ function! s:TmuxConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"socket_name": "default", "target_pane": ":"}
 	if exists('g:slime_take_snapshot')
-      let b:slime_config = {"socket_name": "default", "target_pane": ":", "snapshot_offset": 1}
+      let b:slime_config = {"socket_name": "default", "target_pane": ":", "difference_trim": 1}
 	endif
   end
   let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
@@ -86,7 +86,7 @@ function! s:TmuxConfig() abort
     let b:slime_config["target_pane"] = split(b:slime_config["target_pane"])[0]
   endif
   if exists('g:slime_take_snapshot')
-    let b:slime_config["snapshot_offset"] = input("tmux snapshot offset: ", b:slime_config["snapshot_offset"])
+    let b:slime_config["difference_trim"] = input("tmux difference trim: ", b:slime_config["difference_trim"])
   endif
 endfunction
 
@@ -102,7 +102,7 @@ function! s:TmuxGetDifference(config) abort
 	\let num_snapshot_lines_trimmed=$(printf "\%s" "$(< ' . g:slime_snapshot_file . ')" | wc -l);
 	\let num_diff=$(($num_current_lines_trimmed - $num_snapshot_lines_trimmed - $num_paste_lines + 1));
 	\let tail_offset=$(($num_current_lines - $num_snapshot_lines_trimmed - 1));
-	\let head_offset=$(($num_diff - ' . a:config["snapshot_offset"] . '));
+	\let head_offset=$(($num_diff - ' . a:config["difference_trim"] . '));
 	\tail -n $tail_offset ' . g:slime_current_file . ' | head -n $head_offset;'
 	execute l:difference_sh
 endfunction
