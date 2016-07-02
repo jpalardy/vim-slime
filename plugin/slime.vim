@@ -60,8 +60,9 @@ function! s:TmuxSend(config, text)
   call s:WritePasteFile(a:text)
   if exists('g:slime_take_snapshot')
     call system("tmux -L " . shellescape(a:config["socket_name"]) . " clear-history -t " . shellescape(a:config["target_pane"]))
-    call system("tmux -L " . shellescape(a:config["socket_name"]) . " capture-pane -b snapshot -t " . shellescape(a:config["target_pane"]))
-    call system("tmux -L " . shellescape(a:config["socket_name"]) . " save-buffer -b snapshot " . g:slime_snapshot_file)
+    call system("tmux -L " . shellescape(a:config["socket_name"]) . " capture-pane -t " . shellescape(a:config["target_pane"]))
+    call system("tmux -L " . shellescape(a:config["socket_name"]) . " save-buffer " . g:slime_snapshot_file)
+    call system("tmux -L " . shellescape(a:config["socket_name"]) . " delete-buffer")
   endif
   call system("tmux -L " . shellescape(a:config["socket_name"]) . " load-buffer " . g:slime_paste_file)
   call system("tmux -L " . shellescape(a:config["socket_name"]) . " paste-buffer -d -t " . shellescape(a:config["target_pane"]))
@@ -90,8 +91,9 @@ function! s:TmuxConfig() abort
 endfunction
 
 function! s:TmuxGetDifference(config) abort
-    call system("tmux -L " . shellescape(a:config["socket_name"]) . " capture-pane -S - -b current -t " . shellescape(a:config["target_pane"]))
-    call system("tmux -L " . shellescape(a:config["socket_name"]) . " save-buffer -b current " . g:slime_current_file)
+    call system("tmux -L " . shellescape(a:config["socket_name"]) . " capture-pane -S -9999 -t " . shellescape(a:config["target_pane"]))
+    call system("tmux -L " . shellescape(a:config["socket_name"]) . " save-buffer " . g:slime_current_file)
+    call system("tmux -L " . shellescape(a:config["socket_name"]) . " delete-buffer")
 
 	let l:difference_sh = 'read! 
 	\let num_current_lines=$(wc -l ' . g:slime_current_file . ' | cut -d " " -f 1);
@@ -302,7 +304,9 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 command -bar -nargs=0 SlimeConfig call s:SlimeConfig()
-command -bar -nargs=0 SlimeGetDifference call s:SlimeGetDifference()
+if exists("g:slime_take_snapshot")
+  command -bar -nargs=0 SlimeGetDifference call s:SlimeGetDifference()
+endif
 command -range -bar -nargs=0 SlimeSend <line1>,<line2>call s:SlimeSendRange()
 command -nargs=+ SlimeSend1 call s:SlimeSend(<q-args> . "\r")
 command -nargs=+ SlimeSend0 call s:SlimeSend(<args>)
@@ -314,7 +318,9 @@ noremap <unique> <script> <silent> <Plug>SlimeLineSend :<c-u>call <SID>SlimeSend
 noremap <unique> <script> <silent> <Plug>SlimeMotionSend <SID>Operator
 noremap <unique> <script> <silent> <Plug>SlimeParagraphSend <SID>Operatorip
 noremap <unique> <script> <silent> <Plug>SlimeConfig :<c-u>SlimeConfig<cr>
-noremap <unique> <script> <silent> <Plug>SlimeGetDifference :call <SID>SlimeGetDifference()<cr>
+if exists("g:slime_take_snapshot")
+  noremap <unique> <script> <silent> <Plug>SlimeGetDifference :call <SID>SlimeGetDifference()<cr>
+endif
 
 if !exists("g:slime_no_mappings") || !g:slime_no_mappings
   if !hasmapto('<Plug>SlimeRegionSend', 'x')
@@ -329,15 +335,11 @@ if !exists("g:slime_no_mappings") || !g:slime_no_mappings
     nmap <c-c><c-c> <Plug>SlimeParagraphSend
   endif
 
-  if !hasmapto('<Plug>SlimeParagraphGetDifference', 'n')
-    nmap <c-c><c-d> <Plug>SlimeGetDifference
-  endif
-
   if !hasmapto('<Plug>SlimeConfig', 'n')
     nmap <c-c>v <Plug>SlimeConfig
   endif
 
-  if !hasmapto('<Plug>SlimeGetDifference', 'n')
+  if !hasmapto('<Plug>SlimeGetDifference', 'n') && exists("g:slime_take_snapshot")
     nmap <c-c><c-d> <Plug>SlimeGetDifference
   endif
 endif
