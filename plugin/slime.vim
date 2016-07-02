@@ -76,10 +76,10 @@ endfunction
 function! s:TmuxConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"socket_name": "default", "target_pane": ":"}
-	if exists('g:slime_take_snapshot')
-      let b:slime_config = {"socket_name": "default", "target_pane": ":", "difference_trim": 1}
-	endif
-  end
+  endif
+  if exists("g:slime_take_snapshot") && !has_key(b:slime_config, "difference_trim")
+    let b:slime_config["difference_trim"] = 1
+  endif
   let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
   let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
   if b:slime_config["target_pane"] =~ '\s\+'
