@@ -123,6 +123,8 @@ tmux socket name:
 
 tmux target pane:
 
+Note that all of these ordinals are 0-indexed by default.
+
     ":"     means current window, current pane (a reasonable default)
     ":i"    means the ith window, current pane
     ":i.j"  means the ith window, jth pane
