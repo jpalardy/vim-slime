@@ -70,6 +70,21 @@ function! s:TmuxConfig() abort
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Neovim Terminal
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! s:NeovimSend(config, text)
+  call s:WritePasteFile(a:text)
+  call jobsend(str2nr(a:config["jobid"]), add(readfile($HOME."/.slime_paste"), ""))
+endfunction
+
+function! s:NeovimConfig() abort
+  if !exists("b:slime_config")
+    let b:slime_config = {"jobid": "1"}
+  end
+  let b:slime_config["jobid"] = input("jobid: ", b:slime_config["jobid"])
+endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Conemu
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
