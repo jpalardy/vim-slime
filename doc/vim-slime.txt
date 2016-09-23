@@ -21,9 +21,10 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence
 1. Usage				|slime-usage|
 2. Screen Configuration 		|slime-screen|
 3. Tmux Configuration			|slime-tmux|
-4. whimrepl Configuration		|slime-whimrepl|
-5. Slime Configuration			|slime-configuration|
-6. Slime Requirements			|slime-requirements|
+4. Neovim Configuration			|slime-neovim|
+5. whimrepl Configuration		|slime-whimrepl|
+6. Slime Configuration			|slime-configuration|
+7. Slime Requirements			|slime-requirements|
 
 ==============================================================================
 1. Slime Usage 					*slime-usage*
@@ -102,9 +103,24 @@ To get a list of all the available pane execute the following:
 >
 	tmux list-panes -a
 <
+==============================================================================
+4. Neovim Configuration 			*slime-neovim*
+
+Neovim is not the default, to use it you will have to add this line to your
+|.vimrc|:
+>
+	let g:slime_target = "neovim"
+<
+When you invoke vim-slime for the first time (see below), you will be prompted
+for more configuration.
+
+jobid~
+
+In the neovim terminal buffer type ":echo b:terminal_job_id" to get the
+job_id for that terminal
 
 ==============================================================================
-4. whimrepl Configuration 			*slime-whimrepl*
+5. whimrepl Configuration 			*slime-whimrepl*
 
 whimrepl is not the default, to use it you will have to add this line to
 your |.vimrc|:
@@ -121,7 +137,7 @@ displays that name in its banner every time you start up an instance of
 whimrepl.
 
 ==============================================================================
-5. Slime Configuration 				*slime-configuration*
+6. Slime Configuration 				*slime-configuration*
 
 Global Variables~
 						*g:slime_target*
@@ -185,7 +201,7 @@ To use vim like mappings instead of emacs keybindings use the following:
 <
 
 ==============================================================================
-6. Slime Requirements 				*slime-requirements*
+7. Slime Requirements 				*slime-requirements*
 
 Slime requires either screen or tmux to be available and executable. Awk is
 used for completion of screen sessions.  whimrepl does not require any
