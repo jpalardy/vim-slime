@@ -12,3 +12,6 @@ Python buffers, you need to set the corresponding variable in your .vimrc:
 
     let g:slime_python_ipython = 1
 
+Note: if you're using IPython 5, you _need_ to set `g:slime_python_ipython` for
+pasting to work correctly.
+
