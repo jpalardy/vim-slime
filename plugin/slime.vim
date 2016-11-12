@@ -30,6 +30,8 @@ if !exists("g:slime_current_file")
   let g:slime_current_file = "$HOME/.slime_current"
 end
 
+let s:plugin_path = expand('<sfile>:p:h')
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -91,20 +93,22 @@ function! s:TmuxConfig() abort
 endfunction
 
 function! s:TmuxGetDifference(config) abort
-    call system("tmux -L " . shellescape(a:config["socket_name"]) . " capture-pane -S -9999 -t " . shellescape(a:config["target_pane"]))
-    call system("tmux -L " . shellescape(a:config["socket_name"]) . " save-buffer " . g:slime_current_file)
-    call system("tmux -L " . shellescape(a:config["socket_name"]) . " delete-buffer")
+    execute "read !/bin/bash " . s:plugin_path . "/tmux_get_difference.sh " . a:config["socket_name"] . " " . a:config["target_pane"] . " " . g:slime_paste_file . " " . g:slime_current_file . " " . g:slime_snapshot_file . " " . a:config["difference_trim"]
+endfunction
 
-	let l:difference_sh = 'read! 
-	\let num_current_lines=$(wc -l ' . g:slime_current_file . ' | cut -d " " -f 1);
-	\let num_paste_lines=$(wc -l ' . g:slime_paste_file . ' | cut -d " " -f 1);
-	\let num_current_lines_trimmed=$(printf "\%s" "$(< ' . g:slime_current_file . ')" | wc -l);
-	\let num_snapshot_lines_trimmed=$(printf "\%s" "$(< ' . g:slime_snapshot_file . ')" | wc -l);
-	\let num_diff=$(($num_current_lines_trimmed - $num_snapshot_lines_trimmed - $num_paste_lines + 1));
-	\let tail_offset=$(($num_current_lines - $num_snapshot_lines_trimmed - 1));
-	\let head_offset=$(($num_diff - ' . a:config["difference_trim"] . '));
-	\tail -n $tail_offset ' . g:slime_current_file . ' | head -n $head_offset;'
-	execute l:difference_sh
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Neovim Terminal
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! s:NeovimSend(config, text)
+  call s:WritePasteFile(a:text)
+  call jobsend(str2nr(a:config["jobid"]), add(readfile($HOME."/.slime_paste"), ""))
+endfunction
+
+function! s:NeovimConfig() abort
+  if !exists("b:slime_config")
+    let b:slime_config = {"jobid": "1"}
+  end
+  let b:slime_config["jobid"] = input("jobid: ", b:slime_config["jobid"])
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

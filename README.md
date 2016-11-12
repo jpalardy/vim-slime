@@ -119,9 +119,11 @@ When you invoke vim-slime for the first time, you will be prompted for more conf
 
 tmux socket name:
 
-    This is what you put in the -L flag, it will be "default" if you didn't put anything.
+    If you started tmux with the -L flag, use that same socket name here. If you didn't put anything, the default name is "default".
 
 tmux target pane:
+
+Note that all of these ordinals are 0-indexed by default.
 
     ":"     means current window, current pane (a reasonable default)
     ":i"    means the ith window, current pane
