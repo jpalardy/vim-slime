@@ -18,7 +18,7 @@ end
 
 " screen and tmux need a file, so set a default if not configured
 if !exists("g:slime_paste_file")
-  let g:slime_paste_file = "$HOME/.slime_paste"
+  let g:slime_paste_file = expand("$HOME/.slime_paste")
 end
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -75,7 +75,7 @@ endfunction
 
 function! s:NeovimSend(config, text)
   call s:WritePasteFile(a:text)
-  call jobsend(str2nr(a:config["jobid"]), add(readfile(expand(g:slime_paste_file)), ""))
+  call jobsend(str2nr(a:config["jobid"]), add(readfile(g:slime_paste_file), ""))
 endfunction
 
 function! s:NeovimConfig() abort
