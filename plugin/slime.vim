@@ -72,9 +72,10 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Neovim Terminal
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 function! s:NeovimSend(config, text)
   call s:WritePasteFile(a:text)
-  call jobsend(str2nr(a:config["jobid"]), add(readfile($HOME."/.slime_paste"), ""))
+  call jobsend(str2nr(a:config["jobid"]), add(readfile(g:slime_paste_file), ""))
 endfunction
 
 function! s:NeovimConfig() abort
