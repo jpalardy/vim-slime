@@ -134,7 +134,7 @@ endfun
 
 function! s:WritePasteFile(text)
   " could check exists("*writefile")
-  call system("cat > " . g:slime_paste_file, a:text)
+  call system("cat >! " . g:slime_paste_file, a:text)
 endfunction
 
 function! s:_EscapeText(text)
