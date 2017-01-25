@@ -20,6 +20,17 @@ if !exists("g:slime_paste_file")
   let g:slime_paste_file = expand("$HOME/.slime_paste")
 end
 
+" for get_snapshot
+if !exists("g:slime_snapshot_file")
+  let g:slime_snapshot_file = "$HOME/.slime_snapshot"
+end
+
+if !exists("g:slime_current_file")
+  let g:slime_current_file = "$HOME/.slime_current"
+end
+
+let s:plugin_path = expand('<sfile>:p:h')
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -54,6 +65,12 @@ endfunction
 
 function! s:TmuxSend(config, text)
   call s:WritePasteFile(a:text)
+  if exists('g:slime_take_snapshot')
+    call system("tmux -L " . shellescape(a:config["socket_name"]) . " clear-history -t " . shellescape(a:config["target_pane"]))
+    call system("tmux -L " . shellescape(a:config["socket_name"]) . " capture-pane -t " . shellescape(a:config["target_pane"]))
+    call system("tmux -L " . shellescape(a:config["socket_name"]) . " save-buffer " . g:slime_snapshot_file)
+    call system("tmux -L " . shellescape(a:config["socket_name"]) . " delete-buffer")
+  endif
   call system("tmux -L " . shellescape(a:config["socket_name"]) . " load-buffer " . g:slime_paste_file)
   call system("tmux -L " . shellescape(a:config["socket_name"]) . " paste-buffer -d -t " . shellescape(a:config["target_pane"]))
 endfunction
@@ -66,12 +83,22 @@ endfunction
 function! s:TmuxConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"socket_name": "default", "target_pane": ":"}
-  end
+  endif
+  if exists("g:slime_take_snapshot") && !has_key(b:slime_config, "difference_trim")
+    let b:slime_config["difference_trim"] = 1
+  endif
   let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
   let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
   if b:slime_config["target_pane"] =~ '\s\+'
     let b:slime_config["target_pane"] = split(b:slime_config["target_pane"])[0]
   endif
+  if exists('g:slime_take_snapshot')
+    let b:slime_config["difference_trim"] = input("tmux difference trim: ", b:slime_config["difference_trim"])
+  endif
+endfunction
+
+function! s:TmuxGetDifference(config) abort
+    execute "read !/bin/bash " . s:plugin_path . "/tmux_get_difference.sh " . a:config["socket_name"] . " " . a:config["target_pane"] . " " . g:slime_paste_file . " " . g:slime_current_file . " " . g:slime_snapshot_file . " " . a:config["difference_trim"]
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -247,6 +274,9 @@ function! s:SlimeRestoreCurPos()
   endif
 endfunction
 
+function! s:SlimeGetDifference() abort
+    call s:SlimeDispatch('GetDifference', b:slime_config)
+endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Public interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -269,6 +299,10 @@ function! s:SlimeConfig() abort
   call inputrestore()
 endfunction
 
+function! s:SlimeGetDifference() abort
+	call s:SlimeDispatch('GetDifference', b:slime_config)
+endfunction
+
 " delegation
 function! s:SlimeDispatch(name, ...)
   let target = substitute(tolower(g:slime_target), '\(.\)', '\u\1', '') " Capitalize
@@ -280,6 +314,9 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 command -bar -nargs=0 SlimeConfig call s:SlimeConfig()
+if exists("g:slime_take_snapshot")
+  command -bar -nargs=0 SlimeGetDifference call s:SlimeGetDifference()
+endif
 command -range -bar -nargs=0 SlimeSend <line1>,<line2>call s:SlimeSendRange()
 command -nargs=+ SlimeSend1 call s:SlimeSend(<q-args> . "\r")
 command -nargs=+ SlimeSend0 call s:SlimeSend(<args>)
@@ -292,6 +329,9 @@ noremap <unique> <script> <silent> <Plug>SlimeLineSend :<c-u>call <SID>SlimeSend
 noremap <unique> <script> <silent> <Plug>SlimeMotionSend <SID>Operator
 noremap <unique> <script> <silent> <Plug>SlimeParagraphSend <SID>Operatorip
 noremap <unique> <script> <silent> <Plug>SlimeConfig :<c-u>SlimeConfig<cr>
+if exists("g:slime_take_snapshot")
+  noremap <unique> <script> <silent> <Plug>SlimeGetDifference :call <SID>SlimeGetDifference()<cr>
+endif
 
 if !exists("g:slime_no_mappings") || !g:slime_no_mappings
   if !hasmapto('<Plug>SlimeRegionSend', 'x')
@@ -302,8 +342,15 @@ if !exists("g:slime_no_mappings") || !g:slime_no_mappings
     nmap <c-c><c-c> <Plug>SlimeParagraphSend
   endif
 
+  if !hasmapto('<Plug>SlimeParagraphSend', 'n')
+    nmap <c-c><c-c> <Plug>SlimeParagraphSend
+  endif
+
   if !hasmapto('<Plug>SlimeConfig', 'n')
     nmap <c-c>v <Plug>SlimeConfig
   endif
-endif
 
+  if !hasmapto('<Plug>SlimeGetDifference', 'n') && exists("g:slime_take_snapshot")
+    nmap <c-c><c-d> <Plug>SlimeGetDifference
+  endif
+endif
