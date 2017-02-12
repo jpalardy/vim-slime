@@ -20,6 +20,14 @@ if !exists("g:slime_paste_file")
   let g:slime_paste_file = expand("$HOME/.slime_paste")
 end
 
+if !exists("g:slime_default_tmux_socket_name")
+  let g:slime_default_tmux_socket_name = "default"
+end
+
+if !exists("g:slime_default_tmux_target_pane")
+  let g:slime_default_tmux_target_pane = ":"
+end
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -52,22 +60,13 @@ endfunction
 " Tmux
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-function! s:TmuxDefaultSocket()
-  " The socket path is the first value in the comma-separated list of $TMUX.
-  return empty($TMUX) ? "default" : split($TMUX, ",")[0]
-endfunction
-
-function! s:IsAbsolute(path)
-  " Case sensitivity does not matter here, but let's follow good practice.
-  " TODO: Make this cross-platform. Windows supports tmux as of mid-2016.
-  return a:path[0] ==? "/"
-endfunction
-
 function! s:TmuxCommand(config, args)
   let l:socket = a:config["socket_name"]
-  " Use tmux -S for an absolute path to the socket.
-  " Use tmux -L for a relative path to the socket in tmux's temporary directory.
-  let l:socket_option = s:IsAbsolute(l:socket) ? "-S" : "-L"
+  " For an absolute path to the socket, use tmux -S.
+  " For a relative path to the socket in tmux's temporary directory, use tmux -L.
+  " Case sensitivity does not matter here, but let's follow good practice.
+  " TODO: Make this cross-platform. Windows supports tmux as of mid-2016.
+  let l:socket_option = l:socket[0] ==? "/" ? "-S" : "-L"
   return system("tmux " . l:socket_option . " " . shellescape(l:socket) . " " . a:args)
 endfunction
 
@@ -84,7 +83,7 @@ endfunction
 
 function! s:TmuxConfig() abort
   if !exists("b:slime_config")
-    let b:slime_config = {"socket_name": s:TmuxDefaultSocket(), "target_pane": ":.2"}
+    let b:slime_config = {"socket_name": g:slime_default_tmux_socket_name, "target_pane": g:slime_default_tmux_target_pane}
   end
   let b:slime_config["socket_name"] = input("tmux socket name or absolute path: ", b:slime_config["socket_name"])
   let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
