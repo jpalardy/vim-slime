@@ -20,14 +20,6 @@ if !exists("g:slime_paste_file")
   let g:slime_paste_file = expand("$HOME/.slime_paste")
 end
 
-if !exists("g:slime_default_tmux_socket_name")
-  let g:slime_default_tmux_socket_name = "default"
-end
-
-if !exists("g:slime_default_tmux_target_pane")
-  let g:slime_default_tmux_target_pane = ":"
-end
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -83,7 +75,7 @@ endfunction
 
 function! s:TmuxConfig() abort
   if !exists("b:slime_config")
-    let b:slime_config = {"socket_name": g:slime_default_tmux_socket_name, "target_pane": g:slime_default_tmux_target_pane}
+    let b:slime_config = {"socket_name": "default", "target_pane": ":"}
   end
   let b:slime_config["socket_name"] = input("tmux socket name or absolute path: ", b:slime_config["socket_name"])
   let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
