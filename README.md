@@ -117,9 +117,10 @@ you sent over.
 
 When you invoke vim-slime for the first time, you will be prompted for more configuration.
 
-tmux socket name:
+tmux socket name or absolute path:
 
-    If you started tmux with the -L flag, use that same socket name here. If you didn't put anything, the default name is "default".
+    If you started tmux with the -L or -S flag, use that same socket name or path here.
+    If you didn't put anything, the default name is "default".
 
 tmux target pane:
 
@@ -132,6 +133,10 @@ Note that all of these ordinals are 0-indexed by default.
             (either session name or number), the ith window and the jth pane
     "%i"    means i refers the pane's unique id
 
+You can configure the defaults for these options. If you generally run vim in
+a split tmux window with a REPL in the other pane:
+
+    let g:slime_default_config = {"socket_name": split($TMUX, ",")[0], "target_pane": ":.2"}
 
 ### whimrepl
 

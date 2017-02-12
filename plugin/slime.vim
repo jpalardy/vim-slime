@@ -52,22 +52,32 @@ endfunction
 " Tmux
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+function! s:TmuxCommand(config, args)
+  let l:socket = a:config["socket_name"]
+  " For an absolute path to the socket, use tmux -S.
+  " For a relative path to the socket in tmux's temporary directory, use tmux -L.
+  " Case sensitivity does not matter here, but let's follow good practice.
+  " TODO: Make this cross-platform. Windows supports tmux as of mid-2016.
+  let l:socket_option = l:socket[0] ==? "/" ? "-S" : "-L"
+  return system("tmux " . l:socket_option . " " . shellescape(l:socket) . " " . a:args)
+endfunction
+
 function! s:TmuxSend(config, text)
   call s:WritePasteFile(a:text)
-  call system("tmux -L " . shellescape(a:config["socket_name"]) . " load-buffer " . g:slime_paste_file)
-  call system("tmux -L " . shellescape(a:config["socket_name"]) . " paste-buffer -d -t " . shellescape(a:config["target_pane"]))
+  call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
+  call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
 endfunction
 
 function! s:TmuxPaneNames(A,L,P)
   let format = '#{pane_id} #{session_name}:#{window_index}.#{pane_index} #{window_name}#{?window_active, (active),}'
-  return system("tmux -L " . shellescape(b:slime_config['socket_name']) . " list-panes -a -F " . shellescape(format))
+  return s:TmuxCommand(b:slime_config, "list-panes -a -F " . shellescape(format))
 endfunction
 
 function! s:TmuxConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"socket_name": "default", "target_pane": ":"}
   end
-  let b:slime_config["socket_name"] = input("tmux socket name: ", b:slime_config["socket_name"])
+  let b:slime_config["socket_name"] = input("tmux socket name or absolute path: ", b:slime_config["socket_name"])
   let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
   if b:slime_config["target_pane"] =~ '\s\+'
     let b:slime_config["target_pane"] = split(b:slime_config["target_pane"])[0]
