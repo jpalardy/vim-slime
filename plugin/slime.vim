@@ -42,7 +42,7 @@ endfunction
 
 function! s:ScreenConfig() abort
   if !exists("b:slime_config")
-    let b:slime_config = {"sessionname": "", "windowname": "0"}
+    let b:slime_config = {"sessionname": $STY, "windowname": "0"}
   end
   let b:slime_config["sessionname"] = input("screen session name: ", b:slime_config["sessionname"], "custom,<SNR>" . s:SID() . "_ScreenSessionNames")
   let b:slime_config["windowname"]  = input("screen window name: ",  b:slime_config["windowname"])
