@@ -166,6 +166,12 @@ g:slime_default_config	Set to dictionary of pre-filled prompt answer. See
 g:slime_dont_ask_default	Works with g:slime_default_config. See
 			the README for details: https://github.com/jpalardy/vim-slime
 
+                                                *g:slime_matlab_eval*
+g:slime_matlab_eval     Set to non zero value when using matlab to enable
+                        pasting inside eval() function. Allows to distinguish between the
+                        sent code and an output it produces for easier
+                        spotting of errors. 
+
 Mappings~
 
 Slime's default mappings can be overridden by setting up mappings in your
