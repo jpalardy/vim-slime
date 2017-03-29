@@ -27,13 +27,10 @@ end
 function! s:ScreenSend(config, text)
   call s:WritePasteFile(a:text)
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
-        \ " -X eval \"msgwait 0\"")
-  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X eval \"readreg p " . g:slime_paste_file . "\"")
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X paste p")
-  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
-        \ " -X eval \"msgwait 5\"")
+  call system('screen -X colon "^M"')
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
