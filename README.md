@@ -188,7 +188,7 @@ The default mappings are:
 If you want vim-slime to prefill the prompt answers, you can set a default configuration:
 
     " screen:
-    let b:slime_default_config = {"sessionname": "xxx", "windowname": "0"}
+    let g:slime_default_config = {"sessionname": "xxx", "windowname": "0"}
 
     " tmux:
     let g:slime_default_config = {"socket_name": "default", "target_pane": "1"}
