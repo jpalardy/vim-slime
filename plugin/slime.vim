@@ -220,7 +220,7 @@ function! s:SlimeSendRange() range abort
 
   let rv = getreg('"')
   let rt = getregtype('"')
-  sil exe a:firstline . ',' . a:lastline . 'yank'
+  silent exe a:firstline . ',' . a:lastline . 'yank'
   call s:SlimeSend(@")
   call setreg('"', rv, rt)
 endfunction
@@ -230,7 +230,7 @@ function! s:SlimeSendLines(count) abort
 
   let rv = getreg('"')
   let rt = getregtype('"')
-  exe "norm! " . a:count . "yy"
+  silent exe 'normal! ' . a:count . 'yy'
   call s:SlimeSend(@")
   call setreg('"', rv, rt)
 endfunction

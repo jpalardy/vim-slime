@@ -130,7 +130,6 @@ function! _EscapeText_haskell(text)
 endfunction
 
 function! _EscapeText_haskell_script(text)
-    echo "ok"
     let l:text  = Remove_block_comments(a:text)
     let l:lines = Lines(Tab_to_spaces(l:text))
     let l:lines = Remove_line_comments(l:lines)
