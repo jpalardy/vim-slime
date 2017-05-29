@@ -86,8 +86,11 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:NeovimSend(config, text)
+  " Neovim jobsend is fully asynchronous, it causes some problems with
+  " iPython %cpaste (input buffering: not all lines sent over)
+  " So this s:WritePasteFile can help as a small lock & delay
   call s:WritePasteFile(a:text)
-  call jobsend(str2nr(a:config["jobid"]), add(readfile(g:slime_paste_file), ""))
+  call jobsend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
 endfunction
 
 function! s:NeovimConfig() abort
