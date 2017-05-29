@@ -17,7 +17,7 @@ function! Perhaps_prepend_let(lines)
         let l:line  = l:lines[0]
 
         " Prepend let if the line is an assignment
-        if (l:line =~ "=" || l:line =~ "::") && !Is_type_declaration(l:line)
+        if (l:line =~ "=[^>]" || l:line =~ "::") && !Is_type_declaration(l:line)
             let l:lines[0] = "let " . l:lines[0]
         endif
 
