@@ -201,7 +201,7 @@ By default, vim-slime will try to restore your cursor position after it runs. If
 
     let g:slime_preserve_curpos = 0
 
-If you would like vim-slime to restore your cursor position after using Visual Mode in Vim, unset the `g:slime_preserve_curpos_sel` option:
+When selecting in Visual mode, if you would like vim-slime to restore your cursor position to the end of the selection, unset the `g:slime_preserve_curpos_sel` option:
 
     let g:slime_preserve_curpos_sel = 0
 
