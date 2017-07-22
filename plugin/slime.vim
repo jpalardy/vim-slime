@@ -15,6 +15,10 @@ if !exists("g:slime_preserve_curpos")
   let g:slime_preserve_curpos = 1
 end
 
+if !exists("g:slime_preserve_curpos_sel")
+  let g:slime_preserve_curpos_sel = 1
+end
+
 " screen and tmux need a file, so set a default if not configured
 if !exists("g:slime_paste_file")
   let g:slime_paste_file = expand("$HOME/.slime_paste")
@@ -200,7 +204,11 @@ function! s:SlimeSendOp(type, ...) abort
   let rt = getregtype('"')
 
   if a:0  " Invoked from Visual mode, use '< and '> marks.
-    silent exe "normal! `<" . a:type . '`>y'
+    if g:slime_preserve_curpos_sel == 1
+      silent exe "normal! `<" . a:type . '`>y'
+    else " moves cursor to bottom end of selection when in Visual mode
+      silent exe "normal! `<" . a:type . "`>y']"
+    endif
   elseif a:type == 'line'
     silent exe "normal! '[V']y"
   elseif a:type == 'block'
