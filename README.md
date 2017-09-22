@@ -170,6 +170,15 @@ By default the windows clipboard is used to pass the text to ConEmu. If you
 experience issues with this, make sure the `conemuc` executable is in your
 `path`.
 
+### Vim :terminal
+
+Vim :terminal is *not* the default, to use it you will have to add this line to your .vimrc:
+
+    let g:slime_target = "vimterminal"
+
+When you invoke vim-slime for the first time, you will be prompted for more
+configuration.
+
 Advanced Configuration
 ----------------------
 
