@@ -179,6 +179,16 @@ Vim :terminal is *not* the default, to use it you will have to add this line to 
 When you invoke vim-slime for the first time, you will be prompted for more
 configuration.
 
+
+### NeoVim terminal
+
+NeoVim :terminal is *not* the default, to use it you will have to add this line to your .vimrc:
+
+    let g:slime_target = "neovim"
+
+When you invoke vim-slime for the first time, you will be prompted for more
+configuration.
+
 Advanced Configuration
 ----------------------
 
