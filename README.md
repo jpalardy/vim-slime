@@ -19,7 +19,7 @@ Context for [SLIME](https://en.wikipedia.org/wiki/SLIME):
     Vim-slime is a humble attempt at getting _some_ of these features into Vim.
     It works with any REPL and isn't tied to Lisp.
 
-Grab some text and send it to a [GNU Screen](http://www.gnu.org/software/screen/) / [tmux](https://tmux.github.io/) / [whimrepl](https://github.com/malyn/lein-whimrepl) / [ConEmu](http://conemu.github.io/) session.
+Grab some text and send it to a [GNU Screen](http://www.gnu.org/software/screen/) / [tmux](https://tmux.github.io/) / [whimrepl](https://github.com/malyn/lein-whimrepl) / [ConEmu](http://conemu.github.io/) session / NeoVim Terminal / Vim Terminal
 
     VIM ---(text)---> screen / tmux / whimrepl / ConEmu
 
@@ -179,6 +179,11 @@ Vim :terminal is *not* the default, to use it you will have to add this line to 
 When you invoke vim-slime for the first time, you will be prompted for more
 configuration.
 
+Vim terminal configuration can be set by using the following in your .vimrc:
+
+    let g:slime_vimterminal_config = {options}
+
+for possible options, see :help term_start()
 
 ### NeoVim terminal
 

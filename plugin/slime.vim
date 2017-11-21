@@ -172,12 +172,13 @@ function! s:VimterminalConfig() abort
     echoerr "vimterminal support requires vim built with :terminal support"
     return
   endif
-  let b:vimterminal_config =  {}
   if !exists("b:slime_config")
       let b:slime_config = {"bufnr": ""}
-  else
-      let b:vimterminal_config = b:slime_config
-  endif
+  end
+  let b:vimterminal_config =  {}
+  if exists("g:slime_vimterminal_config")
+    let b:vimterminal_config  = g:slime_vimterminal_config
+  end
   let bufs = filter(term_list(),"term_getstatus(v:val)=~'running'")
   let terms = map(bufs,"getbufinfo(v:val)[0]")
   let choices = map(copy(terms),"s:VimterminalDescription(v:key+1,v:val)")
