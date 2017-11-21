@@ -21,7 +21,7 @@ Context for [SLIME](https://en.wikipedia.org/wiki/SLIME):
 
 Grab some text and send it to a [GNU Screen](http://www.gnu.org/software/screen/) / [tmux](https://tmux.github.io/) / [whimrepl](https://github.com/malyn/lein-whimrepl) / [ConEmu](http://conemu.github.io/) session / NeoVim Terminal / Vim Terminal
 
-    VIM ---(text)---> screen / tmux / whimrepl / ConEmu
+    VIM ---(text)---> screen / tmux / whimrepl / ConEmu / NeoVim Terminal / Vim Terminal
 
 Presumably, your session contains a [REPL](http://en.wikipedia.org/wiki/REPL), maybe Clojure, R or python. If you can type text into it, vim-slime can send text to it.
 
