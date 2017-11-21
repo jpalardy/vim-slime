@@ -173,7 +173,11 @@ function! s:VimterminalConfig() abort
     return
   endif
   if !exists("b:slime_config")
-    let b:slime_config = {"bufnr": ""}
+      let b:slime_config = {"bufnr": ""}
+  end
+  let b:vimterminal_config =  {}
+  if exists("g:slime_vimterminal_config")
+    let b:vimterminal_config  = g:slime_vimterminal_config
   end
   let bufs = filter(term_list(),"term_getstatus(v:val)=~'running'")
   let terms = map(bufs,"getbufinfo(v:val)[0]")
@@ -189,7 +193,7 @@ function! s:VimterminalConfig() abort
         let cmd = &shell
       endif
       let winid = win_getid()
-      let new_bufnr = term_start(cmd)
+      let new_bufnr = term_start(cmd, b:vimterminal_config)
       call win_gotoid(winid)
       let b:slime_config["bufnr"] = new_bufnr
     else
