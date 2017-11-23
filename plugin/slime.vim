@@ -189,7 +189,11 @@ function! s:VimterminalConfig() abort
         let cmd = &shell
       endif
       let winid = win_getid()
-      let new_bufnr = term_start(cmd)
+      if exists("g:slime_vimterminal_config")
+        let new_bufnr = term_start(cmd, g:slime_vimterminal_config)
+      else
+        let new_bufnr = term_start(cmd)
+      end
       call win_gotoid(winid)
       let b:slime_config["bufnr"] = new_bufnr
     else
