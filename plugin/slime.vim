@@ -173,7 +173,7 @@ function! s:VimterminalConfig() abort
     return
   endif
   if !exists("b:slime_config")
-      let b:slime_config = {"bufnr": ""}
+    let b:slime_config = {"bufnr": ""}
   end
   let bufs = filter(term_list(),"term_getstatus(v:val)=~'running'")
   let terms = map(bufs,"getbufinfo(v:val)[0]")
