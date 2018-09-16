@@ -41,8 +41,9 @@ function! s:ScreenConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"sessionname": "", "windowname": "0"}
   end
-  let b:slime_config["sessionname"] = input("screen session name: ", b:slime_config["sessionname"], "custom,<SNR>" . s:SID() . "_ScreenSessionNames")
-  let b:slime_config["windowname"]  = input("screen window name: ",  b:slime_config["windowname"])
+
+  let b:slime_config["sessionname"] = input("screen session name: ", get(b:slime_config, "sessionname", ""), "custom,<SNR>" . s:SID() . "_ScreenSessionNames")
+  let b:slime_config["windowname"]  = input("screen window name: ",  get(b:slime_config, "windowname", "0"))
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -74,8 +75,8 @@ function! s:TmuxConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"socket_name": "default", "target_pane": ":"}
   end
-  let b:slime_config["socket_name"] = input("tmux socket name or absolute path: ", b:slime_config["socket_name"])
-  let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
+  let b:slime_config["socket_name"] = input("tmux socket name or absolute path: ", get(b:slime_config, "socket_name", "default"))
+  let b:slime_config["target_pane"] = input("tmux target pane: ", get(b:slime_config, "target_pane", ":"), "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
   if b:slime_config["target_pane"] =~ '\s\+'
     let b:slime_config["target_pane"] = split(b:slime_config["target_pane"])[0]
   endif
@@ -97,7 +98,7 @@ function! s:NeovimConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"jobid": "1"}
   end
-  let b:slime_config["jobid"] = input("jobid: ", b:slime_config["jobid"])
+  let b:slime_config["jobid"] = input("jobid: ", get(b:slime_config, "jobid", "1"))
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -122,7 +123,7 @@ function! s:ConemuConfig() abort
     " defaults to the active tab/split of the first found ConEmu window
     let b:slime_config = {"HWND": "0"}
   end
-  let b:slime_config["HWND"] = input("Console server HWND: ", b:slime_config["HWND"])
+  let b:slime_config["HWND"] = input("Console server HWND: ", get(b:slime_config, "HWND", "0"))
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -137,7 +138,7 @@ function! s:WhimreplConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"server_name": "whimrepl"}
   end
-  let b:slime_config["server_name"] = input("whimrepl server name: ", b:slime_config["server_name"])
+  let b:slime_config["server_name"] = input("whimrepl server name: ", get(b:slime_config, "server_name", "whimrepl"))
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
