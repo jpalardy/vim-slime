@@ -15,9 +15,16 @@ if !exists("g:slime_preserve_curpos")
   let g:slime_preserve_curpos = 1
 end
 
-" screen and tmux need a file, so set a default if not configured
-if !exists("g:slime_paste_file")
-  let g:slime_paste_file = expand("$HOME/.slime_paste")
+
+if !exists("g:slime_delete_paste_file")
+  " if the the user supplies a paste file, don't clean it up to preserve
+  " existing behavior. otherwise default to auto-cleanup of files created
+  " and named by mktemp
+  if exists("g:slime_paste_file")
+    let g:slime_delete_paste_file = 0
+   else
+    let g:slime_delete_paste_file = 1
+  end
 end
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -25,12 +32,13 @@ end
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:ScreenSend(config, text)
-  call s:WritePasteFile(a:text)
+  let paste_filename = s:WritePasteFile(a:text)
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
-        \ " -X eval \"readreg p " . g:slime_paste_file . "\"")
+        \ " -X eval \"readreg p " . paste_filename . "\"")
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X paste p")
   call system('screen -X colon ""')
+  call s:MaybeCleanupPasteFile(paste_filename)
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
@@ -60,9 +68,10 @@ function! s:TmuxCommand(config, args)
 endfunction
 
 function! s:TmuxSend(config, text)
-  call s:WritePasteFile(a:text)
-  call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
+  let paste_filename = s:WritePasteFile(a:text)
+  call s:TmuxCommand(a:config, "load-buffer " . paste_filename)
   call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
+  call s:MaybeCleanupPasteFile(paste_filename)
 endfunction
 
 function! s:TmuxPaneNames(A,L,P)
@@ -89,8 +98,9 @@ function! s:NeovimSend(config, text)
   " Neovim jobsend is fully asynchronous, it causes some problems with
   " iPython %cpaste (input buffering: not all lines sent over)
   " So this s:WritePasteFile can help as a small lock & delay
-  call s:WritePasteFile(a:text)
+  let paste_filename s:WritePasteFile(a:text)
   call jobsend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
+  call s:MaybeCleanupPasteFile(paste_filename)
 endfunction
 
 function! s:NeovimConfig() abort
@@ -212,8 +222,19 @@ function! s:SID()
 endfun
 
 function! s:WritePasteFile(text)
-  " could check exists("*writefile")
-  call system("cat > " . g:slime_paste_file, a:text)
+  if !exists('g:slime_paste_file')
+    let filename = system("mktemp")
+  else
+    let filename = g:slime_paste_file
+  end
+  call system("cat > " . filename, a:text)
+  return filename
+endfunction
+
+function! s:MaybeCleanupPasteFile(filename)
+  if !exists('g:slime_paste_file')
+    call delete(a:filename)
+  end
 endfunction
 
 function! s:_EscapeText(text)
