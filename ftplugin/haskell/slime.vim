@@ -1,3 +1,8 @@
+" GHC before 8.0.1 does not support top-level bindings
+if !exists('g:slime_haskell_ghci_add_let')
+    let g:slime_haskell_ghci_add_let = 1
+endif
+
 " Remove '>' on line beginning in literate haskell
 function! Remove_initial_gt(lines)
     return map(copy(a:lines), "substitute(v:val, '^>[ \t]*', '', 'g')")
@@ -112,8 +117,12 @@ function! _EscapeText_lhaskell(text)
     let l:lines = Remove_initial_gt(l:lines)
     let [l:imports, l:nonImports] = FilterImportLines(l:lines)
     let l:lines = Remove_line_comments(l:nonImports)
-    let l:lines = Perhaps_prepend_let(l:lines)
-    let l:lines = Indent_lines(l:lines)
+
+    if g:slime_haskell_ghci_add_let
+        let l:lines = Perhaps_prepend_let(l:lines)
+        let l:lines = Indent_lines(l:lines)
+    endif
+
     let l:lines = Wrap_if_multi(l:lines)
     return Unlines(l:imports + l:lines)
 endfunction
@@ -123,8 +132,12 @@ function! _EscapeText_haskell(text)
     let l:lines = Lines(Tab_to_spaces(l:text))
     let [l:imports, l:nonImports] = FilterImportLines(l:lines)
     let l:lines = Remove_line_comments(l:nonImports)
-    let l:lines = Perhaps_prepend_let(l:lines)
-    let l:lines = Indent_lines(l:lines)
+
+    if g:slime_haskell_ghci_add_let
+        let l:lines = Perhaps_prepend_let(l:lines)
+        let l:lines = Indent_lines(l:lines)
+    endif
+
     let l:lines = Wrap_if_multi(l:lines)
     return Unlines(l:imports + l:lines)
 endfunction
