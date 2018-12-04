@@ -99,6 +99,7 @@ A tmux pane can be targeted with any of the following values:
   - "h:i.j" means the tmux session where h is the session identifier 
     (either session name or number), the ith window and the jth pane
   - "%i" means i refers the pane's unique id
+  - "{token}" one of tmux's supported special tokens, like "{right-of}"
 
 To get a list of all the available pane execute the following:
 >
