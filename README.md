@@ -126,17 +126,24 @@ tmux target pane:
 
 Note that all of these ordinals are 0-indexed by default.
 
-    ":"     means current window, current pane (a reasonable default)
-    ":i"    means the ith window, current pane
-    ":i.j"  means the ith window, jth pane
-    "h:i.j" means the tmux session where h is the session identifier
-            (either session name or number), the ith window and the jth pane
-    "%i"    means i refers the pane's unique id
+    ":"       means current window, current pane (a reasonable default)
+    ":i"      means the ith window, current pane
+    ":i.j"    means the ith window, jth pane
+    "h:i.j"   means the tmux session where h is the session identifier
+              (either session name or number), the ith window and the jth pane
+    "%i"      means i refers the pane's unique id
+    "{token}" one of tmux's supported special tokens, like "{right-of}"
 
 You can configure the defaults for these options. If you generally run vim in
 a split tmux window with a REPL in the other pane:
 
     let g:slime_default_config = {"socket_name": split($TMUX, ",")[0], "target_pane": ":.2"}
+
+Or more reliably by employing [a special token][right-of] as pane index:
+
+    let g:slime_default_config = {"socket_name": "default", "target_pane": "{right-of}"}
+
+[right-of]: http://man.openbsd.org/OpenBSD-current/man1/tmux.1#_right-of_
 
 ### whimrepl
 
