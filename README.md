@@ -190,6 +190,14 @@ Vim terminal configuration can be set by using the following in your .vimrc:
 
     let g:slime_vimterminal_config = {options}
 
+You can specify if you have frequently used commands:
+
+    let g:slime_vimterminal_cmd = "command"
+
+If you use Node, set it as follows:
+
+    let g:slime_vimterminal_cmd = "node"
+
 for possible options, see :help term_start()
 
 ### NeoVim terminal
