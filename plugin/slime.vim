@@ -184,9 +184,13 @@ function! s:VimterminalConfig() abort
         \ : 1
   if choice > 0
     if choice>len(terms)
-      let cmd = input("Enter a command to run [".&shell."]:")
-      if len(cmd)==0
-        let cmd = &shell
+      if !exists("g:slime_vimterminal_cmd")
+          let cmd = input("Enter a command to run [".&shell."]:")
+          if len(cmd)==0
+            let cmd = &shell
+          endif
+      else
+          let cmd = g:slime_vimterminal_cmd
       endif
       let winid = win_getid()
       if exists("g:slime_vimterminal_config")
