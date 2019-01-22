@@ -145,6 +145,18 @@ Or more reliably by employing [a special token][right-of] as pane index:
 
 [right-of]: http://man.openbsd.org/OpenBSD-current/man1/tmux.1#_right-of_
 
+### kitty
+
+kitty is *not* the default, to use it you will have to add this line to your .vimrc:
+
+    let g:slime_target = "kitty"
+
+When you invoke vim-slime for the first time, you will be prompted for more configuration.
+
+kitty target window
+
+    This is the id of the kitty window that you wish to target. See e.g. the value of $KITTY_WINDOW_ID in the target window.
+
 ### whimrepl
 
 whimrepl is *not* the default, to use it you will have to add this line to your .vimrc:

@@ -22,10 +22,11 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence
 2. Screen Configuration 		|slime-screen|
 3. Tmux Configuration			|slime-tmux|
 4. Neovim Configuration			|slime-neovim|
-5. whimrepl Configuration		|slime-whimrepl|
-6. vimterminal Configuration		|slime-vimterminal|
-7. Slime Configuration			|slime-configuration|
-8. Slime Requirements			|slime-requirements|
+5. Kitty Configuration			|slime-kitty|
+6. whimrepl Configuration		|slime-whimrepl|
+7. vimterminal Configuration		|slime-vimterminal|
+8. Slime Configuration			|slime-configuration|
+9. Slime Requirements			|slime-requirements|
 
 ==============================================================================
 1. Slime Usage 					*slime-usage*
@@ -96,7 +97,7 @@ A tmux pane can be targeted with any of the following values:
   - ":" means current window, current pane (a reasonable default)
   - ":i" means the ith window, current pane
   - ":i.j" means the ith window, jth pane
-  - "h:i.j" means the tmux session where h is the session identifier 
+  - "h:i.j" means the tmux session where h is the session identifier
     (either session name or number), the ith window and the jth pane
   - "%i" means i refers the pane's unique id
   - "{token}" one of tmux's supported special tokens, like "{right-of}"
@@ -122,7 +123,22 @@ In the neovim terminal buffer type ":echo b:terminal_job_id" to get the
 job_id for that terminal
 
 ==============================================================================
-5. whimrepl Configuration 			*slime-whimrepl*
+5. Kitty Configuration 			*slime-kitty*
+
+Kitty is not the default, to use it you will have to add this line to your
+|.vimrc|:
+>
+	let g:slime_target = "kitty"
+<
+When you invoke vim-slime for the first time (see below), you will be prompted
+for more configuration.
+
+kitty target window~
+
+See e.g. the value of $KITTY_WINDOW_ID in the target window.
+
+==============================================================================
+6. whimrepl Configuration 			*slime-whimrepl*
 
 whimrepl is not the default, to use it you will have to add this line to
 your |.vimrc|:
@@ -139,7 +155,7 @@ displays that name in its banner every time you start up an instance of
 whimrepl.
 
 ==============================================================================
-6. Vim :terminal Configuration 			*slime-vimterminal*
+7. Vim :terminal Configuration 			*slime-vimterminal*
 
 Vim :terminal support targets the terminal emulator built into vim from
 version 8.0.0693, accessed via the :terminal command. It does not support the
@@ -169,7 +185,7 @@ When you invoke vim-slime for the first time (see below), you will be prompted
 to select from an existing terminal or to create a new one.
 
 ==============================================================================
-7. Slime Configuration 				*slime-configuration*
+8. Slime Configuration 				*slime-configuration*
 
 Global Variables~
 						*g:slime_target*
@@ -233,7 +249,7 @@ To use vim like mappings instead of emacs keybindings use the following:
 <
 
 ==============================================================================
-8. Slime Requirements 				*slime-requirements*
+9. Slime Requirements 				*slime-requirements*
 
 Slime requires either screen or tmux to be available and executable. Awk is
 used for completion of screen sessions.  whimrepl does not require any
