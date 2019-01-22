@@ -41,6 +41,23 @@ function! s:ScreenConfig() abort
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Kitty
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+function! s:KittySend(config, text)
+  call s:WritePasteFile(a:text)
+  call system("kitty @ send-text --match id:" . shellescape(a:config["window_id"]) .
+    \ " --from-file " . g:slime_paste_file)
+endfunction
+
+function! s:KittyConfig() abort
+  if !exists("b:slime_config")
+    let b:slime_config = {"window_id": 1}
+  end
+  let b:slime_config["window_id"] = input("kitty target window: ", b:slime_config["window_id"])
+endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tmux
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
