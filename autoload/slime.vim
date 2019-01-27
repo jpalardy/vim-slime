@@ -15,10 +15,6 @@ if !exists("g:slime_paste_file")
   let g:slime_paste_file = expand("$HOME/.slime_paste")
 end
 
-if !exists("g:slime_dispatch_pause")
-  let g:slime_dispatch_pause = 100
-end
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -352,8 +348,8 @@ function! slime#send(text)
   " so we, possibly, send many strings -- but probably just one
   let pieces = s:_EscapeText(a:text)
   for piece in pieces
-    if piece == v:null
-      execute 'sleep' g:slime_dispatch_pause . 'm'
+    if type(piece) == 0
+      execute 'sleep' piece . 'm'
     else
       call s:SlimeDispatch('Send', b:slime_config, piece)
     end
