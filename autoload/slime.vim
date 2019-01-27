@@ -349,7 +349,9 @@ function! slime#send(text)
   let pieces = s:_EscapeText(a:text)
   for piece in pieces
     if type(piece) == 0
-      execute 'sleep' piece . 'm'
+      if piece != 0
+        execute 'sleep' piece . 'm'
+      endif
     else
       call s:SlimeDispatch('Send', b:slime_config, piece)
     end
