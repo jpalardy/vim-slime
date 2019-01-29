@@ -348,8 +348,8 @@ function! slime#send(text)
   " so we, possibly, send many strings -- but probably just one
   let pieces = s:_EscapeText(a:text)
   for piece in pieces
-    if type(piece) == 0
-      if piece != 0
+    if type(piece) == 0  " a number
+      if piece > 0  " sleep accepts only positive count
         execute 'sleep' piece . 'm'
       endif
     else
