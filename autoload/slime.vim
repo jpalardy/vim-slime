@@ -25,8 +25,7 @@ function! s:ScreenSend(config, text)
         \ " -X eval \"readreg p " . g:slime_paste_file . "\"")
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X paste p")
-  call system('screen -X colon "
-"')
+  call system('screen -X colon ""')
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
@@ -348,7 +347,7 @@ function! slime#send(text)
   " will flush the rest of the buffer given a special sequence (ctrl-v)
   " so we, possibly, send many strings -- but probably just one
   let pieces = s:_EscapeText(a:text)
-    if type(piece) == 0   " a number
+  for piece in pieces
     if type(piece) == 0
       if piece != 0
         execute 'sleep' piece . 'm'
