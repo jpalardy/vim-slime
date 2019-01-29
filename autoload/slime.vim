@@ -348,7 +348,13 @@ function! slime#send(text)
   " so we, possibly, send many strings -- but probably just one
   let pieces = s:_EscapeText(a:text)
   for piece in pieces
-    call s:SlimeDispatch('Send', b:slime_config, piece)
+    if type(piece) == 0  " a number
+      if piece > 0  " sleep accepts only positive count
+        execute 'sleep' piece . 'm'
+      endif
+    else
+      call s:SlimeDispatch('Send', b:slime_config, piece)
+    end
   endfor
 endfunction
 
