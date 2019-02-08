@@ -137,7 +137,7 @@ Note that all of these ordinals are 0-indexed by default.
 You can configure the defaults for these options. If you generally run vim in
 a split tmux window with a REPL in the other pane:
 
-    let g:slime_default_config = {"socket_name": split($TMUX, ",")[0], "target_pane": ":.2"}
+    let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
 
 Or more reliably by employing [a special token][right-of] as pane index:
 
