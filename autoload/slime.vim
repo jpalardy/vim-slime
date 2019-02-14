@@ -284,6 +284,8 @@ function! slime#send_op(type, ...) abort
     silent exe "normal! '[V']y"
   elseif a:type == 'block'
     silent exe "normal! `[\<C-V>`]\y"
+  elseif a:type == 'cell'
+    silent exe ":?" . g:cell_delimiter . "?;/" . g:cell_delimiter . "/y"
   else
     silent exe "normal! `[v`]y"
   endif

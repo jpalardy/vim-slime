@@ -16,6 +16,7 @@ command! SlimeSendCurrentLine call slime#send(getline(".") . "\r")
 noremap <SID>Operator :<c-u>call slime#store_curpos()<cr>:set opfunc=slime#send_op<cr>g@
 
 noremap <unique> <script> <silent> <Plug>SlimeRegionSend :<c-u>call slime#send_op(visualmode(), 1)<cr>
+noremap <unique> <script> <silent> <Plug>SlimeCellSend :<c-u>call slime#send_op('cell')<cr>
 noremap <unique> <script> <silent> <Plug>SlimeLineSend :<c-u>call slime#send_lines(v:count1)<cr>
 noremap <unique> <script> <silent> <Plug>SlimeMotionSend <SID>Operator
 noremap <unique> <script> <silent> <Plug>SlimeParagraphSend <SID>Operatorip
@@ -33,5 +34,10 @@ if !exists("g:slime_no_mappings") || !g:slime_no_mappings
   if !hasmapto('<Plug>SlimeConfig', 'n')
     nmap <c-c>v <Plug>SlimeConfig
   endif
+
+  if !hasmapto('<Plug>SlimeCellSend', 'n')
+    nmap <c-g> <Plug>SlimeCellSend
+  endif
 endif
 
+let g:cell_delimiter = '\(##\|#%%|#\s%%\)'
