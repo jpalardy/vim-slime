@@ -105,11 +105,36 @@ function! s:NeovimSend(config, text)
   call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
 endfunction
 
+function! s:NeovimTermSplit(cmd, vertical) abort
+    if a:vertical
+        exec("vsplit term://" . a:cmd)
+    else
+        exec("split term://" . a:cmd)
+    endif
+    let l:id = b:terminal_job_id
+    wincmd w
+    return l:id
+endfunction
+
 function! s:NeovimConfig() abort
-  if !exists("b:slime_config")
+  if exists("b:slime_config")
+    let l:default = b:slime_config["jobid"]
+  else
     let b:slime_config = {"jobid": "3"}
+    let l:default = ""
   end
-  let b:slime_config["jobid"] = input("jobid: ", b:slime_config["jobid"])
+
+  let l:res = input("existing term (type the job id) or new split (type v or s) ? ", l:default)
+
+  if l:res ==# 'v' || l:res ==# 's'
+      " ask for the command and create the split
+      let l:cmd = input("command to launch the repl: ")
+      let l:id = s:NeovimTermSplit(l:cmd, l:res ==# 'v')
+      echom "New terminal have job id " . l:id
+      let b:slime_config["jobid"] = l:id
+  else
+    let b:slime_config["jobid"] = l:res
+  end
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
