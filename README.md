@@ -39,7 +39,9 @@ then simply copy and paste:
     cd ~/.vim/bundle
     git clone git://github.com/jpalardy/vim-slime.git
 
-If you like it the hard way, copy plugin/slime.vim from this repo into ~/.vim/plugin.
+If you like it the hard way, copy autoload, ftplugin and plugin into ~/.vim.
+
+If you would also like to have the documentation available inside Vim, copy doc into ~/.vim as well.
 
 
 Usage
