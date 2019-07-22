@@ -72,9 +72,19 @@ function! s:TmuxCommand(config, args)
 endfunction
 
 function! s:TmuxSend(config, text)
-  call s:WritePasteFile(a:text)
+  let l:lastchar = a:text[len(a:text)-1]
+  if l:lastchar == "\n"
+      call s:WritePasteFile(a:text[0:(len(a:text)-2)])
+  else
+      call s:WritePasteFile(a:text)
+  endif
+  call s:TmuxCommand(a:config, "send-keys -X -t " . shellescape(a:config["target_pane"]) . " cancel")
   call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
-  call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
+  call s:TmuxCommand(a:config, "paste-buffer -p -d -t " . shellescape(a:config["target_pane"]))
+  if l:lastchar == "\n"
+      call s:TmuxCommand(a:config, "set-buffer ")
+      call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
+  endif
 endfunction
 
 function! s:TmuxPaneNames(A,L,P)
