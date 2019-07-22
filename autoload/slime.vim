@@ -82,7 +82,7 @@ function! s:TmuxSend(config, text)
   call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
   call s:TmuxCommand(a:config, "paste-buffer -p -d -t " . shellescape(a:config["target_pane"]))
   if l:lastchar == "\n"
-      call s:TmuxCommand(a:config, "set-buffer ")
+      call s:TmuxCommand(a:config, "set-buffer \<CR>")
       call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
   endif
 endfunction
