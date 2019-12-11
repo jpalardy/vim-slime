@@ -212,6 +212,11 @@ If you use Node, set it as follows:
 
     let g:slime_vimterminal_cmd = "node"
 
+You can make the vim terminal closed automatically, 
+if you set the `g:slime_vimterminal_cmd`:
+
+    let g:slime_vimterminal_config = {"term_finish": "close"}
+
 for possible options, see :help term_start()
 
 ### NeoVim terminal
