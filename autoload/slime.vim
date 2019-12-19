@@ -319,19 +319,13 @@ endfunction
 
 function! slime#store_curpos()
   if g:slime_preserve_curpos == 1
-    let has_getcurpos = exists("*getcurpos")
-    if has_getcurpos
-      " getcurpos() doesn't exist before 7.4.313.
-      let s:cur = getcurpos()
-    else
-      let s:cur = getpos('.')
-    endif
+    let s:cur = winsaveview()
   endif
 endfunction
 
 function! s:SlimeRestoreCurPos()
   if g:slime_preserve_curpos == 1 && exists("s:cur")
-    call setpos('.', s:cur)
+    call winrestview(s:cur)
     unlet s:cur
   endif
 endfunction
