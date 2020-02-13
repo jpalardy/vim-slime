@@ -23,10 +23,11 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence
 3. Tmux Configuration			|slime-tmux|
 4. Neovim Configuration			|slime-neovim|
 5. Kitty Configuration			|slime-kitty|
-6. whimrepl Configuration		|slime-whimrepl|
-7. vimterminal Configuration		|slime-vimterminal|
-8. Slime Configuration			|slime-configuration|
-9. Slime Requirements			|slime-requirements|
+6. X11 Configuration			|slime-x11|
+7. whimrepl Configuration		|slime-whimrepl|
+8. vimterminal Configuration		|slime-vimterminal|
+9. Slime Configuration			|slime-configuration|
+10. Slime Requirements			|slime-requirements|
 
 ==============================================================================
 1. Slime Usage 					*slime-usage*
@@ -138,7 +139,18 @@ kitty target window~
 See e.g. the value of $KITTY_WINDOW_ID in the target window.
 
 ==============================================================================
-6. whimrepl Configuration 			*slime-whimrepl*
+6. X11 Configuration 				*slime-x11*
+
+x11 is not the default, to use it you will have to add this line to your
+|.vimrc|:
+>
+	let g:slime_target = "x11"
+<
+When you invoke vim-slime for the first time, you will have to designate a
+target window by clicking on it.
+
+==============================================================================
+7. whimrepl Configuration 			*slime-whimrepl*
 
 whimrepl is not the default, to use it you will have to add this line to
 your |.vimrc|:
@@ -155,7 +167,7 @@ displays that name in its banner every time you start up an instance of
 whimrepl.
 
 ==============================================================================
-7. Vim :terminal Configuration 			*slime-vimterminal*
+8. Vim :terminal Configuration 			*slime-vimterminal*
 
 Vim :terminal support targets the terminal emulator built into vim from
 version 8.0.0693, accessed via the :terminal command. It does not support the
@@ -185,7 +197,7 @@ When you invoke vim-slime for the first time (see below), you will be prompted
 to select from an existing terminal or to create a new one.
 
 ==============================================================================
-8. Slime Configuration 				*slime-configuration*
+9. Slime Configuration 				*slime-configuration*
 
 Global Variables~
 						*g:slime_target*
@@ -249,7 +261,7 @@ To use vim like mappings instead of emacs keybindings use the following:
 <
 
 ==============================================================================
-9. Slime Requirements 				*slime-requirements*
+10. Slime Requirements 				*slime-requirements*
 
 Slime requires either screen or tmux to be available and executable. Awk is
 used for completion of screen sessions.  whimrepl does not require any
