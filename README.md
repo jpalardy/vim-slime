@@ -159,6 +159,16 @@ kitty target window
 
     This is the id of the kitty window that you wish to target. See e.g. the value of $KITTY_WINDOW_ID in the target window.
 
+### X11
+
+x11 is *not* the default, to use it you will have to add this line to your
+.vimrc:
+
+    let g:slime_target = "x11"
+
+When you invoke vim-slime for the first time, you will have to designate a
+target window by clicking on it.
+
 ### whimrepl
 
 whimrepl is *not* the default, to use it you will have to add this line to your .vimrc:
