@@ -147,6 +147,19 @@ Or more reliably by employing [a special token][right-of] as pane index:
 
 [right-of]: http://man.openbsd.org/OpenBSD-current/man1/tmux.1#_right-of_
 
+### dtach
+
+dtach is *not* the default, to use it you will have to add this line to your .vimrc:
+
+    let g:slime_target = "dtach"
+
+When you invoke vim-slime for the first time, you will be prompted for more configuration.
+
+socket_path:
+
+    The path to the Unix-domain socket that the dtach session is attached to.
+    The default is /tmp/slime
+
 ### kitty
 
 kitty is *not* the default, to use it you will have to add this line to your .vimrc:

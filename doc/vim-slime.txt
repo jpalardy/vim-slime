@@ -21,13 +21,14 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence
 1. Usage				|slime-usage|
 2. Screen Configuration 		|slime-screen|
 3. Tmux Configuration			|slime-tmux|
-4. Neovim Configuration			|slime-neovim|
-5. Kitty Configuration			|slime-kitty|
-6. X11 Configuration			|slime-x11|
-7. whimrepl Configuration		|slime-whimrepl|
-8. vimterminal Configuration		|slime-vimterminal|
-9. Slime Configuration			|slime-configuration|
-10. Slime Requirements			|slime-requirements|
+4. dtach Configuration			|slime-dtach|
+5. Neovim Configuration			|slime-neovim|
+6. Kitty Configuration			|slime-kitty|
+7. X11 Configuration			|slime-x11|
+8. whimrepl Configuration		|slime-whimrepl|
+9. vimterminal Configuration		|slime-vimterminal|
+10. Slime Configuration			|slime-configuration|
+11. Slime Requirements			|slime-requirements|
 
 ==============================================================================
 1. Slime Usage 					*slime-usage*
@@ -108,7 +109,24 @@ To get a list of all the available pane execute the following:
 	tmux list-panes -a
 <
 ==============================================================================
-4. Neovim Configuration 			*slime-neovim*
+4. dtach Configuration 			*slime-dtach*
+
+dtach is not the default, to use it you will have to add this line to your
+|.vimrc|:
+>
+	let g:slime_target = "dtach"
+
+<
+When you invoke vim-slime for the first time, you will be prompted for more
+configuration.
+
+socket_path~
+
+The path to the Unix-domain socket that the dtach session is attached to.
+The default is /tmp/slime
+
+==============================================================================
+5. Neovim Configuration 			*slime-neovim*
 
 Neovim is not the default, to use it you will have to add this line to your
 |.vimrc|:
@@ -124,7 +142,7 @@ In the neovim terminal buffer type ":echo b:terminal_job_id" to get the
 job_id for that terminal
 
 ==============================================================================
-5. Kitty Configuration 			*slime-kitty*
+6. Kitty Configuration 			*slime-kitty*
 
 Kitty is not the default, to use it you will have to add this line to your
 |.vimrc|:
@@ -139,7 +157,7 @@ kitty target window~
 See e.g. the value of $KITTY_WINDOW_ID in the target window.
 
 ==============================================================================
-6. X11 Configuration 				*slime-x11*
+7. X11 Configuration 				*slime-x11*
 
 x11 is not the default, to use it you will have to add this line to your
 |.vimrc|:
@@ -150,7 +168,7 @@ When you invoke vim-slime for the first time, you will have to designate a
 target window by clicking on it.
 
 ==============================================================================
-7. whimrepl Configuration 			*slime-whimrepl*
+8. whimrepl Configuration 			*slime-whimrepl*
 
 whimrepl is not the default, to use it you will have to add this line to
 your |.vimrc|:
@@ -167,7 +185,7 @@ displays that name in its banner every time you start up an instance of
 whimrepl.
 
 ==============================================================================
-8. Vim :terminal Configuration 			*slime-vimterminal*
+9. Vim :terminal Configuration 			*slime-vimterminal*
 
 Vim :terminal support targets the terminal emulator built into vim from
 version 8.0.0693, accessed via the :terminal command. It does not support the
@@ -197,7 +215,7 @@ When you invoke vim-slime for the first time (see below), you will be prompted
 to select from an existing terminal or to create a new one.
 
 ==============================================================================
-9. Slime Configuration 				*slime-configuration*
+10. Slime Configuration 				*slime-configuration*
 
 Global Variables~
 						*g:slime_target*
@@ -261,7 +279,7 @@ To use vim like mappings instead of emacs keybindings use the following:
 <
 
 ==============================================================================
-10. Slime Requirements 				*slime-requirements*
+11. Slime Requirements 				*slime-requirements*
 
 Slime requires either screen or tmux to be available and executable. Awk is
 used for completion of screen sessions.  whimrepl does not require any
