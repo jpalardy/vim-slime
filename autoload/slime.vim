@@ -346,6 +346,18 @@ function! slime#send_lines(count) abort
   call setreg('"', rv, rt)
 endfunction
 
+function! slime#send_cell(cell_delimiter) abort
+  let line_ini = search(a:cell_delimiter, 'bcnW')
+  let line_end = search(a:cell_delimiter, 'nW')
+  if !line_ini
+      let line_ini = 1
+  endif
+  if !line_end
+      let line_end = line("$")
+  endif
+  call slime#send_range(line_ini, line_end)
+endfunction
+
 function! slime#store_curpos()
   if g:slime_preserve_curpos == 1
     let s:cur = winsaveview()
