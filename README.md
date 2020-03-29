@@ -282,6 +282,10 @@ By default, vim-slime will try to restore your cursor position after it runs. If
 
     let g:slime_preserve_curpos = 0
 
+If you want to send blocks of code between two delimiters, emulating the cell-like mode of REPL environments like ipython, matlab, etc., you can set the cell delimiter on the `g:slime_cell_delimiter` variable and use the `<Plug>SlimeSendCell` mapping to send the block of code. For example, if your are using ipython you could use the following:
+
+    let g:slime_cell_delimiter = "#%%"
+    nmap <leader>s <Plug>SlimeSendCell
 
 Language Support
 ----------------
