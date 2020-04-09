@@ -230,7 +230,12 @@ function! s:X11Config() abort
   if !exists("b:slime_config")
     let b:slime_config = {"window_id": ""}
   endif
-  let b:slime_config["window_id"] = trim(system("xdotool selectwindow"))
+  if exists("g:slime_custom_script")
+    let b:slime_action = g:slime_custom_script
+  else
+    let b:slime_action = "xdotool selectwindow"
+  endif
+  let b:slime_config["window_id"] = trim(system(b:slime_action))
   echom b:slime_config["window_id"]
 endfunction
 
@@ -247,22 +252,6 @@ function! s:DtachConfig() abort
     let b:slime_config = {"socket_path": "/tmp/slime"}
   end
   let b:slime_config["socket_path"] = input("dtach socket path: ", b:slime_config["socket_path"])
-endfunction
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Custom
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-function! s:CustomSend(config, text)
-  call system("xdotool type --delay 0 --window " . b:slime_config["window_id"] . " -- " . shellescape(a:text))
-endfunction
-
-function! s:CustomConfig() abort
-  if !exists("b:slime_config")
-    let b:slime_config = {"window_id": ""}
-  endif
-  let b:slime_config["window_id"] = trim(system("tabbed-slime"))
-  echom b:slime_config["window_id"]
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
