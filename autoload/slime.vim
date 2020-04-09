@@ -250,21 +250,18 @@ function! s:DtachConfig() abort
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Tabbed
+" Custom
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-function! s:TabbedSend(config, text)
+function! s:CustomSend(config, text)
   call system("xdotool type --delay 0 --window " . b:slime_config["window_id"] . " -- " . shellescape(a:text))
 endfunction
 
-function! s:TabbedConfig() abort
+function! s:CustomConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"window_id": ""}
   endif
-  if !exists("b:slime_custom_script")
-    let b:slime_custom_script = tabbed
-  endif
-  let b:slime_config["window_id"] = trim(system("b:slime_custom_script"))
+  let b:slime_config["window_id"] = trim(system("tabbed-slime"))
   echom b:slime_config["window_id"]
 endfunction
 
