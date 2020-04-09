@@ -261,7 +261,10 @@ function! s:TabbedConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"window_id": ""}
   endif
-  let b:slime_config["window_id"] = trim(system("xwininfo -children -id $XEMBED | grep '     0x' | sed -e's@^ *\\(0x[0-9a-f]*\\) \"\\([^\"]*\\)\".*@\\1 \\2@' | tail -n +2 | dmenu -i -l 5 -p 'REPL window: ' | cut -b 1-9 | xargs printf '%d'"))
+  if !exists("b:slime_custom_script")
+    let b:slime_custom_script = tabbed
+  endif
+  let b:slime_config["window_id"] = trim(system("b:slime_custom_script"))
   echom b:slime_config["window_id"]
 endfunction
 
