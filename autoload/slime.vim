@@ -229,8 +229,9 @@ endfunction
 function! s:X11Config() abort
   if !exists("b:slime_config")
     let b:slime_config = {"window_id": ""}
-  end
+  endif
   let b:slime_config["window_id"] = trim(system("xdotool selectwindow"))
+  echom b:slime_config["window_id"]
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -246,6 +247,22 @@ function! s:DtachConfig() abort
     let b:slime_config = {"socket_path": "/tmp/slime"}
   end
   let b:slime_config["socket_path"] = input("dtach socket path: ", b:slime_config["socket_path"])
+endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Tabbed
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+function! s:TabbedSend(config, text)
+  call system("xdotool type --delay 0 --window " . b:slime_config["window_id"] . " -- " . shellescape(a:text))
+endfunction
+
+function! s:TabbedConfig() abort
+  if !exists("b:slime_config")
+    let b:slime_config = {"window_id": ""}
+  endif
+  let b:slime_config["window_id"] = trim(system("xwininfo -children -id $XEMBED | grep '     0x' | sed -e's@^ *\\(0x[0-9a-f]*\\) \"\\([^\"]*\\)\".*@\\1 \\2@' | tail -n +2 | dmenu -i -l 5 -p 'REPL window: ' | cut -b 1-9 | xargs printf '%d'"))
+  echom b:slime_config["window_id"]
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
