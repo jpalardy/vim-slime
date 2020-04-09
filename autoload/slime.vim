@@ -236,7 +236,6 @@ function! s:X11Config() abort
     let b:slime_action = "xdotool selectwindow"
   endif
   let b:slime_config["window_id"] = trim(system(b:slime_action))
-  echom b:slime_config["window_id"]
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
