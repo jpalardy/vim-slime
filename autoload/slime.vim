@@ -264,7 +264,9 @@ endfunction
 function! s:_EscapeText(text)
   if exists("&filetype")
     let custom_escape = "_EscapeText_" . substitute(&filetype, "[.]", "_", "g")
-    if exists("*" . custom_escape)
+    if exists("*SlimeCustom" . custom_escape)
+      let result = call("SlimeCustom" . custom_escape, [a:text])
+    elseif exists("*" . custom_escape)
       let result = call(custom_escape, [a:text])
     end
   end
