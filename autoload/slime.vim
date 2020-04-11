@@ -401,6 +401,10 @@ endfunction
 
 " delegation
 function! s:SlimeDispatch(name, ...)
+  " allow custom override
+  if exists("*SlimeCustom" . a:name)
+    return call("SlimeCustom" . a:name, a:000)
+  end
   let target = substitute(tolower(g:slime_target), '\(.\)', '\u\1', '') " Capitalize
   return call("s:" . target . a:name, a:000)
 endfunction
