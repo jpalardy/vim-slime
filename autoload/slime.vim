@@ -264,8 +264,8 @@ endfunction
 function! s:_EscapeText(text)
   if exists("&filetype")
     let custom_escape = "_EscapeText_" . substitute(&filetype, "[.]", "_", "g")
-    if exists("*SlimeCustom" . custom_escape)
-      let result = call("SlimeCustom" . custom_escape, [a:text])
+    if exists("*SlimeOverride" . custom_escape)
+      let result = call("SlimeOverride" . custom_escape, [a:text])
     elseif exists("*" . custom_escape)
       let result = call(custom_escape, [a:text])
     end
@@ -404,8 +404,8 @@ endfunction
 " delegation
 function! s:SlimeDispatch(name, ...)
   " allow custom override
-  if exists("*SlimeCustom" . a:name)
-    return call("SlimeCustom" . a:name, a:000)
+  if exists("*SlimeOverride" . a:name)
+    return call("SlimeOverride" . a:name, a:000)
   end
   let target = substitute(tolower(g:slime_target), '\(.\)', '\u\1', '') " Capitalize
   return call("s:" . target . a:name, a:000)
