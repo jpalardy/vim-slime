@@ -21,13 +21,29 @@ Context for [SLIME](https://en.wikipedia.org/wiki/SLIME):
 
 Grab some text and send it to a [GNU Screen](http://www.gnu.org/software/screen/) / [tmux](https://tmux.github.io/) / [whimrepl](https://github.com/malyn/lein-whimrepl) / [ConEmu](http://conemu.github.io/) session / NeoVim Terminal / Vim Terminal
 
-    VIM ---(text)---> screen / tmux / whimrepl / ConEmu / NeoVim Terminal / Vim Terminal
+Grab some text and send it to a target, most probably [GNU Screen](http://www.gnu.org/software/screen/), [tmux](https://tmux.github.io/) or [Vim Terminal](https://vimhelp.org/terminal.txt.html).
 
-Presumably, your session contains a [REPL](http://en.wikipedia.org/wiki/REPL), maybe Clojure, R or python. If you can type text into it, vim-slime can send text to it.
+/ [whimrepl](https://github.com/malyn/lein-whimrepl) / [ConEmu](http://conemu.github.io/) session / NeoVim Terminal / Vim Terminal
 
-The reason you're doing this? Because you want the benefits of a REPL and the benefits of using Vim (familiar environment, syntax highlighting, persistence ...).
+    VIM ---(text)---> target {screen / tmux / vim terminal ...}
+
+Presumably, your target contains a [REPL](http://en.wikipedia.org/wiki/REPL), maybe Clojure, R or python. If you can type text into it, vim-slime can send text to it.
+
+The reason for doing this? Because you want the benefits of a REPL and the benefits of using Vim (familiar environment, syntax highlighting, persistence ...).
 
 More details in the [blog post](http://technotales.wordpress.com/2007/10/03/like-slime-for-vim/).
+
+Many targets are supported:
+
+- [GNU Screen](#gnu-screen)
+- [tmux](#tmux)
+- [dtach](#dtach)
+- [kitty](#kitty)
+- [x11](#x11)
+- [whimrepl](#whimrepl)
+- [ConEmu](#conemu)
+- [Vim terminal](#vim-terminal)
+- [NeoVim terminal](#neovim-terminal)
 
 
 Installation
@@ -254,7 +270,7 @@ configuration.
 Advanced Configuration
 ----------------------
 
-If you need this, you might as well refer to [the code](https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim#L233-L245) :-)
+If you need this, you might as well refer to [the code](https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim#L233-L245) 😄
 
 If you don't want the default key mappings, set:
 
@@ -282,7 +298,7 @@ By default, vim-slime will try to restore your cursor position after it runs. If
 
     let g:slime_preserve_curpos = 0
 
-If you want to send blocks of code between two delimiters, emulating the cell-like mode of REPL environments like ipython, matlab, etc., you can set the cell delimiter on the `g:slime_cell_delimiter` variable and use the `<Plug>SlimeSendCell` mapping to send the block of code. For example, if your are using ipython you could use the following:
+If you want to send blocks of code between two delimiters, emulating the cell-like mode of REPL environments like ipython, matlab, etc., you can set the cell delimiter on the `g:slime_cell_delimiter` variable and use the `<Plug>SlimeSendCell` mapping to send the block of code. For example, if you are using ipython you could use the following:
 
     let g:slime_cell_delimiter = "#%%"
     nmap <leader>s <Plug>SlimeSendCell
