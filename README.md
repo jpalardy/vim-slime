@@ -39,7 +39,7 @@ Many targets are supported:
 - [whimrepl](#whimrepl)
 - [ConEmu](#conemu)
 - [Vim :terminal](#vim-terminal)
-- [NeoVim terminal](#neovim-terminal)
+- [NeoVim :terminal](#neovim-terminal)
 
 
 Installation
@@ -93,8 +93,7 @@ The name of the file used can be configured through a variable:
     " or maybe...
     let g:slime_paste_file = tempname()
 
-WARNING: This file is not erased by the plugin and will always contain the last thing
-you sent over.
+⚠️  This file is not erased by the plugin and will always contain the last thing you sent over.
 
 When you invoke vim-slime for the first time, you will be prompted for more configuration.
 
@@ -122,8 +121,7 @@ the file used can be configured through a variable:
     " or maybe...
     let g:slime_paste_file = tempname()
 
-WARNING: This file is not erased by the plugin and will always contain the last thing
-you sent over.
+⚠️  This file is not erased by the plugin and will always contain the last thing you sent over.
 
 When you invoke vim-slime for the first time, you will be prompted for more configuration.
 
@@ -250,7 +248,7 @@ if you set the `g:slime_vimterminal_cmd`:
 
 for possible options, see :help term_start()
 
-### NeoVim terminal
+### NeoVim :terminal
 
 [NeoVim :terminal](https://neovim.io/doc/user/nvim_terminal_emulator.html) is *not* the default, to use it you will have to add this line to your .vimrc:
 
@@ -296,6 +294,93 @@ If you want to send blocks of code between two delimiters, emulating the cell-li
     let g:slime_cell_delimiter = "#%%"
     nmap <leader>s <Plug>SlimeSendCell
 
+
+Advanced Configuration: Overrides
+---------------------------------
+
+At the end of the day, you might find that vim-slime _ALMOST_ does everything
+you need, but not quite the way you like it. You might be tempted to fork it,
+but the idea of writing and maintaining vimscript is daunting (trust me: I sympathize 😐).
+
+You can override _some_ logic and still benefit from the rest of vim-slime.
+Here's the mental model you need to understand how things work:
+
+1. you invoke a key binding and vim-slime grabs a chunk of text
+2. depending on which language you are using (see below), the text might be "transformed" and "massaged" to paste correctly
+3. if the config is missing, the user is prompted to fill in the blanks
+4. a target-specific function is called to delegate the "send this text to the right target" part
+5. the target receives the right text, the right way, and everything works
+
+There is some good news, for step 2, 3, 4, you can override the logic with your
+own functions! Put these functions in your `.vimrc` and hijack the part you
+need.
+
+You can override any or all (zero to many) of these functions, as needed.
+
+Why is this awesome?
+
+- skip vimscript: delegate to an external script; written in your own preferred language
+- optimize for you: treat yourself with just-for-you customizations and hardcoded values
+- ultimate power: beyond config and flags, passing a function means you can do anything you want
+
+You might still need some vimscript to glue things together. Leaning on the
+vim-slime code for examples might get you 90% of what you need. If not, there's
+always [Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/).
+
+If you feel others can benefit from your customizations, open a PR and we'll find a way.
+
+
+### How to override "language transformations"?
+
+Write a function named `SlimeOverride_EscapeText_#{language}`:
+
+```vim
+function SlimeOverride_EscapeText_python(text)
+  return system("some-command-line-script", a:text)
+endfunction
+```
+
+This example code, for Python in this case, pushes the selected text to `some-command-line-script`
+through STDIN and returns whatever that script produced through STDOUT.
+
+Contract:
+- input is selected text
+- output is string or an array of strings (see other `ftplugin` for details)
+
+### How to override "configuration"?
+
+Write a function named `SlimeOverrideConfig`:
+
+```vim
+function SlimeOverrideConfig()
+  let b:slime_config = {}
+  let b:slime_config["key"] = input("key: ", "default value")
+endfunction
+```
+
+Contract:
+- no input, but...
+- `b:slime_config` might contain `g:slime_default_config` if it was defined, or be undefined otherwise
+- no output but...
+- `b:slime_config` expected to contain necessary keys and values used by the target send function (up next)
+
+### How to override "send to target"?
+
+Write a function named `SlimeOverrideSend`:
+
+```vim
+functio! SlimeOverrideSend(config, text)
+  echom a:config
+  call system("send-to-target --key " . a:config["key"], a:text)
+endfunction
+```
+
+Contract:
+- inputs are config (from config function, above or default) and selected text (post transformation)
+- no output but...
+- expected to do whatever is needed to send to target, probably a call to `system` but see code for details
+
+
 Language Support
 ----------------
 
@@ -314,3 +399,4 @@ might tweak the text without explicit configuration:
   * [scala](ftplugin/scala/slime.vim)
   * [sml](ftplugin/sml/slime.vim)
   * [stata](ftplugin/stata/slime.vim)
+
