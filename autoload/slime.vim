@@ -357,7 +357,9 @@ function! slime#send_cell(cell_delimiter) abort
   " line before delimiter or bottom of file
   let line_end = line_end ? line_end - 1 : line("$")
 
-  call slime#send_range(line_ini, line_end)
+  if line_ini <= line_end
+    call slime#send_range(line_ini, line_end)
+  endif
 endfunction
 
 function! slime#store_curpos()
