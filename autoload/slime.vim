@@ -357,7 +357,7 @@ function! slime#send_cell(cell_delimiter) abort
   if !line_end
       let line_end = line("$")
   endif
-  call slime#send_range(line_ini, line_end)
+  call slime#send_range(line_ini+1, line_end-1)
 endfunction
 
 function! slime#store_curpos()
