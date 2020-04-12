@@ -351,17 +351,13 @@ endfunction
 function! slime#send_cell(cell_delimiter) abort
   let line_ini = search(a:cell_delimiter, 'bcnW')
   let line_end = search(a:cell_delimiter, 'nW')
-  let line_ini_delta = 1
-  let line_end_delta = 1
-  if !line_ini
-      let line_ini = 1
-      let line_ini_delta = 0
-  endif
-  if !line_end
-      let line_end = line("$")
-      let line_end_delta = 0
-  endif
-  call slime#send_range(line_ini+line_ini_delta, line_end-line_end_delta)
+
+  " line after delimiter or top of file
+  let line_ini = line_ini ? line_ini + 1 : 1
+  " line before delimiter or bottom of file
+  let line_end = line_end ? line_end - 1 : line("$")
+
+  call slime#send_range(line_ini, line_end)
 endfunction
 
 function! slime#store_curpos()
