@@ -369,7 +369,7 @@ Contract:
 Write a function named `SlimeOverrideSend`:
 
 ```vim
-functio! SlimeOverrideSend(config, text)
+function SlimeOverrideSend(config, text)
   echom a:config
   call system("send-to-target --key " . a:config["key"], a:text)
 endfunction
