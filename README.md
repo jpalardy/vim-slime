@@ -21,7 +21,7 @@ Context for [SLIME](https://en.wikipedia.org/wiki/SLIME):
 
 Grab some text and send it to a target, most probably: [GNU Screen](http://www.gnu.org/software/screen/), [tmux](https://tmux.github.io/) or [Vim Terminal](https://vimhelp.org/terminal.txt.html).
 
-    VIM ---(text)---> target {screen / tmux / vim terminal ...}
+![vim-slime sends text to a REPL through a target](assets/vim-slime-model.png)
 
 Presumably, your target contains a [REPL](http://en.wikipedia.org/wiki/REPL), maybe Clojure, R or python. If you can type text into it, vim-slime can send text to it.
 
