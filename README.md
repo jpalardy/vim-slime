@@ -19,29 +19,37 @@ Context for [SLIME](https://en.wikipedia.org/wiki/SLIME):
     Vim-slime is a humble attempt at getting _some_ of these features into Vim.
     It works with any REPL and isn't tied to Lisp.
 
-Grab some text and send it to a [GNU Screen](http://www.gnu.org/software/screen/) / [tmux](https://tmux.github.io/) / [whimrepl](https://github.com/malyn/lein-whimrepl) / [ConEmu](http://conemu.github.io/) session / NeoVim Terminal / Vim Terminal
+Grab some text and send it to a target, most probably: [GNU Screen](http://www.gnu.org/software/screen/), [tmux](https://tmux.github.io/) or [Vim Terminal](https://vimhelp.org/terminal.txt.html).
 
-    VIM ---(text)---> screen / tmux / whimrepl / ConEmu / NeoVim Terminal / Vim Terminal
+    VIM ---(text)---> target {screen / tmux / vim terminal ...}
 
-Presumably, your session contains a [REPL](http://en.wikipedia.org/wiki/REPL), maybe Clojure, R or python. If you can type text into it, vim-slime can send text to it.
+Presumably, your target contains a [REPL](http://en.wikipedia.org/wiki/REPL), maybe Clojure, R or python. If you can type text into it, vim-slime can send text to it.
 
-The reason you're doing this? Because you want the benefits of a REPL and the benefits of using Vim (familiar environment, syntax highlighting, persistence ...).
+The reason for doing this? Because you want the benefits of a REPL (instant feedback, no need to reload ...) and the benefits of using Vim (familiar environment, syntax highlighting, persistence ...).
 
 More details in the [blog post](http://technotales.wordpress.com/2007/10/03/like-slime-for-vim/).
+
+Many targets are supported:
+
+- [GNU Screen](#gnu-screen)
+- [tmux](#tmux)
+- [dtach](#dtach)
+- [kitty](#kitty)
+- [X11](#x11)
+- [whimrepl](#whimrepl)
+- [ConEmu](#conemu)
+- [Vim :terminal](#vim-terminal)
+- [NeoVim :terminal](#neovim-terminal)
 
 
 Installation
 ------------
 
-I recommend installing [pathogen.vim](https://github.com/tpope/vim-pathogen), and
-then simply copy and paste:
+Use your favorite package manager, or use Vim's built-in package support (since Vim 7.4.1528):
 
-    cd ~/.vim/bundle
-    git clone git://github.com/jpalardy/vim-slime.git
-
-If you like it the hard way, copy autoload, ftplugin and plugin into ~/.vim.
-
-If you would also like to have the documentation available inside Vim, copy doc into ~/.vim as well.
+    mkdir -p ~/.vim/pack/plugins/start
+    cd ~/.vim/pack/plugins/start
+    git clone https://github.com/jpalardy/vim-slime.git
 
 
 Usage
@@ -72,7 +80,7 @@ Configuration
 
 ### GNU Screen
 
-By default, GNU Screen is assumed, you don't have to do anything. If you want
+By default, [GNU Screen](https://www.gnu.org/software/screen/) is assumed, you don't have to do anything. If you want
 to be explicit, you can add this line to your .vimrc:
 
     let g:slime_target = "screen"
@@ -85,8 +93,7 @@ The name of the file used can be configured through a variable:
     " or maybe...
     let g:slime_paste_file = tempname()
 
-WARNING: This file is not erased by the plugin and will always contain the last thing
-you sent over.
+⚠️  This file is not erased by the plugin and will always contain the last thing you sent over.
 
 When you invoke vim-slime for the first time, you will be prompted for more configuration.
 
@@ -101,21 +108,20 @@ screen window name:
 
 ### tmux
 
-Tmux is *not* the default, to use it you will have to add this line to your .vimrc:
+[Tmux](https://github.com/tmux/tmux) is *not* the default, to use it you will have to add this line to your .vimrc:
 
     let g:slime_target = "tmux"
 
 Before tmux 2.2, tmux accepted input from STDIN. This doesn't work anymore. To
 make it work out without explicit config, the default was changed to use a file
-like screen. By default this file is set to `$HOME/.slime_paste`. The name of
+like Screen. By default this file is set to `$HOME/.slime_paste`. The name of
 the file used can be configured through a variable:
 
     let g:slime_paste_file = "$HOME/.slime_paste"
     " or maybe...
     let g:slime_paste_file = tempname()
 
-WARNING: This file is not erased by the plugin and will always contain the last thing
-you sent over.
+⚠️  This file is not erased by the plugin and will always contain the last thing you sent over.
 
 When you invoke vim-slime for the first time, you will be prompted for more configuration.
 
@@ -134,22 +140,21 @@ Note that all of these ordinals are 0-indexed by default.
     "h:i.j"   means the tmux session where h is the session identifier
               (either session name or number), the ith window and the jth pane
     "%i"      means i refers the pane's unique id
-    "{token}" one of tmux's supported special tokens, like "{right-of}"
+    "{token}" one of tmux's supported special tokens, like "{last}"
 
 You can configure the defaults for these options. If you generally run vim in
 a split tmux window with a REPL in the other pane:
 
     let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
 
-Or more reliably by employing [a special token][right-of] as pane index:
+Or more reliably by employing [a special token](http://man.openbsd.org/OpenBSD-current/man1/tmux.1#_last__2) as pane index:
 
-    let g:slime_default_config = {"socket_name": "default", "target_pane": "{right-of}"}
+    let g:slime_default_config = {"socket_name": "default", "target_pane": "{last}"}
 
-[right-of]: http://man.openbsd.org/OpenBSD-current/man1/tmux.1#_right-of_
 
 ### dtach
 
-dtach is *not* the default, to use it you will have to add this line to your .vimrc:
+[dtach](http://dtach.sourceforge.net/) is *not* the default, to use it you will have to add this line to your .vimrc:
 
     let g:slime_target = "dtach"
 
@@ -162,7 +167,7 @@ socket_path:
 
 ### kitty
 
-kitty is *not* the default, to use it you will have to add this line to your .vimrc:
+[kitty](https://sw.kovidgoyal.net/kitty/) is *not* the default, to use it you will have to add this line to your .vimrc:
 
     let g:slime_target = "kitty"
 
@@ -170,11 +175,12 @@ When you invoke vim-slime for the first time, you will be prompted for more conf
 
 kitty target window
 
-    This is the id of the kitty window that you wish to target. See e.g. the value of $KITTY_WINDOW_ID in the target window.
+    This is the id of the kitty window that you wish to target.
+    See e.g. the value of $KITTY_WINDOW_ID in the target window.
 
 ### X11
 
-x11 is *not* the default, to use it you will have to add this line to your
+[x11](http://manpages.ubuntu.com/manpages/trusty/man1/xdotool.1.html) is *not* the default, to use it you will have to add this line to your
 .vimrc:
 
     let g:slime_target = "x11"
@@ -184,7 +190,7 @@ target window by clicking on it.
 
 ### whimrepl
 
-whimrepl is *not* the default, to use it you will have to add this line to your .vimrc:
+[whimrepl](https://github.com/malyn/lein-whimrepl) is *not* the default, to use it you will have to add this line to your .vimrc:
 
     let g:slime_target = "whimrepl"
 
@@ -198,7 +204,7 @@ whimrepl server name
 
 ### ConEmu
 
-ConEmu is *not* the default, to use it you will have to add this line to your .vimrc:
+[ConEmu](https://conemu.github.io/) is *not* the default, to use it you will have to add this line to your .vimrc:
 
     let g:slime_target = "conemu"
 
@@ -208,7 +214,7 @@ configuration.
 ConEmu console server HWND
 
     This is what you put in the -GuiMacro flag. It will be "0" if you didn't put
-    anything, adressing the active tab/split of the first found ConEmu window.
+    anything, addressing the active tab/split of the first found ConEmu window.
 
 By default the windows clipboard is used to pass the text to ConEmu. If you
 experience issues with this, make sure the `conemuc` executable is in your
@@ -216,7 +222,7 @@ experience issues with this, make sure the `conemuc` executable is in your
 
 ### Vim :terminal
 
-Vim :terminal is *not* the default, to use it you will have to add this line to your .vimrc:
+[Vim :terminal](https://vimhelp.org/terminal.txt.html) is *not* the default, to use it you will have to add this line to your .vimrc:
 
     let g:slime_target = "vimterminal"
 
@@ -242,9 +248,9 @@ if you set the `g:slime_vimterminal_cmd`:
 
 for possible options, see :help term_start()
 
-### NeoVim terminal
+### NeoVim :terminal
 
-NeoVim :terminal is *not* the default, to use it you will have to add this line to your .vimrc:
+[NeoVim :terminal](https://neovim.io/doc/user/nvim_terminal_emulator.html) is *not* the default, to use it you will have to add this line to your .vimrc:
 
     let g:slime_target = "neovim"
 
@@ -254,7 +260,8 @@ configuration.
 Advanced Configuration
 ----------------------
 
-If you need this, you might as well refer to [the code](https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim#L233-L245) :-)
+If you need this, you might as well refer to [the code](https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim#L233-L245) 😄  
+Seriously, it's not a complicated as it seems.
 
 If you don't want the default key mappings, set:
 
@@ -282,10 +289,97 @@ By default, vim-slime will try to restore your cursor position after it runs. If
 
     let g:slime_preserve_curpos = 0
 
-If you want to send blocks of code between two delimiters, emulating the cell-like mode of REPL environments like ipython, matlab, etc., you can set the cell delimiter on the `g:slime_cell_delimiter` variable and use the `<Plug>SlimeSendCell` mapping to send the block of code. For example, if your are using ipython you could use the following:
+If you want to send blocks of code between two delimiters, emulating the cell-like mode of REPL environments like ipython, matlab, etc., you can set the cell delimiter on the `g:slime_cell_delimiter` variable and use the `<Plug>SlimeSendCell` mapping to send the block of code. For example, if you are using ipython you could use the following:
 
     let g:slime_cell_delimiter = "#%%"
     nmap <leader>s <Plug>SlimeSendCell
+
+
+Advanced Configuration: Overrides
+---------------------------------
+
+At the end of the day, you might find that vim-slime _ALMOST_ does everything
+you need, but not quite the way you like it. You might be tempted to fork it,
+but the idea of writing and maintaining vimscript is daunting (trust me: I sympathize 😐).
+
+You can override _some_ logic and still benefit from the rest of vim-slime.
+Here's the mental model you need to understand how things work:
+
+1. you invoke a key binding and vim-slime grabs a chunk of text
+2. depending on which language you are using (see below), the text might be "transformed" and "massaged" to paste correctly
+3. if the config is missing, the user is prompted to fill in the blanks
+4. a target-specific function is called to delegate the "send this text to the right target" part
+5. the target receives the right text, the right way, and everything works
+
+There is some good news, for step 2, 3, 4, you can override the logic with your
+own functions! Put these functions in your `.vimrc` and hijack the part you
+need.
+
+You can override any or all (zero to many) of these functions, as needed.
+
+Why is this awesome?
+
+- skip vimscript: delegate to an external script; written in your own preferred language
+- optimize for you: treat yourself with just-for-you customizations and hardcoded values
+- ultimate power: beyond config and flags, passing a function means you can do anything you want
+
+You might still need some vimscript to glue things together. Leaning on the
+vim-slime code for examples might get you 90% of what you need. If not, there's
+always [Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com/).
+
+If you feel others can benefit from your customizations, open a PR and we'll find a way.
+
+
+### How to override "language transformations"?
+
+Write a function named `SlimeOverride_EscapeText_#{language}`:
+
+```vim
+function SlimeOverride_EscapeText_python(text)
+  return system("some-command-line-script", a:text)
+endfunction
+```
+
+This example code, for Python in this case, pushes the selected text to `some-command-line-script`
+through STDIN and returns whatever that script produced through STDOUT.
+
+Contract:
+- input is selected text
+- output is string or an array of strings (see other `ftplugin` for details)
+
+### How to override "configuration"?
+
+Write a function named `SlimeOverrideConfig`:
+
+```vim
+function SlimeOverrideConfig()
+  let b:slime_config = {}
+  let b:slime_config["key"] = input("key: ", "default value")
+endfunction
+```
+
+Contract:
+- no input, but...
+- `b:slime_config` might contain `g:slime_default_config` if it was defined, or be undefined otherwise
+- no output but...
+- `b:slime_config` expected to contain necessary keys and values used by the target send function (up next)
+
+### How to override "send to target"?
+
+Write a function named `SlimeOverrideSend`:
+
+```vim
+function SlimeOverrideSend(config, text)
+  echom a:config
+  call system("send-to-target --key " . a:config["key"], a:text)
+endfunction
+```
+
+Contract:
+- inputs are config (from config function, above or default) and selected text (post transformation)
+- no output but...
+- expected to do whatever is needed to send to target, probably a call to `system` but see code for details
+
 
 Language Support
 ----------------
@@ -296,10 +390,13 @@ you want to use.
 Many languages are supported without modifications, while [others](ftplugin)
 might tweak the text without explicit configuration:
 
-  * coffee-script
-  * fsharp
-  * haskell / lhaskell -- [README](ftplugin/haskell)
-  * ocaml
-  * python / ipython -- [README](ftplugin/python)
-  * scala
-  * sml
+  * [coffee-script](ftplugin/coffee/slime.vim)
+  * [fsharp](ftplugin/fsharp/slime.vim)
+  * [haskell](ftplugin/haskell/slime.vim) / [lhaskell](ftplugin/haskell/slime.vim) -- [README](ftplugin/haskell)
+  * [matlab](ftplugin/matlab/slime.vim)
+  * [ocaml](ftplugin/ocaml/slime.vim)
+  * [python](ftplugin/python/slime.vim) / [ipython](ftplugin/python/slime.vim) -- [README](ftplugin/python)
+  * [scala](ftplugin/scala/slime.vim)
+  * [sml](ftplugin/sml/slime.vim)
+  * [stata](ftplugin/stata/slime.vim)
+
