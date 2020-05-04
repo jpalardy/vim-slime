@@ -15,6 +15,10 @@ if !exists("g:slime_paste_file")
   let g:slime_paste_file = expand("$HOME/.slime_paste")
 end
 
+" separator send before sending a range
+if !exists("g:slime_sendrange_separator")
+  let g:slime_sendrange_separator = ""
+end
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -334,6 +338,10 @@ function! slime#send_range(startline, endline) abort
   let rv = getreg('"')
   let rt = getregtype('"')
   silent exe a:startline . ',' . a:endline . 'yank'
+  if g:slime_sendrange_separator != ""
+    call slime#send(g:slime_sendrange_separator)
+    call slime#send("")
+  endif
   call slime#send(@")
   call setreg('"', rv, rt)
 endfunction
