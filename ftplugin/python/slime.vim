@@ -14,10 +14,10 @@ function! _EscapeText_python(text)
     let except_pat = '\(elif\|else\|except\|finally\)\@!'
     let add_eol_pat = '\n\s[^\n]\+\n\zs\ze\('.except_pat.'\S\|$\)'
     let eol_lines = substitute(dedented_lines, add_eol_pat, "\n", "g")
-    if exists('g:slime_python_ipython_qtconsole')
-        return substitute(eol_lines, '\n', '\r', "g")
-    else
-        return eol_lines
+    if exists('g:slime_python_qtconsole') && g:slime_target == "x11"
+        return [substitute(eol_lines, '\n', "\r", "g"), "\r"]
+    end
+    return eol_lines
   end
 endfunction
 
