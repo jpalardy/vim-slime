@@ -9,9 +9,9 @@ let g:loaded_slime = 1
 
 command -bar -nargs=0 SlimeConfig call slime#config()
 command -range -bar -nargs=0 SlimeSend call slime#send_range(<line1>, <line2>)
-command -nargs=+ SlimeSend1 call slime#send(<q-args> . "\r")
+command -nargs=+ SlimeSend1 call slime#send(<q-args> . "\n")
 command -nargs=+ SlimeSend0 call slime#send(<args>)
-command! SlimeSendCurrentLine call slime#send(getline(".") . "\r")
+command! SlimeSendCurrentLine call slime#send(getline(".") . "\n")
 
 noremap <SID>Operator :<c-u>call slime#store_curpos()<cr>:set opfunc=slime#send_op<cr>g@
 
