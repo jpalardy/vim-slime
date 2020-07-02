@@ -396,7 +396,7 @@ might tweak the text without explicit configuration:
   * [matlab](ftplugin/matlab/slime.vim)
   * [ocaml](ftplugin/ocaml/slime.vim)
   * [python](ftplugin/python/slime.vim) / [ipython](ftplugin/python/slime.vim) -- [README](ftplugin/python)
-  * [scala](ftplugin/scala/slime.vim)
+  * [scala](ftplugin/scala/slime.vim) / [ammonite](ftplugin/scala/slime.vim) -- [README](ftplugin/scala)
   * [sml](ftplugin/sml/slime.vim)
   * [stata](ftplugin/stata/slime.vim)
 
