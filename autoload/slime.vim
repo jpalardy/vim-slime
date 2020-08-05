@@ -15,6 +15,10 @@ if !exists("g:slime_paste_file")
   let g:slime_paste_file = expand("$HOME/.slime_paste")
 end
 
+if !exists("g:slime_cell_delimiter")
+  let g:slime_cell_delimiter = ""
+end
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -349,16 +353,20 @@ function! slime#send_lines(count) abort
 endfunction
 
 function! slime#send_cell(cell_delimiter) abort
-  let line_ini = search(a:cell_delimiter, 'bcnW')
-  let line_end = search(a:cell_delimiter, 'nW')
+  if !empty(g:slime_cell_delimiter)
+    let line_ini = search(a:cell_delimiter, 'bcnW')
+    let line_end = search(a:cell_delimiter, 'nW')
 
-  " line after delimiter or top of file
-  let line_ini = line_ini ? line_ini + 1 : 1
-  " line before delimiter or bottom of file
-  let line_end = line_end ? line_end - 1 : line("$")
+    " line after delimiter or top of file
+    let line_ini = line_ini ? line_ini + 1 : 1
+    " line before delimiter or bottom of file
+    let line_end = line_end ? line_end - 1 : line("$")
 
-  if line_ini <= line_end
-    call slime#send_range(line_ini, line_end)
+    if line_ini <= line_end
+      call slime#send_range(line_ini, line_end)
+    endif
+  else
+    echoerr "g:slime_cell_delimiter is empty"
   endif
 endfunction
 
