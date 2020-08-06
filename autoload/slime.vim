@@ -15,10 +15,6 @@ if !exists("g:slime_paste_file")
   let g:slime_paste_file = expand("$HOME/.slime_paste")
 end
 
-if !exists("g:slime_cell_delimiter")
-  let g:slime_cell_delimiter = ""
-end
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -352,14 +348,18 @@ function! slime#send_lines(count) abort
   call setreg('"', rv, rt)
 endfunction
 
-function! slime#send_cell(cell_delimiter) abort
-  if empty(g:slime_cell_delimiter)
+function! slime#send_cell() abort
+  if exists("b:slime_cell_delimiter")
+    let cell_delimiter = b:slime_cell_delimiter
+  elseif exists("g:slime_cell_delimiter")
+    let cell_delimiter = g:slime_cell_delimiter
+  else
     echoerr "g:slime_cell_delimiter is empty"
     return
   endif
 
-  let line_ini = search(a:cell_delimiter, 'bcnW')
-  let line_end = search(a:cell_delimiter, 'nW')
+  let line_ini = search(cell_delimiter, 'bcnW')
+  let line_end = search(cell_delimiter, 'nW')
 
   " line after delimiter or top of file
   let line_ini = line_ini ? line_ini + 1 : 1

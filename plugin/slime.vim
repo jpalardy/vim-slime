@@ -20,8 +20,7 @@ noremap <unique> <script> <silent> <Plug>SlimeLineSend :<c-u>call slime#send_lin
 noremap <unique> <script> <silent> <Plug>SlimeMotionSend <SID>Operator
 noremap <unique> <script> <silent> <Plug>SlimeParagraphSend <SID>Operatorip
 noremap <unique> <script> <silent> <Plug>SlimeConfig :<c-u>SlimeConfig<cr>
-noremap <unique> <script> <silent> <Plug>SlimeSendCell :<c-u>call slime#send_cell(g:slime_cell_delimiter)<cr>
-
+noremap <unique> <script> <silent> <Plug>SlimeSendCell :<c-u>call slime#send_cell()<cr>
 
 if !exists("g:slime_no_mappings") || !g:slime_no_mappings
   if !hasmapto('<Plug>SlimeRegionSend', 'x')
