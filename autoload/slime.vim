@@ -353,20 +353,21 @@ function! slime#send_lines(count) abort
 endfunction
 
 function! slime#send_cell(cell_delimiter) abort
-  if !empty(g:slime_cell_delimiter)
-    let line_ini = search(a:cell_delimiter, 'bcnW')
-    let line_end = search(a:cell_delimiter, 'nW')
-
-    " line after delimiter or top of file
-    let line_ini = line_ini ? line_ini + 1 : 1
-    " line before delimiter or bottom of file
-    let line_end = line_end ? line_end - 1 : line("$")
-
-    if line_ini <= line_end
-      call slime#send_range(line_ini, line_end)
-    endif
-  else
+  if empty(g:slime_cell_delimiter)
     echoerr "g:slime_cell_delimiter is empty"
+    return
+  endif
+
+  let line_ini = search(a:cell_delimiter, 'bcnW')
+  let line_end = search(a:cell_delimiter, 'nW')
+
+  " line after delimiter or top of file
+  let line_ini = line_ini ? line_ini + 1 : 1
+  " line before delimiter or bottom of file
+  let line_end = line_end ? line_end - 1 : line("$")
+
+  if line_ini <= line_end
+    call slime#send_range(line_ini, line_end)
   endif
 endfunction
 
