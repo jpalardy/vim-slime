@@ -259,6 +259,11 @@ for possible options, see :help term_start()
 
     let g:slime_target = "neovim"
 
+In ~/.config/nvim/init.vim:  
+All commands to open nvim terminal need the following postfix: <C-\><C-n> :let g:slime_jobid=b:terminal_job_id <CR>A  
+e.g. A-n to open terminal and get terminal_job_id for slime, then get into insert mode:  
+nnoremap <A-n> :call OpenTerminal() <CR><C-\><C-n> :let g:slime_jobid=b:terminal_job_id <CR>A  
+
 When you invoke vim-slime for the first time, you will be prompted for more
 configuration.
 
