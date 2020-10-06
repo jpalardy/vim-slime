@@ -264,8 +264,10 @@ All commands to open nvim terminal need the following postfix: <C-\><C-n> :let g
 e.g. A-n to open terminal and get terminal_job_id for slime, then get into insert mode:  
 nnoremap <A-n> :call OpenTerminal() <CR><C-\><C-n> :let g:slime_jobid=b:terminal_job_id <CR>A  
 
-When you invoke vim-slime for the first time, you will be prompted for more
-configuration.
+The first time you need to accept and save the jobid by clicking enter.  
+It is the intended behaviour that opening a 2nd terminal, the old jobid stays and the text is still redirected to the old terminal.  
+To change this :SlimeConfig needs to be called with the new jobid, which is basically unkown,  
+so it is probably a good idea to assign <C-\><C-n> :let g:slime_jobid=b:terminal_job_id <CR>A to a short-cut in init.vim.  
 
 Advanced Configuration
 ----------------------
