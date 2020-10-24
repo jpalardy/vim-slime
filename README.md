@@ -260,7 +260,14 @@ for possible options, see :help term_start()
     let g:slime_target = "neovim"
 
 When you invoke vim-slime for the first time, you will be prompted for more
-configuration.
+configuration. The last terminal you opened before calling vim-slime will
+determine which `job-id` is presented as default.
+
+To manually check the right value of `job-id` to use, try:
+
+    echo &channel
+
+from the buffer running your terminal.
 
 Advanced Configuration
 ----------------------
