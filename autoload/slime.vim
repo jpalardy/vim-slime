@@ -74,7 +74,7 @@ endfunction
 function! s:TmuxSend(config, text)
   call s:WritePasteFile(a:text)
   call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
-  call s:TmuxCommand(a:config, "paste-buffer -p -d -t " . shellescape(a:config["target_pane"]))
+  call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
 endfunction
 
 function! s:TmuxPaneNames(A,L,P)
