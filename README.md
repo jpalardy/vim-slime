@@ -405,6 +405,7 @@ Many languages are supported without modifications, while [others](ftplugin)
 might tweak the text without explicit configuration:
 
   * [coffee-script](ftplugin/coffee/slime.vim)
+  * [elm](ftplugin/elm/slime.vim)
   * [fsharp](ftplugin/fsharp/slime.vim)
   * [haskell](ftplugin/haskell/slime.vim) / [lhaskell](ftplugin/haskell/slime.vim) -- [README](ftplugin/haskell)
   * [matlab](ftplugin/matlab/slime.vim)
