@@ -57,18 +57,23 @@ Usage
 
 Put your cursor over the text you want to send and type:
 
-    C-c, C-c       --- the same as slime
+<kbd>ctrl-c</kbd> <kbd>ctrl-c</kbd> _--- the same as slime_
 
-_You can just hold `Ctrl` and double-tap `c`._
+_(You can just hold `ctrl` and double-tap `c`.)_
 
-The current paragraph, what would be selected if you typed `vip`, is automatically
-selected. To control exactly what is sent, you can manually select text before calling vim-slime.
+The current paragraph — what would be selected if you typed `vip` — is automatically selected.
 
-Vim-slime needs to know where to send your text, it will prompt you. Vim-slime
-will remember your answers and won't prompt you again. But if you need to
-reconfigure, type:
+To control exactly what is sent, you can manually select text before calling vim-slime.
 
-    C-c, v         --- mnemonic: "variables"
+Config prompt
+--------------
+
+Vim-slime needs to know where to send your text, it will prompt you.
+It will remember your answers and won't prompt you again.
+
+But, if you want to reconfigure, to force the config prompt again, type:
+
+<kbd>ctrl-c</kbd> <kbd>v</kbd> _--- mnemonic: "variables"_
 
 or call:
 
