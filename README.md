@@ -296,7 +296,7 @@ from the buffer running your terminal.
 Advanced Configuration
 ----------------------
 
-If you need this, you might as well refer to [the code](https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim#L233-L245) 😄
+If you need this, you might as well refer to [the code](https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim#L233-L245) 😄  
 Seriously, it's not a complicated as it seems.
 
 If you don't want the default key mappings, set:

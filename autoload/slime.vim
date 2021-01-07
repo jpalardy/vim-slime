@@ -56,7 +56,10 @@ function! s:KittyConfig() abort
     let b:slime_config = {"window_id": 1, "listen_on": $KITTY_LISTEN_ON}
   end
   let b:slime_config["window_id"] = input("kitty target window: ", b:slime_config["window_id"])
-  let b:slime_config["listen_on"] = input("kitty listen on: ", b:slime_config["listen_on"])
+
+  if has('nvim')
+    let b:slime_config["listen_on"] = input("kitty listen on: ", b:slime_config["listen_on"])
+  endif
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
