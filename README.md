@@ -183,6 +183,25 @@ kitty target window
     This is the id of the kitty window that you wish to target.
     See e.g. the value of $KITTY_WINDOW_ID in the target window.
 
+kitty listen on
+
+    Specifies where kitty should listen to control messages.
+    See e.g. the value of $KITTY_LISTEN_ON in the target window.
+
+To work properly, `kitty` must also be started with the following options:
+
+```sh
+kitty -o allow_remote_control=yes -o enabled_layouts=tall --listen-on unix:/tmp/mykitty
+```
+
+See more [here](https://sw.kovidgoyal.net/kitty/remote-control.html). This can also be added to your `kitty.conf` file as:
+
+```
+allow_remote_control yes
+enabled_layouts tall
+listen_on unix:/tmp/mykitty
+```
+
 ### X11
 
 [x11](http://manpages.ubuntu.com/manpages/trusty/man1/xdotool.1.html) is *not* the default, to use it you will have to add this line to your
@@ -277,7 +296,7 @@ from the buffer running your terminal.
 Advanced Configuration
 ----------------------
 
-If you need this, you might as well refer to [the code](https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim#L233-L245) 😄  
+If you need this, you might as well refer to [the code](https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim#L233-L245) 😄
 Seriously, it's not a complicated as it seems.
 
 If you don't want the default key mappings, set:
