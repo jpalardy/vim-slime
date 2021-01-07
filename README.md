@@ -191,14 +191,13 @@ kitty listen on
 To work properly, `kitty` must also be started with the following options:
 
 ```sh
-kitty -o allow_remote_control=yes -o enabled_layouts=tall --listen-on unix:/tmp/mykitty
+kitty -o allow_remote_control=yes --listen-on unix:/tmp/mykitty
 ```
 
 See more [here](https://sw.kovidgoyal.net/kitty/remote-control.html). This can also be added to your `kitty.conf` file as:
 
 ```
 allow_remote_control yes
-enabled_layouts tall
 listen_on unix:/tmp/mykitty
 ```
 
