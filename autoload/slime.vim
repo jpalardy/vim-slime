@@ -46,15 +46,17 @@ endfunction
 
 function! s:KittySend(config, text)
   call s:WritePasteFile(a:text)
-  call system("kitty @ send-text --match id:" . shellescape(a:config["window_id"]) .
+  call system("kitty @ --to " . shellescape(a:config["listen_on"]) .
+    \ " send-text --match id:" . shellescape(a:config["window_id"]) .
     \ " --from-file " . g:slime_paste_file)
 endfunction
 
 function! s:KittyConfig() abort
   if !exists("b:slime_config")
-    let b:slime_config = {"window_id": 1}
+    let b:slime_config = {"window_id": 1, "listen_on": $KITTY_LISTEN_ON}
   end
   let b:slime_config["window_id"] = input("kitty target window: ", b:slime_config["window_id"])
+  let b:slime_config["listen_on"] = input("kitty listen on: ", b:slime_config["listen_on"])
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
