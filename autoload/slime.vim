@@ -45,21 +45,19 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:KittySend(config, text)
-  call s:WritePasteFile(a:text)
-  call system("kitty @ --to " . shellescape(a:config["listen_on"]) .
-    \ " send-text --match id:" . shellescape(a:config["window_id"]) .
-    \ " --from-file " . g:slime_paste_file)
+  let to_flag = ""
+  if a:config["listen_on"] != ""
+    let to_flag = " --to " . shellescape(a:config["listen_on"])
+  end
+  call system("kitty @" . to_flag . " send-text --match id:" . shellescape(a:config["window_id"]) . " --stdin", a:text)
 endfunction
 
 function! s:KittyConfig() abort
   if !exists("b:slime_config")
-    let b:slime_config = {"window_id": 1, "listen_on": $KITTY_LISTEN_ON}
+    let b:slime_config = {"window_id": 1, "listen_on": ""}
   end
   let b:slime_config["window_id"] = input("kitty target window: ", b:slime_config["window_id"])
-
-  if has('nvim')
-    let b:slime_config["listen_on"] = input("kitty listen on: ", b:slime_config["listen_on"])
-  endif
+  let b:slime_config["listen_on"] = input("kitty listen on: ", b:slime_config["listen_on"])
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
