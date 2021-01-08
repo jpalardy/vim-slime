@@ -188,6 +188,10 @@ kitty listen on
     Specifies where kitty should listen to control messages.
     See e.g. the value of $KITTY_LISTEN_ON in the target window.
 
+    Can be left blank if:
+    - KITTY_LISTEN_ON is exported in the shell running vim
+    - running vim (but not nvim) inside kitty
+
 To work properly, `kitty` must also be started with the following options:
 
 ```sh
