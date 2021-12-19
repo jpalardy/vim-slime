@@ -106,6 +106,11 @@ function! s:NeovimSend(config, text)
   " So this s:WritePasteFile can help as a small lock & delay
   call s:WritePasteFile(a:text)
   call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
+  " if b:slime_config is {"jobid": ""} and not configured
+  " then unset it for automatic configuration next time
+  if b:slime_config["jobid"]  == ""
+      unlet b:slime_config
+  endif
 endfunction
 
 function! s:NeovimConfig() abort
