@@ -80,7 +80,14 @@ endfunction
 function! s:TmuxSend(config, text)
   call s:WritePasteFile(a:text)
   call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
-  if b:slime_config["bracketed_paste"]
+  if exists("b:slime_bracketed_paste")
+    let bracketed_paste = b:slime_bracketed_paste
+  elseif exists("g:slime_bracketed_paste")
+    let bracketed_paste = g:slime_bracketed_paste
+  else
+    let bracketed_paste = 0
+  endif
+  if bracketed_paste
     call s:TmuxCommand(a:config, "paste-buffer -d -p -t " . shellescape(a:config["target_pane"]))
   else
     call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
@@ -94,17 +101,12 @@ endfunction
 
 function! s:TmuxConfig() abort
   if !exists("b:slime_config")
-    let b:slime_config = {"socket_name": "default", "target_pane": ":", "bracketed_paste": 0}
+    let b:slime_config = {"socket_name": "default", "target_pane": ":"}
   end
   let b:slime_config["socket_name"] = input("tmux socket name or absolute path: ", b:slime_config["socket_name"])
   let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,<SNR>" . s:SID() . "_TmuxPaneNames")
   if b:slime_config["target_pane"] =~ '\s\+'
     let b:slime_config["target_pane"] = split(b:slime_config["target_pane"])[0]
-  endif
-  if input("Use bracketed mode for pasting ? (y/N)") == "y"
-      let b:slime_config["bracketed_paste"] = 1
-  else
-      let b:slime_config["bracketed_paste"] = 0
   endif
 endfunction
 

@@ -107,6 +107,7 @@ A tmux pane can be targeted with any of the following values:
 To get a list of all the available pane execute the following:
 >
 	tmux list-panes -a
+<
 
 Use bracketed-paste mode~
 
@@ -116,10 +117,17 @@ it can be useful to rely on bracketed-paste
 (https://cirw.in/blog/bracketed-paste). Luckily, tmux knows how to handle
 that. See tmux's manual.
 
-You can enable bracketed-paste using
+You can enable bracketed-paste using eiter
 >
-    :SlimeConfig
+    g:slime_bracketed_paste
 <
+or
+>
+    b:slime_bracketed_paste
+<
+
+Note that the buffer variable takes precedence over the global's one.
+
 ==============================================================================
 4. dtach Configuration 			*slime-dtach*
 
@@ -254,6 +262,10 @@ g:slime_default_config	Set to dictionary of pre-filled prompt answer. See
 						*g:slime_dont_ask_default*
 g:slime_dont_ask_default	Works with g:slime_default_config. See
 			the README for details: https://github.com/jpalardy/vim-slime
+
+g:slime_bracketed_paste Set to non zero value to enable bracketed paste in
+                        tmux. See |slime-tmux| or the README for details: 
+                        https://github.com/jpalardy/vim-slime 
 
 Mappings~
 

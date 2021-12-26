@@ -148,25 +148,25 @@ Note that all of these ordinals are 0-indexed by default.
     "{token}" one of tmux's supported special tokens, like "{last}"
 
 
+You can configure the defaults for these options. If you generally run vim in
+a split tmux window with a REPL in the other pane:
+
+    let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
+
+Or more reliably by employing [a special token](http://man.openbsd.org/OpenBSD-current/man1/tmux.1#_last__2) as pane index:
+
+    let g:slime_default_config = {"socket_name": "default", "target_pane": "{last}"}
+
 tmux bracketed-paste
 
 Sometimes REPL are too smart for their own good, e.g. autocompleting a bracket
 that should not be autocompleted when pasting code from a file. In this case
 it can be useful to rely on bracketed-paste
 (https://cirw.in/blog/bracketed-paste). Luckily, tmux knows how to handle
-that. See tmux's manual. the `bracketed_paste` boolean in the configuration
+that. See tmux's manual. Setting `g:slime_bracketed_paste` to `1` in your `.vimrc`
 enables or disables bracketed-paste. It is disabled by default because it can
 create issues with ipython. See
 [#265](https://github.com/jpalardy/vim-slime/pull/265).
-
-You can configure the defaults for these options. If you generally run vim in
-a split tmux window with a REPL in the other pane:
-
-    let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2", "bracketed_paste":1}
-
-Or more reliably by employing [a special token](http://man.openbsd.org/OpenBSD-current/man1/tmux.1#_last__2) as pane index:
-
-    let g:slime_default_config = {"socket_name": "default", "target_pane": "{last}", "bracketed_paste":1}
 
 
 ### dtach
