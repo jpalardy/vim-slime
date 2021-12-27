@@ -57,7 +57,21 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence
                         line, to screen, tmux, or whimrepl. A carriage return
                         is automatically appended.
 
+                                                *slime-cell*
+Working wit cells~
 
+If you want to send blocks of code between two delimiters, emulating the
+cell-like mode of REPL environments like ipython, matlab, etc., you can set
+the cell delimiter on the `g:slime_cell_delimiter` variable and use the
+`<Plug>SlimeSendCell` mapping to send the block of code. For example, if you
+are using ipython you could use the following:
+>
+    let g:slime_cell_delimiter = "#%%"
+    nmap <leader>s <Plug>SlimeSendCell
+    nmap <leader>sn <Plug>SlimeNextCell
+    nmap <leader>sp <Plug>SlimePrevCell
+    nmap <leader>ss <Plug>SlimeSendAndGoToNext
+<
 ==============================================================================
 2. Screen Configuration 			*slime-screen*
 
@@ -267,6 +281,9 @@ g:slime_bracketed_paste Set to non zero value to enable bracketed paste in
                         tmux. See |slime-tmux| or the README for details: 
                         https://github.com/jpalardy/vim-slime 
 
+g:slime_cell_delimiter  Define the cell delimiter used in cell-mode. See
+                        |slime-cell|.
+
 Mappings~
 
 Slime's default mappings can be overridden by setting up mappings in your
@@ -286,6 +303,11 @@ The following special plugin mappings are provided by slime:
   Optional mappings:
   <Plug>SlimeLineSend		Send {count} line(s). Use |nmap|.
   <Plug>SlimeMotionSend		Send {motion}. Use |nmap|.
+  <Plug>SlimeSendCell           Send the current cell. See |slime-cell|.
+  <Plug>SlimeNextCell           Move cursor to next cell. See |slime-cell|.
+  <Plug>SlimePrevCell           Move cursor to previous cell. See |slime-cell|.
+  <Plug>SlimeSendAndGoToNext    Send current cell and move cursor to next cell. 
+                                See |slime-cell|.
 
 Disabling a mapping is as simple as creating a mapping that does not exist,
 for example:

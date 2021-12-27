@@ -370,16 +370,23 @@ function! slime#send_lines(count) abort
   call setreg('"', rv, rt)
 endfunction
 
-function! slime#send_cell() abort
+function! slime#get_delimiter()
   if exists("b:slime_cell_delimiter")
     let cell_delimiter = b:slime_cell_delimiter
   elseif exists("g:slime_cell_delimiter")
     let cell_delimiter = g:slime_cell_delimiter
   else
     echoerr "b:slime_cell_delimeter is not defined"
-    return
+    return ""
   endif
+    return cell_delimiter
+endfunction
 
+function! slime#send_cell() abort
+  let cell_delimiter = slime#get_delimiter()
+  if cell_delimiter == ""
+      return
+  endif
   let line_ini = search(cell_delimiter, 'bcnW')
   let line_end = search(cell_delimiter, 'nW')
 
@@ -391,6 +398,26 @@ function! slime#send_cell() abort
   if line_ini <= line_end
     call slime#send_range(line_ini, line_end)
   endif
+endfunction
+
+function! slime#go_to_next_cell()
+  let cell_delimiter = slime#get_delimiter()
+  if cell_delimiter == ""
+      return
+  endif
+  let line = search(cell_delimiter, 'eW')
+  let line = line ? line : line("$")
+  call cursor(line, 0)
+endfunction
+
+function! slime#go_to_previous_cell()
+  let cell_delimiter = slime#get_delimiter()
+  if cell_delimiter == ""
+      return
+  endif
+  let line = search(cell_delimiter, 'Wbz')
+  let line = line ? line : 1
+  call cursor(line, 0)
 endfunction
 
 function! slime#store_curpos()

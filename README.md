@@ -344,6 +344,9 @@ If you want to send blocks of code between two delimiters, emulating the cell-li
 
     let g:slime_cell_delimiter = "#%%"
     nmap <leader>s <Plug>SlimeSendCell
+    nmap <leader>sn <Plug>SlimeNextCell
+    nmap <leader>sp <Plug>SlimePrevCell
+    nmap <leader>ss <Plug>SlimeSendAndGoToNext
 
 ⚠️  it's recommended to use `b:slime_cell_delimiter` and set the variable in `ftplugin` for each relevant filetype.
 
