@@ -454,3 +454,7 @@ might tweak the text without explicit configuration:
   * [sml](ftplugin/sml/slime.vim)
   * [stata](ftplugin/stata/slime.vim)
 
+Advanced cell-features
+----------------------
+
+If you need more advanced cell features, such as syntax highlighting or cell navigation, you might want to have a look at [vim-slime-cells](https://github.com/Klafyvel/vim-slime-cells).
