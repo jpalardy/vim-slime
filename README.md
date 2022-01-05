@@ -147,6 +147,7 @@ Note that all of these ordinals are 0-indexed by default.
     "%i"      means i refers the pane's unique id
     "{token}" one of tmux's supported special tokens, like "{last}"
 
+
 You can configure the defaults for these options. If you generally run vim in
 a split tmux window with a REPL in the other pane:
 
@@ -155,6 +156,17 @@ a split tmux window with a REPL in the other pane:
 Or more reliably by employing [a special token](http://man.openbsd.org/OpenBSD-current/man1/tmux.1#_last__2) as pane index:
 
     let g:slime_default_config = {"socket_name": "default", "target_pane": "{last}"}
+
+tmux bracketed-paste
+
+Sometimes REPL are too smart for their own good, e.g. autocompleting a bracket
+that should not be autocompleted when pasting code from a file. In this case
+it can be useful to rely on bracketed-paste
+(https://cirw.in/blog/bracketed-paste). Luckily, tmux knows how to handle
+that. See tmux's manual. Setting `g:slime_bracketed_paste` to `1` in your `.vimrc`
+enables or disables bracketed-paste. It is disabled by default because it can
+create issues with ipython. See
+[#265](https://github.com/jpalardy/vim-slime/pull/265).
 
 
 ### dtach
@@ -442,3 +454,7 @@ might tweak the text without explicit configuration:
   * [sml](ftplugin/sml/slime.vim)
   * [stata](ftplugin/stata/slime.vim)
 
+Advanced cell-features
+----------------------
+
+If you need more advanced cell features, such as syntax highlighting or cell navigation, you might want to have a look at [vim-slime-cells](https://github.com/Klafyvel/vim-slime-cells).
