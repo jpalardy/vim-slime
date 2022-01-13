@@ -59,7 +59,8 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence
 
                                                 *:SlimeSend0*
 :SlimeSend0 {text}      Send a single line of text, specified on the command
-                        line, to screen, tmux, or whimrepl.
+                        line, to screen, tmux, or whimrepl. This will not
+			automatically append a carriage return.
 
 
 ==============================================================================
