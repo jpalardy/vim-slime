@@ -78,8 +78,6 @@ function! s:TmuxCommand(config, args)
 endfunction
 
 function! s:TmuxSend(config, text)
-  call s:WritePasteFile(a:text)
-  call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
   if exists("b:slime_bracketed_paste")
     let bracketed_paste = b:slime_bracketed_paste
   elseif exists("g:slime_bracketed_paste")
@@ -87,8 +85,21 @@ function! s:TmuxSend(config, text)
   else
     let bracketed_paste = 0
   endif
+
+  let last_char_is_carriage_return = 0
+  if bracketed_paste && a:text[-1:] == "\r"
+    call s:WritePasteFile(a:text[:-2])
+    let last_char_is_carriage_return = 1
+  else
+    call s:WritePasteFile(a:text)
+  end
+
+  call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
   if bracketed_paste
     call s:TmuxCommand(a:config, "paste-buffer -d -p -t " . shellescape(a:config["target_pane"]))
+    if last_char_is_carriage_return
+      call s:TmuxCommand(a:config, "send-keys -t " . shellescape(a:config["target_pane"]) . " Enter")
+    end
   else
     call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
   end
