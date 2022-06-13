@@ -292,7 +292,7 @@ function! s:SID()
 endfun
 
 function! s:WritePasteFile(text)
-  " could check exists("*writefile")
+  call mkdir(fnamemodify(g:slime_paste_file, ":p:h"), "p")
   call system("cat > " . g:slime_paste_file, a:text)
 endfunction
 
