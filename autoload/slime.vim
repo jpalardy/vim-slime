@@ -293,7 +293,10 @@ endfun
 
 function! s:WritePasteFile(text)
   call mkdir(fnamemodify(g:slime_paste_file, ":p:h"), "p")
-  call system("cat > " . g:slime_paste_file, a:text)
+  let output = system("cat > " . g:slime_paste_file, a:text)
+  if v:shell_error
+    echoerr output
+  endif
 endfunction
 
 function! s:_EscapeText(text)
