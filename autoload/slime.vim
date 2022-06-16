@@ -292,7 +292,10 @@ function! s:SID()
 endfun
 
 function! s:WritePasteFile(text)
-  call mkdir(fnamemodify(g:slime_paste_file, ":p:h"), "p")
+  let paste_dir = fnamemodify(g:slime_paste_file, ":p:h")
+  if !isdirectory(paste_dir)
+    call mkdir(paste_dir, "p")
+  endif
   let output = system("cat > " . g:slime_paste_file, a:text)
   if v:shell_error
     echoerr output
