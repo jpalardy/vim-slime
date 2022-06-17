@@ -73,9 +73,6 @@ endfunction
 
 function! s:WeztermConfig() abort
 	if !exists("b:slime_config")
-		let b:slime_config = {"pane_id": 0}
-	end
-	if v:shell_error
 		let b:slime_config["pane_id"] = input("wezterm pane_id: ", "0")
 	end
 	" This funcitonality to select a specific window to send text may be added
