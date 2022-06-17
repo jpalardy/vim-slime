@@ -292,8 +292,14 @@ function! s:SID()
 endfun
 
 function! s:WritePasteFile(text)
-  " could check exists("*writefile")
-  call system("cat > " . g:slime_paste_file, a:text)
+  let paste_dir = fnamemodify(g:slime_paste_file, ":p:h")
+  if !isdirectory(paste_dir)
+    call mkdir(paste_dir, "p")
+  endif
+  let output = system("cat > " . g:slime_paste_file, a:text)
+  if v:shell_error
+    echoerr output
+  endif
 endfunction
 
 function! s:_EscapeText(text)
