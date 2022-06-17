@@ -64,6 +64,28 @@ function! s:KittyConfig() abort
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Wezterm
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! s:WeztermSend(config, text)
+	call system("wezterm cli send-text --no-paste --pane-id " . shellescape(a:config["pane_id"]) . " " . shellescape(a:text))
+endfunction
+
+function! s:WeztermConfig() abort
+	if !exists("b:slime_config")
+		let b:slime_config = {"pane_id": 0}
+	end
+	let b:slime_config["pane_id"] = str2nr(system("wezterm cli list --format json | jq '.[][\"pane_id\"]' | tail -n 1"))
+	if v:shell_error
+		let b:slime_config["pane_id"] = input("wezterm pane_id: ", "0")
+	end
+	" This funcitonality to select a specific window to send text may be added
+	" in the future.
+	" if v:shell_error
+	" 	let b:slime_config["window_id"] = input("wezterm window_id: ", "0")
+	" end
+endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tmux
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
