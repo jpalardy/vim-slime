@@ -25,7 +25,8 @@ function! s:ScreenSend(config, text)
         \ " -X eval \"readreg p " . g:slime_paste_file . "\"")
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X paste p")
-  call system('screen -X colon ""')
+  call system('screen -X colon "
+"')
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
@@ -74,7 +75,6 @@ function! s:WeztermConfig() abort
 	if !exists("b:slime_config")
 		let b:slime_config = {"pane_id": 0}
 	end
-	let b:slime_config["pane_id"] = str2nr(system("wezterm cli list --format json | jq '.[][\"pane_id\"]' | tail -n 1"))
 	if v:shell_error
 		let b:slime_config["pane_id"] = input("wezterm pane_id: ", "0")
 	end
