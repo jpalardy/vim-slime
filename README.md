@@ -35,6 +35,7 @@ Many targets are supported:
 - [tmux](#tmux)
 - [dtach](#dtach)
 - [kitty](#kitty)
+- [wezterm](#wezterm)
 - [X11](#x11)
 - [whimrepl](#whimrepl)
 - [ConEmu](#conemu)
@@ -216,6 +217,20 @@ See more [here](https://sw.kovidgoyal.net/kitty/remote-control.html). This can a
 allow_remote_control yes
 listen_on unix:/tmp/mykitty
 ```
+
+### wezterm
+
+[wezterm](https://wezfurlong.org/wezterm) is *not* the default, to use it you will have to add this line to your .vimrc:
+
+    let g:slime_target = "wezterm"
+
+You also need `jq` installed so that it "automatically" selects the last pane that you created for wezterm. Otherwise,
+you will be prompted for more configuration (also prompts you too if you are on Windows)
+
+wezterm pane id
+    
+    This is the pane id of the wezterm pane that you wish to target.
+    See e.g. the value of $WEZTERM_PANE in the target window.
 
 ### X11
 
