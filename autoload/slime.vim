@@ -68,7 +68,7 @@ endfunction
 " Wezterm
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! s:WeztermSend(config, text)
-	call system("wezterm cli send-text --no-paste --pane-id " . shellescape(a:config["pane_id"]) . " " . shellescape(a:text))
+	call system("wezterm cli send-text --pane-id " . shellescape(a:config["pane_id"]) . " " . shellescape(a:text))
 endfunction
 
 function! s:WeztermConfig() abort
