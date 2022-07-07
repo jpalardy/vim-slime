@@ -226,15 +226,21 @@ Vim terminal configuration can be set by using the following in your .vimrc:
 
     let g:slime_vimterminal_config = {options}
 
-You can specify if you have frequently used commands:
-
-        let g:slime_vimterminal_cmd = "command"
-
-If you use Node, set it as follows:
-
-        let g:slime_vimterminal_cmd = "node"
-
 for possible options, see help term_start()
+
+You can specify if you have frequently used commands:
+>
+	let b:slime_vimterminal_cmd = "command"
+<
+or
+>
+	let g:slime_vimterminal_cmd = "command"
+<
+For example, if you use Python, set the following in your |.vimrc|:
+>
+	autocmd FileType python let b:slime_vimterminal_cmd='python3'
+<
+Note that the buffer variable takes precedence over the global one.
 
 When you invoke vim-slime for the first time (see below), you will be prompted
 to select from an existing terminal or to create a new one.
