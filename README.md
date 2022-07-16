@@ -41,7 +41,6 @@ Many targets are supported:
 - [Vim :terminal](#vim-terminal)
 - [NeoVim :terminal](#neovim-terminal)
 
-
 Installation
 ------------
 
@@ -51,6 +50,7 @@ Use your favorite package manager, or use Vim's built-in package support (since 
     cd ~/.vim/pack/plugins/start
     git clone https://github.com/jpalardy/vim-slime.git
 
+Alternatively, you can [try vim-slime in Docker](https://blog.jpalardy.com/posts/trying-vim-slime-in-docker/), before committing to anything else.
 
 Usage
 -------------
