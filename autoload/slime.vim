@@ -299,7 +299,7 @@ function! s:WritePasteFile(text)
   if !isdirectory(paste_dir)
     call mkdir(paste_dir, "p")
   endif
-  writefile(a:text, g:slime_paste_file, 'b')
+  call writefile(a:text, g:slime_paste_file, 'b')
 endfunction
 
 function! s:_EscapeText(text)
