@@ -308,6 +308,14 @@ To manually check the right value of `job-id` to use, try:
 
 from the buffer running your terminal.
 
+You can also specify a function to query the jobid as
+
+```lua
+vim.g.slime_get_jobid = function()
+  -- some way to select and return jobid
+end
+```
+
 Advanced Configuration
 ----------------------
 
