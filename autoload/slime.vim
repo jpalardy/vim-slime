@@ -25,7 +25,8 @@ function! s:ScreenSend(config, text)
         \ " -X eval \"readreg p " . g:slime_paste_file . "\"")
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X paste p")
-  call system('screen -X colon ""')
+  call system('screen -X colon "
+"')
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
@@ -98,7 +99,7 @@ function! s:ZellijConfig() abort
   elseif b:slime_config["relative_pane"] == "down"
     let b:slime_config["relative_move_back"] = "up"
   else
-    echo "Error: Allowed directions are (right, left, up, down)"
+    echoerr "Error: Allowed values are (current, right, left, up, down)"
   endif
 endfunction
 
