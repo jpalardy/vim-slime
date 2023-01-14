@@ -15,3 +15,19 @@ Python buffers, you need to set the corresponding variable in your .vimrc:
 Note: if you're using IPython 5, you _need_ to set `g:slime_python_ipython` for
 pasting to work correctly.
 
+#### Note for `tmux` users
+
+If you're using `tmux`, it's better to _not_ set `g:slime_python_ipython`, but
+instead use [bracketed-paste](https://cirw.in/blog/bracketed-paste) by setting 
+either
+
+    let g:slime_bracketed_paste = 1
+
+in your `vimrc` or
+
+    let b:slime_bracketed_paste = 1
+
+in `ftplugin/python.vim`.
+
+This lets `tmux` deal with all the problems with indentation and avoids depending 
+`%cpaste`, which occassionally causes issues (e.g., [#327](https://github.com/jpalardy/vim-slime/issues/327))

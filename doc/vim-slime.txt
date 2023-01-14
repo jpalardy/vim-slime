@@ -58,6 +58,11 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence
                         line, to screen, tmux, or whimrepl. A carriage return
                         is automatically appended.
 
+                                                *:SlimeSend0*
+:SlimeSend0 {text}      Send a single line of text, specified on the command
+                        line, to screen, tmux, or whimrepl. This will not
+			automatically append a carriage return.
+
 
 ==============================================================================
 2. Screen Configuration 			*slime-screen*
@@ -109,6 +114,26 @@ To get a list of all the available pane execute the following:
 >
 	tmux list-panes -a
 <
+
+Use bracketed-paste mode~
+
+Sometimes REPL are too smart for their own good, e.g. autocompleting a bracket
+that should not be autocompleted when pasting code from a file. In this case
+it can be useful to rely on bracketed-paste
+(https://cirw.in/blog/bracketed-paste). Luckily, tmux knows how to handle
+that. See tmux's manual.
+
+You can enable bracketed-paste using eiter
+>
+    g:slime_bracketed_paste
+<
+or
+>
+    b:slime_bracketed_paste
+<
+
+Note that the buffer variable takes precedence over the global's one.
+
 ==============================================================================
 4. dtach Configuration 			*slime-dtach*
 
@@ -224,15 +249,21 @@ Vim terminal configuration can be set by using the following in your .vimrc:
 
     let g:slime_vimterminal_config = {options}
 
-You can specify if you have frequently used commands:
-
-        let g:slime_vimterminal_cmd = "command"
-
-If you use Node, set it as follows:
-
-        let g:slime_vimterminal_cmd = "node"
-
 for possible options, see help term_start()
+
+You can specify if you have frequently used commands:
+>
+	let b:slime_vimterminal_cmd = "command"
+<
+or
+>
+	let g:slime_vimterminal_cmd = "command"
+<
+For example, if you use Python, set the following in your |.vimrc|:
+>
+	autocmd FileType python let b:slime_vimterminal_cmd='python3'
+<
+Note that the buffer variable takes precedence over the global one.
 
 When you invoke vim-slime for the first time (see below), you will be prompted
 to select from an existing terminal or to create a new one.
@@ -248,12 +279,11 @@ g:slime_target		Set to either "screen" (default), "tmux" or "whimrepl".
 g:slime_no_mappings	Set to non zero value to disable the default mappings.
 
 						*g:slime_paste_file*
-g:slime_paste_file	Used to transfer data from vim to GNU Screen or tmux.
-			This is required for screen and is set to "$HOME/.slime_paste" by default.
-			For tmux it is optional; If not set, STDIN will be
-			used. Setting this explicitly can work around some
-			occasional portability issues.
-			whimrepl does not require or support this setting.
+g:slime_paste_file	Required to transfer data from vim to GNU screen or
+			tmux. Set to "$HOME/.slime_paste" by default. Setting
+			this explicitly can work around some occasional
+			portability issues. whimrepl does not require or
+			support this setting.
 						*g:slime_preserve_curpos*
 g:slime_preserve_curpos	Set to non zero value to preserve cursor position when
 			sending a line or paragraph. Default is 1.
@@ -266,6 +296,10 @@ g:slime_default_config	Set to dictionary of pre-filled prompt answer. See
 						*g:slime_dont_ask_default*
 g:slime_dont_ask_default	Works with g:slime_default_config. See
 			the README for details: https://github.com/jpalardy/vim-slime
+
+g:slime_bracketed_paste Set to non zero value to enable bracketed paste in
+                        tmux. See |slime-tmux| or the README for details: 
+                        https://github.com/jpalardy/vim-slime 
 
 Mappings~
 
