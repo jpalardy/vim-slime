@@ -95,15 +95,23 @@ function! s:TmuxSend(config, text)
     endif
   endif
 
-  call s:WritePasteFile(text_to_paste)
-  call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
-  if bracketed_paste
-    call s:TmuxCommand(a:config, "paste-buffer -d -p -t " . shellescape(a:config["target_pane"]))
-    if has_crlf
-      call s:TmuxCommand(a:config, "send-keys -t " . shellescape(a:config["target_pane"]) . " Enter")
+  " reasonable hardcode, will become config if needed
+  let chunk_size = 1000
+
+  for i in range(0, len(text_to_paste) / chunk_size)
+    let chunk = slice(text_to_paste, i * chunk_size, (i + 1) * chunk_size)
+    call s:WritePasteFile(chunk)
+    call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
+    if bracketed_paste
+      call s:TmuxCommand(a:config, "paste-buffer -d -p -t " . shellescape(a:config["target_pane"]))
+    else
+      call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
     end
-  else
-    call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
+  endfor
+
+  " trailing newline
+  if has_crlf
+    call s:TmuxCommand(a:config, "send-keys -t " . shellescape(a:config["target_pane"]) . " Enter")
   end
 endfunction
 
