@@ -64,6 +64,45 @@ function! s:KittyConfig() abort
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Zellij
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+function! s:ZellijSend(config, text)
+  let target_session = "" 
+  if a:config["session_id"] != "current"
+    let target_session = "-s " . shellescape(a:config["session_id"])
+  end
+  if a:config["relative_pane"] != "current"
+    call system("zellij " . target_session . " action move-focus " . shellescape(a:config["relative_pane"]))
+  end
+  call system("zellij " . target_session . " action write-chars " . shellescape(a:text))
+  if a:config["relative_pane"] != "current"
+    call system("zellij " . target_session . " action move-focus " . shellescape(a:config["relative_move_back"]))
+  end
+endfunction
+
+function! s:ZellijConfig() abort
+  if !exists("b:slime_config")
+    let b:slime_config = {"session_id": "current", "relative_pane": "current"}
+  end
+  let b:slime_config["session_id"] = input("zellij session: ", b:slime_config["session_id"])
+  let b:slime_config["relative_pane"] = input("target pane relative position: ", b:slime_config["relative_pane"])
+  if b:slime_config["relative_pane"] == "current"
+    let b:slime_config["relative_move_back"] = "current"
+  elseif b:slime_config["relative_pane"] == "right"
+    let b:slime_config["relative_move_back"] = "left"
+  elseif b:slime_config["relative_pane"] == "left"
+    let b:slime_config["relative_move_back"] = "right"
+  elseif b:slime_config["relative_pane"] == "up"
+    let b:slime_config["relative_move_back"] = "down"
+  elseif b:slime_config["relative_pane"] == "down"
+    let b:slime_config["relative_move_back"] = "up"
+  else
+    echoerr "Error: Allowed values are (current, right, left, up, down)"
+  endif
+endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tmux
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
