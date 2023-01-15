@@ -138,7 +138,7 @@ function! s:TmuxSend(config, text)
   let chunk_size = 1000
 
   for i in range(0, len(text_to_paste) / chunk_size)
-    let chunk = slice(text_to_paste, i * chunk_size, (i + 1) * chunk_size)
+    let chunk = text_to_paste[i * chunk_size : (i + 1) * chunk_size - 1]
     call s:WritePasteFile(chunk)
     call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
     if bracketed_paste
