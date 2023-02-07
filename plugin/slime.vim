@@ -36,11 +36,31 @@ if !exists("g:slime_no_mappings") || !g:slime_no_mappings
   endif
 endif
 
-" for neovim (only), make slime_last_channel contain
-" the channel id of the last opened terminal
-if get(g:, "slime_target", "") == "neovim"
-  augroup nvim_slime
-    autocmd!
-    autocmd TermOpen * let g:slime_last_channel = &channel
-  augroup END
-end
+if has('nvim') && get(g:, "slime_target", "") == "neovim"
+
+lua << EOF
+
+	local slime_autocmds = vim.api.nvim_create_augroup("nvim_slime", { clear = true })
+
+	vim.api.nvim_create_autocmd("TermOpen", {
+		pattern = "*",
+		callback = function()
+			vim.g.slime_last_channel = vim.api.nvim_eval("&channel")
+		end,
+		group = slime_autocmds
+	})
+
+	vim.api.nvim_create_autocmd("TermClose", {
+		pattern = "*",
+		callback = function() 			
+			if vim.g.slime_last_channel == vim.api.nvim_eval("&channel") then
+				vim.cmd([[unlet vim.g.slime_last_channel]])
+			end
+
+		end,
+		group = slime_autocmds
+	})
+
+EOF
+
+endif
