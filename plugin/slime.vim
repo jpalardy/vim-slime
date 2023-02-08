@@ -7,6 +7,14 @@ let g:loaded_slime = 1
 " Setup key bindings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+command -bar -nargs=0 ExamplePlug colorscheme blue
+noremap <unique> <script> <silent> <Plug>(ChangeColor) :<c-u>ExamplePlug<cr>
+
+command -bar -nargs=0 ExamplePlug2 colorscheme peachpuff
+noremap <unique> <script> <silent> <Plug>(ChangeColor2) :<c-u>ExamplePlug2<cr>
+
+nmap <leader>pp <Plug>(ChangeColor2)<Plug>(ChangeColor)
+
 command -bar -nargs=0 SlimeConfig call slime#config()
 command -range -bar -nargs=0 SlimeSend call slime#send_range(<line1>, <line2>)
 command -nargs=+ SlimeSend1 call slime#send(<q-args> . "\r")
@@ -45,6 +53,9 @@ lua << EOF
 	vim.api.nvim_create_autocmd("TermOpen", {
 		pattern = "*",
 		callback = function()
+		vim.cmd([[
+
+		]])
 			vim.g.slime_last_channel = vim.api.nvim_eval("&channel")
 		end,
 		group = slime_autocmds
@@ -64,3 +75,8 @@ lua << EOF
 EOF
 
 endif
+
+
+nmap gz <Plug>SlimeMotionSend
+nmap gzz <Plug>SlimeLineSend
+xmap gz <Plug>SlimeRegionSend

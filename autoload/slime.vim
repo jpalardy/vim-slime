@@ -14,9 +14,7 @@ end
 if !exists("g:slime_paste_file")
   let g:slime_paste_file = expand("$HOME/.slime_paste")
 end
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Screen
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" " Screen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:ScreenSend(config, text)
@@ -187,16 +185,35 @@ function! s:NeovimSend(config, text)
   endif
 endfunction
 
-function! s:NeovimConfig() abort
-  if !exists("b:slime_config")
-    let b:slime_config = {"jobid": get(g:, "slime_last_channel", "")}
-  end
-  if exists("g:slime_get_jobid")
-    let b:slime_config["jobid"] = g:slime_get_jobid()
-  else
-    let b:slime_config["jobid"] = input("jobid: ", b:slime_config["jobid"])
-  end
+if exists("g:default_get_slime_job_id") && has("nvim")
+
+end
+
+function! g:get_channel(id_in) abort
+	try
+		let l:pid = jobpid(&channel)
+		return 1
+	catch
+		return 0
+	endtry
 endfunction
+
+function! s:NeovimConfig() abort
+	if !exists("b:slime_config")
+		if exists("g:slime_last_channel")
+			 let b:slime_config = {"jobid": get(g:, "slime_last_channel", "")}
+		 else
+			 echo "No last channel: open new terminal to set"
+		end
+	end
+
+	if exists("g:slime_get_jobid")
+		let b:slime_config["jobid"] = g:slime_get_jobid()
+	else
+		let b:slime_config["jobid"] = input("jobid: ", b:slime_config["jobid"])
+	end
+endfunction
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Conemu
