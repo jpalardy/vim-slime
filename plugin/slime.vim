@@ -53,11 +53,11 @@ lua << EOF
 	vim.api.nvim_create_autocmd("TermOpen", {
 		pattern = "*",
 		callback = function()
-		vim.cmd([[
-
-		]])
-			vim.g.slime_last_channel = vim.api.nvim_eval("&channel")
-		end,
+					if not vim.g.slime_last_channel then
+						vim.g.slime_last_channel = {vim.api.nvim_eval("&channel")}
+					else
+						vim.g.slime_last_channel.insert(vim.api.nvim_eval("&channel"))
+					end,
 		group = slime_autocmds
 	})
 
