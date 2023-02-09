@@ -74,6 +74,12 @@ lua << EOF
 
 EOF
 
+if get(g:, "slime_target", "") == "neovim"
+  augroup nvim_slime
+    autocmd!
+    autocmd TermOpen * let g:slime_last_channel = &channel
+  augroup END
+end
 endif
 
 
