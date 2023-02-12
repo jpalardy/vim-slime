@@ -1,4 +1,4 @@
-Copyright (c) 2012 Jonathan Palardy
+Copyright (c) 2023 Jonathan Palardy
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
