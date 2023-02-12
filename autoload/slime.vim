@@ -25,7 +25,8 @@ function! s:ScreenSend(config, text)
         \ " -X eval \"readreg p " . g:slime_paste_file . "\"")
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X paste p")
-  call system('screen -X colon ""')
+  call system('screen -X colon "
+"')
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
@@ -64,6 +65,43 @@ function! s:KittyConfig() abort
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Zellij
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+function! s:ZellijSend(config, text)
+  let target_session = "" 
+  if a:config["session_id"] != "current"
+    let target_session = "-s " . shellescape(a:config["session_id"])
+  end
+  if a:config["relative_pane"] != "current"
+    call system("zellij " . target_session . " action move-focus " . shellescape(a:config["relative_pane"]))
+  end
+  call system("zellij " . target_session . " action write-chars " . shellescape(a:text))
+  if a:config["relative_pane"] != "current"
+    call system("zellij " . target_session . " action move-focus " . shellescape(a:config["relative_move_back"]))
+  end
+endfunction
+
+function! s:ZellijConfig() abort
+  if !exists("b:slime_config")
+    let b:slime_config = {"session_id": "current", "relative_pane": "current"}
+  end
+  let b:slime_config["session_id"] = input("zellij session: ", b:slime_config["session_id"])
+  let b:slime_config["relative_pane"] = input("target pane relative position: ", b:slime_config["relative_pane"])
+  if b:slime_config["relative_pane"] == "current"
+    let b:slime_config["relative_move_back"] = "current"
+  elseif b:slime_config["relative_pane"] == "right"
+    let b:slime_config["relative_move_back"] = "left"
+  elseif b:slime_config["relative_pane"] == "left"
+    let b:slime_config["relative_move_back"] = "right"
+  elseif b:slime_config["relative_pane"] == "up"
+    let b:slime_config["relative_move_back"] = "down"
+  elseif b:slime_config["relative_pane"] == "down"
+    let b:slime_config["relative_move_back"] = "up"
+  else
+    echoerr "Error: Allowed values are (current, right, left, up, down)"
+  endif
+
 " Wezterm
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -110,15 +148,23 @@ function! s:TmuxSend(config, text)
     endif
   endif
 
-  call s:WritePasteFile(text_to_paste)
-  call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
-  if bracketed_paste
-    call s:TmuxCommand(a:config, "paste-buffer -d -p -t " . shellescape(a:config["target_pane"]))
-    if has_crlf
-      call s:TmuxCommand(a:config, "send-keys -t " . shellescape(a:config["target_pane"]) . " Enter")
+  " reasonable hardcode, will become config if needed
+  let chunk_size = 1000
+
+  for i in range(0, len(text_to_paste) / chunk_size)
+    let chunk = text_to_paste[i * chunk_size : (i + 1) * chunk_size - 1]
+    call s:WritePasteFile(chunk)
+    call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
+    if bracketed_paste
+      call s:TmuxCommand(a:config, "paste-buffer -d -p -t " . shellescape(a:config["target_pane"]))
+    else
+      call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
     end
-  else
-    call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
+  endfor
+
+  " trailing newline
+  if has_crlf
+    call s:TmuxCommand(a:config, "send-keys -t " . shellescape(a:config["target_pane"]) . " Enter")
   end
 endfunction
 
