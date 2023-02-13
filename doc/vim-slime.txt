@@ -211,7 +211,7 @@ A pane relative to the currently active one in the target session
 Wezterm is not the default, to use it you will have to add this line to your
 |.vimrc|:
 >
-	let g:slime_target = "kitty"
+	let g:slime_target = "wezterm"
 <
 When you invoke vim-slime for the first time (see below), you will be prompted
 for more configuration.
