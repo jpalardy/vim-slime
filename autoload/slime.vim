@@ -189,12 +189,10 @@ if exists("g:default_get_slime_job_id") && has("nvim")
 
 end
 
-"TODO: levels of auto: menu/no menu of terminal buffers, autofill/no autofill, or fill without asking
-" add guard of slimeconfig
-
+"TODO: levels of auto: menu/no menu of terminal buffers, echo terminal we connected to
 function! s:NeovimConfig() abort
 	if !exists("b:slime_config")
-		if exists("g:slime_last_channel") && len(g:slime_last_channel) == 1
+		if exists("g:slime_last_channel") && len(g:slime_last_channel) >= 1
 			 let b:slime_config = {"jobid": get(g:slime_last_channel, -1, "")}
 		 else
 			 echo "No last channel: open new terminal to set"
