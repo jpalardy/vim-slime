@@ -200,8 +200,8 @@ endfunction
 
 function! s:NeovimConfig() abort
 	if !exists("b:slime_config")
-		if exists("g:slime_last_channel")
-			 let b:slime_config = {"jobid": get(g:, "slime_last_channel", "")}
+		if exists("g:slime_last_channel") && len(g:slime_last_channel) == 1
+			 let b:slime_config = {"jobid": get(g:slime_last_channel, -1, "")}
 		 else
 			 echo "No last channel: open new terminal to set"
 		end
