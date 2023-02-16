@@ -46,40 +46,64 @@ endif
 
 if has('nvim') && get(g:, "slime_target", "") == "neovim"
 
-lua << EOF
+	function Change_bg()
+		if g:colors_name ==? "gruvbox"
+			colorscheme tokyonight
+		elseif g:colors_name ==? "tokyonight"
+			colorscheme gruvbox
+		endif
+	endfunction
 
-	local slime_autocmds = vim.api.nvim_create_augroup("nvim_slime", { clear = true })
+	function SlimeAddChannel()
+		if !exists("g:slime_last_channel")
+			let g:slime_last_channel = [&channel]
+			echo g:slime_last_channel
+		else
+			call add(g:slime_last_channel, &channel)
+			echo g:slime_last_channel
+		endif
+		"call Change_bg()
+	endfunction
 
-	vim.api.nvim_create_autocmd("TermOpen", {
-		pattern = "*",
-		callback = function()
-					if not vim.g.slime_last_channel then
-						vim.g.slime_last_channel = {vim.api.nvim_eval("&channel")}
-					else
-						vim.g.slime_last_channel.insert(vim.api.nvim_eval("&channel"))
-					end,
-		group = slime_autocmds
-	})
+	" values in is a list, dict in is a dictionary
+	function HasTerminal(idx, val)
+		let vars = a:val['variables']
+		return has_key(vars, "terminal_job_id")
+	endfunction
 
-	vim.api.nvim_create_autocmd("TermClose", {
-		pattern = "*",
-		callback = function() 			
-			if vim.g.slime_last_channel == vim.api.nvim_eval("&channel") then
-				vim.cmd([[unlet vim.g.slime_last_channel]])
-			end
+	let FilterFun = funcref("HasTerminal")
 
-		end,
-		group = slime_autocmds
-	})
+		"for k in vec_range "filtering down to just the info we wqant
+		"	call filter(a[k], 'v:key ==? "bufnr"|| v:key ==? "lnum" || v:key ==? "loaded" || v:key ==? "hidden" || v:key ==? "name" || v:key ==? "variables"' )
+		"	call filter(a[k]['variables'], 'v:key ==? "changedtick" || v:key ==? "terminal_job_pid" || v:key ==? "terminal_job_id" || v:key ==? "term_title"')
+		"endfor
+	function ClearExistingChannel(func_ref_in)
+		let a = getbufinfo()
+		let vec_range = range(len(a))
 
-EOF
+		call filter(a, a:func_ref_in)
 
-if get(g:, "slime_target", "") == "neovim"
-  augroup nvim_slime
-    autocmd!
-    autocmd TermOpen * let g:slime_last_channel = &channel
-  augroup END
-end
+		"call Change_bg()
+
+
+	endfunction
+	
+	function SlimeClearChannel(func_ref_in)
+		if !exists("g:slime_last_channel")
+		elseif len(g:slime_last_channel) == 0
+			unlet g:slime_last_channel
+		else
+			call ClearExistingChannel(a:func_ref_in)
+		endif
+	endfunction
+	
+	if get(g:, "slime_target", "") == "neovim"
+		augroup nvim_slime
+			autocmd!
+	 	 	autocmd TermOpen * call SlimeAddChannel()
+	 	 	autocmd TermClose * call SlimeClearChannel(FilterFun)
+	 	augroup END
+	endif
 endif
 
 
