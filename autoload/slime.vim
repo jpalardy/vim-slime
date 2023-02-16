@@ -189,14 +189,8 @@ if exists("g:default_get_slime_job_id") && has("nvim")
 
 end
 
-function! g:get_channel(id_in) abort
-	try
-		let l:pid = jobpid(&channel)
-		return 1
-	catch
-		return 0
-	endtry
-endfunction
+"TODO: levels of auto: menu/no menu of terminal buffers, autofill/no autofill, or fill without asking
+" add guard of slimeconfig
 
 function! s:NeovimConfig() abort
 	if !exists("b:slime_config")
