@@ -196,11 +196,11 @@ function! s:NeovimConfig() abort
 		let b:slime_config["jobid"] = g:slime_get_jobid()
 	else
 
-		if b:slime_config["jobid"] != "" || b:slime_config["jobid"] isnot v:null
-			let b:slime_config["jobid"] = input("jobid: ", b:slime_config["jobid"])
-		else
-			echo("No running terminal; open one and then configure")
-		endif
+	if b:slime_config["jobid"] != "" || b:slime_config["jobid"] isnot v:null
+		let b:slime_config["jobid"] = str2nr(input("jobid: ", b:slime_config["jobid"]))
+	else
+		echo("No running terminal; open one and then configure")
+	endif
 		
 	endif
 endfunction
@@ -407,19 +407,16 @@ endfunction
 function! s:SlimeVerifyConfig()
 
 	if has('nvim') && get(g:, "slime_target", "") == "neovim"
-		let l:current_channel = {"jobid": get(g:slime_last_channel, -1, "")}
-		let l:all_channels = []
-		let bufinfo = getbufinfo()
 
-
-
-
-
+		if index( g:slime_last_channel, b:slime_config['jobid'] ) >= 0
+			return
+		else
+			call s:SlimeDispatch('Config')
+		endif
 	else
 		return
 	endif
 	
-	return
 endfunction
 
 function! s:SlimeGetConfig()
