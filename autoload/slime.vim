@@ -185,25 +185,24 @@ function! s:NeovimSend(config, text)
   endif
 endfunction
 
-if exists("g:default_get_slime_job_id") && has("nvim")
 
-end
-
-"TODO: levels of auto: menu/no menu of terminal buffers, echo terminal we connected to
+"TODO: levels of auto: menu/no menu of terminal buffers, echo terminal we connected to, add SlimeTestConfig after everywhere where SlimeGetConfig is called
 function! s:NeovimConfig() abort
 	if !exists("b:slime_config")
-		if exists("g:slime_last_channel") && len(g:slime_last_channel) >= 1
-			 let b:slime_config = {"jobid": get(g:slime_last_channel, -1, "")}
-		 else
-			 echo "No last channel: open new terminal to set"
-		end
-	end
+		 let b:slime_config = {"jobid": get(g:slime_last_channel, -1, "")}
+	endif
 
 	if exists("g:slime_get_jobid")
 		let b:slime_config["jobid"] = g:slime_get_jobid()
 	else
-		let b:slime_config["jobid"] = input("jobid: ", b:slime_config["jobid"])
-	end
+
+		if b:slime_config["jobid"] != "" || b:slime_config["jobid"] isnot v:null
+			let b:slime_config["jobid"] = input("jobid: ", b:slime_config["jobid"])
+		else
+			echo("No running terminal; open one and then configure")
+		endif
+		
+	endif
 endfunction
 
 
@@ -248,7 +247,7 @@ function! s:WhimreplConfig() abort
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" vim terminal
+" vim terminal 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:VimterminalSend(config, text)
@@ -387,7 +386,8 @@ function! s:_EscapeText(text)
   end
 endfunction
 
-function! s:SlimeGetConfig()
+
+function! s:SlimeExistsConfig()
   " b:slime_config already configured...
   if exists("b:slime_config")
     return
@@ -403,6 +403,30 @@ function! s:SlimeGetConfig()
   " prompt user
   call s:SlimeDispatch('Config')
 endfunction
+
+function! s:SlimeVerifyConfig()
+
+	if has('nvim') && get(g:, "slime_target", "") == "neovim"
+		let l:current_channel = {"jobid": get(g:slime_last_channel, -1, "")}
+		let l:all_channels = []
+		let bufinfo = getbufinfo()
+
+
+
+
+
+	else
+		return
+	endif
+	
+	return
+endfunction
+
+function! s:SlimeGetConfig()
+	call s:SlimeExistsConfig()
+	call s:SlimeVerifyConfig()
+endfunction
+
 
 function! slime#send_op(type, ...) abort
   call s:SlimeGetConfig()

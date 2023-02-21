@@ -54,7 +54,7 @@ if has('nvim') && get(g:, "slime_target", "") == "neovim"
 		endif
 	endfunction
 
-	function SlimeAddChannel()
+	function SlimeAddChannel() "adds terminal job id to the g:slime_last_channel variable
 		if !exists("g:slime_last_channel")
 			let g:slime_last_channel = [&channel]
 			echo g:slime_last_channel
@@ -62,38 +62,18 @@ if has('nvim') && get(g:, "slime_target", "") == "neovim"
 			call add(g:slime_last_channel, &channel)
 			echo g:slime_last_channel
 		endif
-		"call Change_bg()
 	endfunction
 
-	" values in is a list, dict in is a dictionary
-	function HasTerminal(idx, val)
-		let vars = a:val['variables']
-		return has_key(vars, "terminal_job_id")
-	endfunction
 
-	let FilterFun = funcref("HasTerminal")
-
-		"for k in vec_range "filtering down to just the info we wqant
-		"	call filter(a[k], 'v:key ==? "bufnr"|| v:key ==? "lnum" || v:key ==? "loaded" || v:key ==? "hidden" || v:key ==? "name" || v:key ==? "variables"' )
-		"	call filter(a[k]['variables'], 'v:key ==? "changedtick" || v:key ==? "terminal_job_pid" || v:key ==? "terminal_job_id" || v:key ==? "term_title"')
-		"endfor
-	function ClearExistingChannel(func_ref_in)
-		let a = getbufinfo()
-		let vec_range = range(len(a))
-
-		call filter(a, a:func_ref_in)
-
-		"call Change_bg()
-
-
-	endfunction
-	
-	function SlimeClearChannel(func_ref_in)
+	function SlimeClearChannel() " checks if slime_last_channel exists and is nonempty; then fitlers slime_last_channel to only have existing channels
 		if !exists("g:slime_last_channel")
 		elseif len(g:slime_last_channel) == 0
 			unlet g:slime_last_channel
 		else
-			call ClearExistingChannel(a:func_ref_in)
+			let bufinfo = getbufinfo()
+			call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id") })
+			call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] })
+			call filter(g:slime_last_channel, {_, val -> index(bufinfo, val ) >= 0 })
 		endif
 	endfunction
 	
@@ -101,12 +81,19 @@ if has('nvim') && get(g:, "slime_target", "") == "neovim"
 		augroup nvim_slime
 			autocmd!
 	 	 	autocmd TermOpen * call SlimeAddChannel()
-	 	 	autocmd TermClose * call SlimeClearChannel(FilterFun)
+	 	 	autocmd TermClose * call SlimeClearChannel()
 	 	augroup END
 	endif
 endif
 
-
 nmap gz <Plug>SlimeMotionSend
 nmap gzz <Plug>SlimeLineSend
 xmap gz <Plug>SlimeRegionSend
+		" let vec_range = range(len(a))
+		"for k in vec_range "filtering down to just the info we wqant
+		"	call filter(a[k], 'v:key ==? "bufnr"|| v:key ==? "lnum" || v:key ==? "loaded" || v:key ==? "hidden" || v:key ==? "name" || v:key ==? "variables"' )
+		"	call filter(a[k]['variables'], 'v:key ==? "changedtick" || v:key ==? "terminal_job_pid" || v:key ==? "terminal_job_id" || v:key ==? "term_title"')
+		"endfor
+
+
+
