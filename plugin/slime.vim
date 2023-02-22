@@ -86,14 +86,6 @@ if has('nvim') && get(g:, "slime_target", "") == "neovim"
 	endif
 endif
 
-nmap gz <Plug>SlimeMotionSend
-nmap gzz <Plug>SlimeLineSend
-xmap gz <Plug>SlimeRegionSend
-		" let vec_range = range(len(a))
-		"for k in vec_range "filtering down to just the info we wqant
-		"	call filter(a[k], 'v:key ==? "bufnr"|| v:key ==? "lnum" || v:key ==? "loaded" || v:key ==? "hidden" || v:key ==? "name" || v:key ==? "variables"' )
-		"	call filter(a[k]['variables'], 'v:key ==? "changedtick" || v:key ==? "terminal_job_pid" || v:key ==? "terminal_job_id" || v:key ==? "term_title"')
-		"endfor
 
 
 
