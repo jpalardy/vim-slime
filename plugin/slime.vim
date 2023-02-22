@@ -69,13 +69,11 @@ if has('nvim') && get(g:, "slime_target", "") == "neovim"
 		endif
 	endfunction
 	
-	if get(g:, "slime_target", "") == "neovim"
 		augroup nvim_slime
 			autocmd!
 	 	 	autocmd TermOpen * call SlimeAddChannel()
 	 	 	autocmd TermClose * call SlimeClearChannel()
 	 	augroup END
-	endif
 endif
 
 
