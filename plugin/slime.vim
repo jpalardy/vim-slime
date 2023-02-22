@@ -38,14 +38,6 @@ endif
 
 if has('nvim') && get(g:, "slime_target", "") == "neovim"
 
-	function Change_bg()
-		if g:colors_name ==? "gruvbox"
-			colorscheme tokyonight
-		elseif g:colors_name ==? "tokyonight"
-			colorscheme gruvbox
-		endif
-	endfunction
-
 	function SlimeAddChannel() "adds terminal job id to the g:slime_last_channel variable
 		if !exists("g:slime_last_channel")
 			let g:slime_last_channel = [&channel]
