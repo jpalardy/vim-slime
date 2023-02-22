@@ -186,7 +186,6 @@ function! s:NeovimSend(config, text)
 endfunction
 
 
-"TODO: levels of auto: menu/no menu of terminal buffers, echo terminal we connected to, add SlimeTestConfig after everywhere where SlimeGetConfig is called
 function! s:NeovimConfig() abort
 	if !exists("b:slime_config")
 		 let b:slime_config = {"jobid": get(g:slime_last_channel, -1, "")}
