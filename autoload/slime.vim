@@ -100,6 +100,7 @@ function! s:ZellijConfig() abort
   else
     echoerr "Error: Allowed values are (current, right, left, up, down)"
   endif
+endfunction
 
 " Wezterm
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
