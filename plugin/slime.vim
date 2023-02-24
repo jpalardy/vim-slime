@@ -36,6 +36,9 @@ if !exists("g:slime_no_mappings") || !g:slime_no_mappings
   endif
 endif
 
+" for neovim (only), make slime_last_channel contain
+" the channel id of the last opened terminal, stored in an array with
+" the most recent terminal job id the last element
 if has('nvim') && get(g:, "slime_target", "") == "neovim"
 
   function SlimeAddChannel() "adds terminal job id to the g:slime_last_channel variable
@@ -59,14 +62,10 @@ if has('nvim') && get(g:, "slime_target", "") == "neovim"
       call filter(g:slime_last_channel, {_, val -> index(bufinfo, val ) >= 1 })
     endif
   endfunction
-  
+
     augroup nvim_slime
       autocmd!
         autocmd TermOpen * call SlimeAddChannel()
         autocmd TermClose * call SlimeClearChannel()
      augroup END
 endif
-
-
-
-
