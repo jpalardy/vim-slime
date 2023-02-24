@@ -197,11 +197,11 @@ function! s:NeovimConfig() abort
 		let b:slime_config["jobid"] = g:slime_get_jobid()
 	else
 
-	if b:slime_config["jobid"] != "" || b:slime_config["jobid"] isnot v:null "it would be empty if there was no slime_las_channel
-		let b:slime_config["jobid"] = str2nr(input("jobid: ", b:slime_config["jobid"]))
-	else
-		echo("No running NeoVim Terminal; open one and try configuring again.")
-	endif
+		if b:slime_config["jobid"] != "" || b:slime_config["jobid"] isnot v:null "it would be empty if there was no slime_las_channel
+			let b:slime_config["jobid"] = str2nr(input("jobid: ", b:slime_config["jobid"]))
+		else
+			echo("No running NeoVim Terminal; open one and try configuring again.")
+		endif
 		
 	endif
 endfunction
