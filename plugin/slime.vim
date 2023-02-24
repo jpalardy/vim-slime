@@ -38,34 +38,33 @@ endif
 
 if has('nvim') && get(g:, "slime_target", "") == "neovim"
 
-	function SlimeAddChannel() "adds terminal job id to the g:slime_last_channel variable
-		if !exists("g:slime_last_channel")
-			let g:slime_last_channel = [&channel]
-			echo g:slime_last_channel
-		else
-			call add(g:slime_last_channel, &channel)
-			echo g:slime_last_channel
-		endif
-	endfunction
+  function SlimeAddChannel() "adds terminal job id to the g:slime_last_channel variable
+    if !exists("g:slime_last_channel")
+      let g:slime_last_channel = [&channel]
+      echo g:slime_last_channel
+    else
+      call add(g:slime_last_channel, &channel)
+      echo g:slime_last_channel
+    endif
+  endfunction
 
-
-	function SlimeClearChannel() " checks if slime_last_channel exists and is nonempty; then fitlers slime_last_channel to only have existing channels
-		if !exists("g:slime_last_channel")
-		elseif len(g:slime_last_channel) == 0
-			unlet g:slime_last_channel
-		else
-			let bufinfo = getbufinfo()
-			call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id") })
-			call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] })
-			call filter(g:slime_last_channel, {_, val -> index(bufinfo, val ) >= 0 })
-		endif
-	endfunction
-	
-		augroup nvim_slime
-			autocmd!
-	 	 	autocmd TermOpen * call SlimeAddChannel()
-	 	 	autocmd TermClose * call SlimeClearChannel()
-	 	augroup END
+  function SlimeClearChannel() " checks if slime_last_channel exists and is nonempty; then fitlers slime_last_channel to only have existing channels
+    if !exists("g:slime_last_channel")
+    elseif len(g:slime_last_channel) == 1
+      unlet g:slime_last_channel
+    else
+      let bufinfo = getbufinfo()
+      call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id") })
+      call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] })
+      call filter(g:slime_last_channel, {_, val -> index(bufinfo, val ) >= 1 })
+    endif
+  endfunction
+  
+    augroup nvim_slime
+      autocmd!
+        autocmd TermOpen * call SlimeAddChannel()
+        autocmd TermClose * call SlimeClearChannel()
+     augroup END
 endif
 
 

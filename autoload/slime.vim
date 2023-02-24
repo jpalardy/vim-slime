@@ -195,7 +195,7 @@ function! s:NeovimConfig() abort
   if exists("g:slime_get_jobid")
     let b:slime_config["jobid"] = g:slime_get_jobid()
   else
-    if b:slime_config["jobid"] != "" || b:slime_config["jobid"] isnot v:null "it would be empty if there was no slime_las_channel
+    if b:slime_config["jobid"] != "" || b:slime_config["jobid"] isnot v:null "it would be empty if there was no slime_last_channel
       let b:slime_config["jobid"] = str2nr(input("jobid: ", b:slime_config["jobid"]))
     else
       echo("No running NeoVim Terminal; open one and try configuring again.")
@@ -403,23 +403,20 @@ function! s:SlimeExistsConfig()
 endfunction
 
 function! s:SlimeVerifyConfig()
-
-	if has('nvim') && get(g:, "slime_target", "") == "neovim"
-
-		if index( g:slime_last_channel, b:slime_config['jobid'] ) >= 0
-			return
-		else
-			call s:SlimeDispatch('Config')
-		endif
-	else
-		return
-	endif
-	
+  if has('nvim') && get(g:, "slime_target", "") == "neovim"
+    if index( g:slime_last_channel, b:slime_config['jobid'] ) >= 0
+      return
+    else
+      call s:SlimeDispatch('Config')
+    endif
+  else
+    return
+  endif
 endfunction
 
 function! s:SlimeGetConfig()
-	call s:SlimeExistsConfig()
-	call s:SlimeVerifyConfig()
+  call s:SlimeExistsConfig()
+  call s:SlimeVerifyConfig()
 endfunction
 
 
