@@ -248,7 +248,7 @@ function! s:WhimreplConfig() abort
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" vim terminal 
+" vim terminal
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:VimterminalSend(config, text)
