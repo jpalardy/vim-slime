@@ -187,7 +187,6 @@ function! s:NeovimSend(config, text)
   endif
 endfunction
 
-
 function! s:NeovimConfig() abort
   if !exists("b:slime_config")
      let b:slime_config = {"jobid": get(g:slime_last_channel, -1, "")}
@@ -202,7 +201,6 @@ function! s:NeovimConfig() abort
     endif
   endif
 endfunction
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Conemu
@@ -383,7 +381,6 @@ function! s:_EscapeText(text)
     return result
   end
 endfunction
-
 
 function! s:SlimeExistsConfig()
   " b:slime_config already configured...
