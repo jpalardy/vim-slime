@@ -25,11 +25,12 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence
 5. Neovim Configuration			|slime-neovim|
 6. Kitty Configuration			|slime-kitty|
 7. Zellij Configuration			|slime-zellij|	
-8. X11 Configuration			|slime-x11|
-9. whimrepl Configuration		|slime-whimrepl|
-10. vimterminal Configuration		|slime-vimterminal|
-11. Slime Configuration			|slime-configuration|
-12. Slime Requirements			|slime-requirements|
+8. Wezterm Configuration	        |slime-wezterm|	
+9. X11 Configuration			|slime-x11|
+10. whimrepl Configuration		|slime-whimrepl|
+11. vimterminal Configuration		|slime-vimterminal|
+12. Slime Configuration			|slime-configuration|
+13. Slime Requirements			|slime-requirements|
 
 ==============================================================================
 1. Slime Usage 					*slime-usage*
@@ -205,7 +206,22 @@ A pane relative to the currently active one in the target session
   - "up"/"down"/"right"/"left" for the pane in that direction relative to the location of the active pane
 
 ==============================================================================
-8. X11 Configuration 				*slime-x11*
+8. Wezterm Configuration 			*slime-wezterm*
+
+Wezterm is not the default, to use it you will have to add this line to your
+|.vimrc|:
+>
+	let g:slime_target = "wezterm"
+<
+When you invoke vim-slime for the first time (see below), you will be prompted
+for more configuration.
+
+wezterm pane id~
+
+See e.g. the value of $WEZTERM_PANE in the target pane.
+
+==============================================================================
+9. X11 Configuration 				*slime-x11*
 
 x11 is not the default, to use it you will have to add this line to your
 |.vimrc|:
@@ -216,7 +232,7 @@ When you invoke vim-slime for the first time, you will have to designate a
 target window by clicking on it.
 
 ==============================================================================
-9. whimrepl Configuration 			*slime-whimrepl*
+10. whimrepl Configuration 			*slime-whimrepl*
 
 whimrepl is not the default, to use it you will have to add this line to
 your |.vimrc|:
@@ -233,7 +249,7 @@ displays that name in its banner every time you start up an instance of
 whimrepl.
 
 ==============================================================================
-10. Vim :terminal Configuration 			*slime-vimterminal*
+11. Vim :terminal Configuration 			*slime-vimterminal*
 
 Vim :terminal support targets the terminal emulator built into vim from
 version 8.0.0693, accessed via the :terminal command. It does not support the
@@ -269,7 +285,7 @@ When you invoke vim-slime for the first time (see below), you will be prompted
 to select from an existing terminal or to create a new one.
 
 ==============================================================================
-11. Slime Configuration 				*slime-configuration*
+12. Slime Configuration 				*slime-configuration*
 
 Global Variables~
 						*g:slime_target*
@@ -336,7 +352,7 @@ To use vim like mappings instead of emacs keybindings use the following:
 <
 
 ==============================================================================
-12. Slime Requirements 				*slime-requirements*
+13. Slime Requirements 				*slime-requirements*
 
 Slime requires either screen or tmux to be available and executable. Awk is
 used for completion of screen sessions.  whimrepl does not require any

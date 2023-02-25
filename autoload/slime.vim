@@ -102,6 +102,20 @@ function! s:ZellijConfig() abort
   endif
 endfunction
 
+" Wezterm
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+function! s:WeztermSend(config, text)
+  call system("echo " . shellescape(a:text) . " | wezterm cli send-text --pane-id=" . shellescape(a:config["pane_id"]))
+endfunction
+
+function! s:WeztermConfig() abort
+  if !exists("b:slime_config")
+    let b:slime_config = {"pane_id": 1}
+  end
+  let b:slime_config["pane_id"] = input("wezterm pane_id: ","1") 
+endfunction
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tmux
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

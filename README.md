@@ -40,6 +40,7 @@ Many targets are supported:
 - [ConEmu](#conemu)
 - [Vim :terminal](#vim-terminal)
 - [NeoVim :terminal](#neovim-terminal)
+- [wezterm](#wezterm)
 
 Installation
 ------------
@@ -338,6 +339,19 @@ vim.g.slime_get_jobid = function()
   -- some way to select and return jobid
 end
 ```
+
+### wezterm
+
+[wezterm](https://wezfurlong.org/wezterm/index.html) is *not* the default, to use it you will have to add this line to your .vimrc:
+
+    let g:slime_target = "wezterm"
+
+When you invoke vim-slime for the first time, you will be prompted for more configuration.
+
+wezterm pane id
+
+    This is the id of the wezterm pane that you wish to target.
+    See e.g. the value of $WEZTERM_PANE in the target pane.
 
 Advanced Configuration
 ----------------------
