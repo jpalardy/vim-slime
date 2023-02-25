@@ -348,9 +348,9 @@ end
 
 When you invoke vim-slime for the first time, you will be prompted for more configuration.
 
-weztem pane id
+wezterm pane id
 
-    This is the id of the kitty window that you wish to target.
+    This is the id of the wezterm pane that you wish to target.
     See e.g. the value of $WEZTERM_PANE in the target pane.
 
 Advanced Configuration
