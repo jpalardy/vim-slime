@@ -359,7 +359,7 @@ function! s:SID()
 endfun
 
 function! s:WritePasteFile(text)
-  let paste_dir = fnamemodify(g:slime_paste_file, ":p:h")
+  let paste_dir = fnamemodify(expand(g:slime_paste_file), ":p:h")
   if !isdirectory(paste_dir)
     call mkdir(paste_dir, "p")
   endif
