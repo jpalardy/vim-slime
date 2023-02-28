@@ -325,7 +325,7 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:X11Send(config, text)
-  call system("xdotool type --delay 0 --window " . b:slime_config["window_id"] . " -- " . shellescape(a:text))
+  call system("xdotool type --delay 0 --window " . shellescape(b:slime_config["window_id"]) . " -- " . shellescape(a:text))
 endfunction
 
 function! s:X11Config() abort
@@ -340,7 +340,7 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:DtachSend(config, text)
-  call system("dtach -p " . b:slime_config["socket_path"], a:text)
+  call system("dtach -p " . shellescape(b:slime_config["socket_path"]), a:text)
 endfunction
 
 function! s:DtachConfig() abort
@@ -363,7 +363,7 @@ function! s:WritePasteFile(text)
   if !isdirectory(paste_dir)
     call mkdir(paste_dir, "p")
   endif
-  let output = system("cat > " . g:slime_paste_file, a:text)
+  let output = system("cat > " . shellescape(g:slime_paste_file, a:text))
   if v:shell_error
     echoerr output
   endif
