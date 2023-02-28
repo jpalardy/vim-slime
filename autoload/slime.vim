@@ -363,7 +363,7 @@ function! s:WritePasteFile(text)
   if !isdirectory(paste_dir)
     call mkdir(paste_dir, "p")
   endif
-  let output = system("cat > " . shellescape(g:slime_paste_file, a:text))
+  let output = system("cat > " . shellescape(g:slime_paste_file), a:text)
   if v:shell_error
     echoerr output
   endif
