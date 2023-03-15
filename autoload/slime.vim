@@ -262,13 +262,9 @@ function! s:VimterminalSend(config, text)
     echoerr "Invalid terminal. Use :SlimeConfig to select a terminal"
     return
   endif
-  " Ideally we ought to be able to use a single term_sendkeys call however as
-  " of vim 8.0.1203 doing so can cause terminal display issues for longer
-  " selections of text.
-  for l in split(a:text,'\n\zs')
-    call term_sendkeys(bufnr,substitute(l,'\n',"\r",''))
-    call term_wait(bufnr)
-  endfor
+  " send the text, translating newlines to enter keycode for Windows or any
+  " other platforms where they are not the same
+  call term_sendkeys(bufnr,substitute(a:text,'\n',"\r",'g'))
 endfunction
 
 function! s:VimterminalDescription(idx,info)
