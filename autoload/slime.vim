@@ -106,7 +106,19 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:WeztermSend(config, text)
-  call system("echo " . shellescape(a:text) . " | wezterm cli send-text --pane-id=" . shellescape(a:config["pane_id"]))
+  if exists("b:slime_bracketed_paste")
+    let bracketed_paste = b:slime_bracketed_paste
+  elseif exists("g:slime_bracketed_paste")
+    let bracketed_paste = g:slime_bracketed_paste
+  else
+    let bracketed_paste = 0
+  endif
+
+  if bracketed_paste
+      call system("echo " . shellescape(a:text) . " | wezterm cli send-text --pane-id=" . shellescape(a:config["pane_id"]))
+  else
+      call system("echo " . shellescape(a:text) . " | wezterm cli send-text --no-paste --pane-id=" . shellescape(a:config["pane_id"]))
+  endif
 endfunction
 
 function! s:WeztermConfig() abort
