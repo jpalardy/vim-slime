@@ -353,6 +353,10 @@ wezterm pane id
     This is the id of the wezterm pane that you wish to target.
     See e.g. the value of $WEZTERM_PANE in the target pane.
 
+By default bracketed paste is disabled for vim-slime.
+Setting `g:slime_bracketed_paste` to `1` in your `.vimrc`
+enables or disables bracketed-paste. It is disabled by default because it can
+create issues with ipython. Refer the tmux section above for details.
 Advanced Configuration
 ----------------------
 

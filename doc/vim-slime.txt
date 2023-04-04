@@ -124,7 +124,7 @@ it can be useful to rely on bracketed-paste
 (https://cirw.in/blog/bracketed-paste). Luckily, tmux knows how to handle
 that. See tmux's manual.
 
-You can enable bracketed-paste using eiter
+You can enable bracketed-paste using either
 >
     g:slime_bracketed_paste
 <
@@ -219,6 +219,21 @@ for more configuration.
 wezterm pane id~
 
 See e.g. the value of $WEZTERM_PANE in the target pane.
+
+By default bracketed paste is disabled for vim-slime.
+
+You can enable bracketed-paste using either
+>
+    g:slime_bracketed_paste
+<
+or
+>
+    b:slime_bracketed_paste
+<
+
+Note that the buffer variable takes precedence over the global's one.
+Refer the tmux section above more information on bracketed-paste.
+
 
 ==============================================================================
 9. X11 Configuration 				*slime-x11*
