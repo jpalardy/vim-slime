@@ -25,7 +25,8 @@ function! s:ScreenSend(config, text)
         \ " -X eval \"readreg p " . g:slime_paste_file . "\"")
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X paste p")
-  call system('screen -X colon ""')
+  call system('screen -X colon "
+"')
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
@@ -113,11 +114,11 @@ function! s:WeztermSend(config, text)
   else
     let bracketed_paste = 0
   endif
-
   if bracketed_paste
-      call system("echo " . shellescape(a:text) . " | wezterm cli send-text --pane-id=" . shellescape(a:config["pane_id"]))
+    call system("echo " . shellescape(a:text) . " | wezterm cli send-text --pane-id=" . shellescape(a:config["pane_id"]))
   else
-      call system("echo " . shellescape(a:text) . " | wezterm cli send-text --no-paste --pane-id=" . shellescape(a:config["pane_id"]))
+    call system("echo " . shellescape(a:text) . " | wezterm cli send-text --no-paste --pane-id=" . shellescape(a:config["pane_id"]))
+  endif
   endif
 endfunction
 
