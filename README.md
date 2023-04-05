@@ -357,6 +357,7 @@ By default bracketed paste is disabled for vim-slime.
 Setting `g:slime_bracketed_paste` to `1` in your `.vimrc`
 enables or disables bracketed-paste. It is disabled by default because it can
 create issues with ipython. Refer the tmux section above for details.
+
 Advanced Configuration
 ----------------------
 
