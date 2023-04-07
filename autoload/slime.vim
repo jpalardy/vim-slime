@@ -114,9 +114,9 @@ function! s:WeztermSend(config, text)
     let bracketed_paste = 0
   endif
   if bracketed_paste
-    call system("echo " . shellescape(a:text) . " | wezterm cli send-text --pane-id=" . shellescape(a:config["pane_id"]))
+      call system("wezterm cli send-text --pane-id=" . shellescape(a:config["pane_id"]). ' '. shellescape(a:text) )
   else
-    call system("echo " . shellescape(a:text) . " | wezterm cli send-text --no-paste --pane-id=" . shellescape(a:config["pane_id"]))
+      call system("wezterm cli send-text --no-paste --pane-id=" . shellescape(a:config["pane_id"]). ' '. shellescape(a:text))
   endif
   endif
 endfunction
