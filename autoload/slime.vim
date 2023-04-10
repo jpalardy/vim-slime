@@ -107,7 +107,33 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:WeztermSend(config, text)
-  call system("wezterm cli send-text --pane-id=" . shellescape(a:config["pane_id"]), a:text)
+  if exists("b:slime_bracketed_paste")
+    let bracketed_paste = b:slime_bracketed_paste
+  elseif exists("g:slime_bracketed_paste")
+    let bracketed_paste = g:slime_bracketed_paste
+  else
+    let bracketed_paste = 0
+  endif
+
+  let [text_to_paste, has_crlf] = [a:text, 0]
+  if bracketed_paste
+    if a:text[-2:] == "\r\n"
+      let [text_to_paste, has_crlf] = [a:text[:-3], 1]
+    elseif a:text[-1:] == "\r" || a:text[-1:] == "\n"
+      let [text_to_paste, has_crlf] = [a:text[:-2], 1]
+    endif
+  endif
+
+  if bracketed_paste
+    call system("wezterm cli send-text --pane-id=" . shellescape(a:config["pane_id"]), text_to_paste)
+  else
+    call system("wezterm cli send-text --no-paste --pane-id=" . shellescape(a:config["pane_id"]), text_to_paste)
+  endif
+
+  " trailing newline
+  if has_crlf
+    call system("wezterm cli send-text --no-paste --pane-id=" . shellescape(a:config["pane_id"]), "\n")
+  end
 endfunction
 
 function! s:WeztermConfig() abort
