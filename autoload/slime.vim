@@ -114,7 +114,7 @@ function! s:WeztermConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"pane_id": 1}
   end
-  let b:slime_config["pane_id"] = input("wezterm pane_id: ","1")
+  let b:slime_config["pane_id"] = input("wezterm pane_id: ", b:slime_config["pane_id"])
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
