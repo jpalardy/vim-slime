@@ -107,7 +107,7 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:WeztermSend(config, text)
-  call system("echo " . shellescape(a:text) . " | wezterm cli send-text --pane-id=" . shellescape(a:config["pane_id"]))
+  call system("wezterm cli send-text --pane-id=" . shellescape(a:config["pane_id"]), a:text)
 endfunction
 
 function! s:WeztermConfig() abort
