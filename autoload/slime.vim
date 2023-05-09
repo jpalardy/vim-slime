@@ -188,14 +188,19 @@ function! s:NeovimSend(config, text)
 endfunction
 
 function! s:NeovimConfig() abort
-  if !exists("b:slime_config")
-     let b:slime_config = {"jobid": get(g:slime_last_channel, -1, "")}
+  if !exists("b:slime_config") "initializing slime_config
+"slime_last_channel should be a list if everything is working right
+    if !exists("g:slime_last_channel":) 
+      let b:slime_config = {"jobid": v:null}
+    else
+      let b:slime_config = {"jobid": get(g:slime_last_channel, -1, "")}
+    endif
   endif
   if exists("g:slime_get_jobid")
     let b:slime_config["jobid"] = g:slime_get_jobid()
   else
-    if b:slime_config["jobid"] != "" || b:slime_config["jobid"] isnot v:null "it would be empty if there was no slime_last_channel
-      let b:slime_config["jobid"] = str2nr(input("jobid: ", b:slime_config["jobid"]))
+    if b:slime_config["jobid"] != "" && b:slime_config["jobid"] isnot v:null "it would be empty i f there was no slime_last_channel
+      let b:slime_config["jobid"] = str2nr(input("jobid: ", b:slime_config["jobid"])) "automatically selecting current value, can change
     else
       echo("No running NeoVim Terminal; open one and try configuring again.")
     endif
