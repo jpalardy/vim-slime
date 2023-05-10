@@ -59,7 +59,7 @@ if has('nvim') && get(g:, "slime_target", "") == "neovim"
       let bufinfo = getbufinfo()
       call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id") })
       call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] })
-      call filter(g:slime_last_channel, {_, val -> index(bufinfo, val ) >= 1 })
+      call filter(g:slime_last_channel, {_, val -> index(bufinfo, val ) >= 0 })
     endif
   endfunction
 

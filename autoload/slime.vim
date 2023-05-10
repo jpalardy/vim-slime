@@ -188,23 +188,24 @@ function! s:NeovimSend(config, text)
 endfunction
 
 function! s:NeovimConfig() abort
-  if !exists("b:slime_config") "initializing slime_config
-"slime_last_channel should be a list if everything is working right
-    if !exists("g:slime_last_channel":) 
-      let b:slime_config = {"jobid": v:null}
-    else
-      let b:slime_config = {"jobid": get(g:slime_last_channel, -1, "")}
-    endif
-  endif
-  if exists("g:slime_get_jobid")
-    let b:slime_config["jobid"] = g:slime_get_jobid()
+	let not_configured=1
+  if exists("g:slime_last_channel")
+   let b:slime_config = {"jobid": get(g:slime_last_channel, -1, "")}
+   if exists("g:slime_get_jobid")
+     let b:slime_config["jobid"] = g:slime_get_jobid()
+     let not_configured=0
+   else
+     if b:slime_config["jobid"] != "" && b:slime_config["jobid"] isnot v:null "it would be empty i f there was no slime_last_channel
+       let b:slime_config["jobid"] = str2nr(input("jobid: ", b:slime_config["jobid"]))
+       let not_configured=0
+     endif
+   endif
   else
-    if b:slime_config["jobid"] != "" && b:slime_config["jobid"] isnot v:null "it would be empty i f there was no slime_last_channel
-      let b:slime_config["jobid"] = str2nr(input("jobid: ", b:slime_config["jobid"])) "automatically selecting current value, can change
-    else
-      echo("No running NeoVim Terminal; open one and try configuring again.")
-    endif
+    echo "Terminal not detected; open neovim terminal and try again"
   endif
+
+  return not_configured
+
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -387,38 +388,60 @@ function! s:_EscapeText(text)
   end
 endfunction
 
-function! s:SlimeExistsConfig()
-  " b:slime_config already configured...
+function! s:SlimeExistsConfig() abort
+  " b:slime_config already not_configured...
+
+  let not_configured = 1
   if exists("b:slime_config")
-    return
+    let not_configured = s:SlimeVerifyConfig()	
+	return not_configured
   end
   " assume defaults, if they exist
   if exists("g:slime_default_config")
     let b:slime_config = g:slime_default_config
+	let not_configured = 0
   end
-  " skip confirmation, if configured
+  " skip confirmation, if not_configured
   if exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
-    return
+	let not_configured = 0
+    return not_configured
   end
   " prompt user
-  call s:SlimeDispatch('Config')
+  let not_configured = s:SlimeDispatch('Config')
+  return not_configured
 endfunction
 
-function! s:SlimeVerifyConfig()
+function! s:SlimeVerifyConfig() abort
+	let not_configured = 1
   if has('nvim') && get(g:, "slime_target", "") == "neovim"
+
+	if !exists("g:slime_last_channel")
+  	    echo "No last channel: open new neovim terminal"
+  	    return not_configured
+  	endif
+
     if index( g:slime_last_channel, b:slime_config['jobid'] ) >= 0
-      return
-    else
-      call s:SlimeDispatch('Config')
+		let not_configured = 0
+		return not_configured
     endif
+		echo "Terminal channel number in config not found"
+		let not_configured = s:SlimeDispatch('Config')
+		return not_configured
   else
-    return
+      let not_configured = 0 "not checking the value
+	  return not_configured
   endif
 endfunction
 
 function! s:SlimeGetConfig()
-  call s:SlimeExistsConfig()
-  call s:SlimeVerifyConfig()
+	try
+		let not_configured = s:SlimeExistsConfig()
+		if not_configured
+			throw 'configuration_error'
+		endif
+	catch
+		echoerr 'Configuration error'
+	endtry
 endfunction
 
 
