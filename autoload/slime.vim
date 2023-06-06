@@ -25,7 +25,8 @@ function! s:ScreenSend(config, text)
         \ " -X eval \"readreg p " . g:slime_paste_file . "\"")
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X paste p")
-  call system('screen -X colon ""')
+  call system('screen -X colon "
+"')
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
@@ -57,9 +58,9 @@ function! s:KittyConfig() abort
     let b:slime_config = {"window_id": 1, "listen_on": ""}
   end
   let b:slime_config["window_id"] = str2nr(system("kitty @ select-window --self"))
-  if v:shell_error
-    let b:slime_config["window_id"] = input("kitty window_id: ","1")
-  end
+  if v:shell_error || b:slime_config["window_id"] == $KITTY_WINDOW_ID
+    let b:slime_config["window_id"] = input("kitty window_id: ", b:slime_config["window_id"])
+  endif
   let b:slime_config["listen_on"] = input("kitty listen on: ", b:slime_config["listen_on"])
 endfunction
 
