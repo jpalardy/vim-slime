@@ -25,7 +25,6 @@ function! s:ScreenSend(config, text)
         \ " -X eval \"readreg p " . g:slime_paste_file . "\"")
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X paste p")
-  call system('screen -X colon ""')
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
