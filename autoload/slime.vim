@@ -181,6 +181,7 @@ function! s:TmuxSend(config, text)
     let chunk = text_to_paste[i * chunk_size : (i + 1) * chunk_size - 1]
     call s:WritePasteFile(chunk)
     call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
+    call s:TmuxCommand(a:config, "send-keys -X -t " . shellescape(a:config["target_pane"]) . " cancel")
     if bracketed_paste
       call s:TmuxCommand(a:config, "paste-buffer -d -p -t " . shellescape(a:config["target_pane"]))
     else
