@@ -231,6 +231,14 @@ x11 is not the default, to use it you will have to add this line to your
 When you invoke vim-slime for the first time, you will have to designate a
 target window by clicking on it.
 
+In the context of X11 applications such as Jupyter QtConsolex,
+it's necessary to convert new lines into carriage returns to ensure these
+applications are able to correctly interpret and handle multi-line breaks.
+To enable this feature, add this line to your |.vimrc|:
+>
+        let g:slime_x11_lf_to_cr = 1
+<
+
 ==============================================================================
 10. whimrepl Configuration 			*slime-whimrepl*
 
@@ -313,9 +321,14 @@ g:slime_default_config	Set to dictionary of pre-filled prompt answer. See
 g:slime_dont_ask_default	Works with g:slime_default_config. See
 			the README for details: https://github.com/jpalardy/vim-slime
 
+						*g:slime_bracketed_paste*
 g:slime_bracketed_paste Set to non zero value to enable bracketed paste in
                         tmux. See |slime-tmux| or the README for details: 
                         https://github.com/jpalardy/vim-slime 
+
+						*g:slime_x11_lf_to_cr*
+g:slime_x11_lf_to_cr    Set to non zero value to replace new lines with
+                        carriage returns when the target is X11.
 
 Mappings~
 

@@ -348,7 +348,14 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:X11Send(config, text)
-  call system("xdotool type --delay 0 --window " . shellescape(b:slime_config["window_id"]) . " -- " . shellescape(a:text))
+  if !exists("g:slime_x11_lf_to_cr") || !g:slime_x11_lf_to_cr
+      call system("xdotool type --delay 0 --window " . shellescape(b:slime_config["window_id"]) . " -- " . shellescape(a:text))
+  else
+      " In the context of X11 applications such as Jupyter QtConsole,
+      " it's necessary to convert new lines into carriage returns to ensure these
+      " applications are able to correctly interpret and handle multi-line breaks.
+      call system("xdotool type --delay 0 --window " . shellescape(b:slime_config["window_id"]) . " -- " . shellescape(substitute(a:text, '\n', '\r', 'g')))
+  end
 endfunction
 
 function! s:X11Config() abort
