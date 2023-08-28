@@ -6,7 +6,7 @@ endfunction
 
 " replace tabs by spaces
 function! slime#common#tab_to_spaces(text) abort
-  return substitute(a:text, "	", slime#common#get_indent_string(), "g")
+  return substitute(a:text, "\t", slime#common#get_indent_string(), "g")
 endfunction
 
 " change string into array of lines
