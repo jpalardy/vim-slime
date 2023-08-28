@@ -220,6 +220,15 @@ wezterm pane id~
 
 See e.g. the value of $WEZTERM_PANE in the target pane.
 
+wezterm pane direction~
+
+If you want the id of the pane in a relative direction to the default, see "wezterm cli get-pane-direction --help" for possible values.
+
+You can configure the defaults for these options. If you generally run vim to the left of your REPL, you could set the default pane direction to "right".~
+>
+	let g:slime_default_config = {"pane_direction": "right"}
+<
+
 ==============================================================================
 9. X11 Configuration 				*slime-x11*
 

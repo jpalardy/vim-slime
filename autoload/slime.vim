@@ -25,7 +25,8 @@ function! s:ScreenSend(config, text)
         \ " -X eval \"readreg p " . g:slime_paste_file . "\"")
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X paste p")
-  call system('screen -X colon ""')
+  call system('screen -X colon "
+"')
 endfunction
 
 function! s:ScreenSessionNames(A,L,P)
@@ -139,7 +140,14 @@ endfunction
 function! s:WeztermConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"pane_id": 1}
-  end
+  elseif exists("b:slime_config.pane_direction")
+    let tmp = system("wezterm cli get-pane-direction " . shellescape(b:slime_config["pane_direction"]), "\n")
+    if tmp != ""
+      let b:slime_config = {"pane_id": tmp}
+    else
+      let b:slime_config = {"pane_id": 1}
+    endif
+  endif
   let b:slime_config["pane_id"] = input("wezterm pane_id: ", b:slime_config["pane_id"])
 endfunction
 
