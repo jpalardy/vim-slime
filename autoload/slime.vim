@@ -139,12 +139,8 @@ function! s:WeztermConfig() abort
   if !exists("b:slime_config")
     let b:slime_config = {"pane_id": 1}
   elseif exists("b:slime_config.pane_direction")
-    let tmp = system("wezterm cli get-pane-direction " . shellescape(b:slime_config["pane_direction"]), "\n")
-    if tmp != ""
-      let b:slime_config = {"pane_id": tmp}
-    else
-      let b:slime_config = {"pane_id": 1}
-    endif
+    let pane_id = system("wezterm cli get-pane-direction " . shellescape(b:slime_config["pane_direction"]))
+    let b:slime_config = {"pane_id": pane_id}
   endif
   let b:slime_config["pane_id"] = input("wezterm pane_id: ", b:slime_config["pane_id"])
 endfunction
