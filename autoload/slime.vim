@@ -74,7 +74,38 @@ function! s:ZellijSend(config, text)
   if a:config["relative_pane"] != "current"
     call system("zellij " . target_session . " action move-focus " . shellescape(a:config["relative_pane"]))
   end
-  call system("zellij " . target_session . " action write-chars " . shellescape(a:text))
+  if exists("b:slime_bracketed_paste")
+    let bracketed_paste = b:slime_bracketed_paste
+  elseif exists("g:slime_bracketed_paste")
+    let bracketed_paste = g:slime_bracketed_paste
+  else
+    let bracketed_paste = 0
+  endif
+
+  let [text_to_paste, has_crlf] = [a:text, 0]
+  if bracketed_paste
+    if a:text[-2:] == "\r\n"
+      let [text_to_paste, has_crlf] = [a:text[:-3], 1]
+    elseif a:text[-1:] == "\r" || a:text[-1:] == "\n"
+      let [text_to_paste, has_crlf] = [a:text[:-2], 1]
+    endif
+  endif
+
+  if bracketed_paste
+    " zellij doesn't support bracketed paste so wrap in escape codes
+    let ec_start = [27, 91, 50, 48, 48, 126] " ESC [ 2 0 0 ~
+    let ec_end = [27, 91, 50, 48, 49, 126] " ESC [ 2 0 1 ~
+    if has_crlf
+      " trailing newline
+      let ec_end += [10]
+    end
+    " convert to list of ascii codes and stack the escape codes
+    let text_to_paste = ec_start + map(split(text_to_paste, '\zs'), 'char2nr(v:val)') + ec_end
+    call system("zellij " . target_session . " action write " . join(text_to_paste))
+  else
+    call system("zellij " . target_session . " action write-chars " . shellescape(text_to_paste))
+  endif
+
   if a:config["relative_pane"] != "current"
     call system("zellij " . target_session . " action move-focus " . shellescape(a:config["relative_move_back"]))
   end
