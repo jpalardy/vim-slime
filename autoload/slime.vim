@@ -93,7 +93,34 @@ function! s:ZellijSend(config, text)
   if a:config["relative_pane"] != "current"
     call system("zellij " . target_session . " action move-focus " . shellescape(a:config["relative_pane"]))
   end
-  call system("zellij " . target_session . " action write-chars " . shellescape(a:text))
+  if exists("b:slime_bracketed_paste")
+    let bracketed_paste = b:slime_bracketed_paste
+  elseif exists("g:slime_bracketed_paste")
+    let bracketed_paste = g:slime_bracketed_paste
+  else
+    let bracketed_paste = 0
+  endif
+
+  let [text_to_paste, has_crlf] = [a:text, 0]
+  if bracketed_paste
+    if a:text[-2:] == "\r\n"
+      let [text_to_paste, has_crlf] = [a:text[:-3], 1]
+    elseif a:text[-1:] == "\r" || a:text[-1:] == "\n"
+      let [text_to_paste, has_crlf] = [a:text[:-2], 1]
+    endif
+  endif
+
+  if bracketed_paste
+    call system("zellij " . target_session . " action write 27 91 50 48 48 126")
+    call system("zellij " . target_session . " action write-chars " . shellescape(text_to_paste))
+    call system("zellij " . target_session . " action write 27 91 50 48 49 126")
+    if has_crlf
+      call system("zellij " . target_session . " action write 10")
+    endif
+  else
+    call system("zellij " . target_session . " action write-chars " . shellescape(text_to_paste))
+  endif
+
   if a:config["relative_pane"] != "current"
     call system("zellij " . target_session . " action move-focus " . shellescape(a:config["relative_move_back"]))
   end
