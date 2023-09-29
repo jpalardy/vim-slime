@@ -92,16 +92,12 @@ function! s:ZellijSend(config, text)
   endif
 
   if bracketed_paste
-    " zellij doesn't support bracketed paste so wrap in escape codes
-    let ec_start = [27, 91, 50, 48, 48, 126] " ESC [ 2 0 0 ~
-    let ec_end = [27, 91, 50, 48, 49, 126] " ESC [ 2 0 1 ~
+    call system("zellij " . target_session . " action write 27 91 50 48 48 126")
+    call system("zellij " . target_session . " action write-chars " . shellescape(text_to_paste))
+    call system("zellij " . target_session . " action write 27 91 50 48 49 126")
     if has_crlf
-      " trailing newline
-      let ec_end += [10]
-    end
-    " convert to list of ascii codes and stack the escape codes
-    let text_to_paste = ec_start + map(split(text_to_paste, '\zs'), 'char2nr(v:val)') + ec_end
-    call system("zellij " . target_session . " action write " . join(text_to_paste))
+      call system("zellij " . target_session . " action write 10")
+    endif
   else
     call system("zellij " . target_session . " action write-chars " . shellescape(text_to_paste))
   endif
