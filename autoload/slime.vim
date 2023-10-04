@@ -534,7 +534,7 @@ function! slime#send_cell() abort
   elseif exists("g:slime_cell_delimiter")
     let cell_delimiter = g:slime_cell_delimiter
   else
-    echoerr "b:slime_cell_delimeter is not defined"
+    echoerr "b:slime_cell_delimiter is not defined"
     return
   endif
 
