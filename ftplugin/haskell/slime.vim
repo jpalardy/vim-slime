@@ -1,4 +1,7 @@
 
+" GHC before 8.0.1 does not support top-level bindings
+let g:slime_config_defaults["haskell_ghci_add_let"] = 1
+
 " Remove '>' on line beginning in literate haskell
 function! s:Remove_initial_gt(lines)
   return map(copy(a:lines), "substitute(v:val, '^>[ \t]*', '', 'g')")
@@ -93,7 +96,7 @@ function! _EscapeText_lhaskell(text)
   let [l:imports, l:nonImports] = s:FilterImportLines(l:lines)
   let l:lines = s:Remove_line_comments(l:nonImports)
 
-  if slime#config#resolve("haskell_ghci_add_let", 1)
+  if slime#config#resolve("haskell_ghci_add_let")
     let l:lines = s:Perhaps_prepend_let(l:lines)
     let l:lines = s:Indent_lines(l:lines)
   endif
@@ -108,7 +111,7 @@ function! _EscapeText_haskell(text)
   let [l:imports, l:nonImports] = s:FilterImportLines(l:lines)
   let l:lines = s:Remove_line_comments(l:nonImports)
 
-  if slime#config#resolve("haskell_ghci_add_let", 1)
+  if slime#config#resolve("haskell_ghci_add_let")
     let l:lines = s:Perhaps_prepend_let(l:lines)
     let l:lines = s:Indent_lines(l:lines)
   endif

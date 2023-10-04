@@ -1,7 +1,10 @@
 
+let g:slime_config_defaults["python_ipython"] = 0
+let g:slime_config_defaults["dispatch_ipython_pause"] = 100
+
 function! _EscapeText_python(text)
-  if slime#config#resolve("python_ipython", 0) && len(split(a:text,"\n")) > 1
-    return ["%cpaste -q\n", slime#config#resolve("dispatch_ipython_pause", 100), a:text, "--\n"]
+  if slime#config#resolve("python_ipython") && len(split(a:text,"\n")) > 1
+    return ["%cpaste -q\n", slime#config#resolve("dispatch_ipython_pause"), a:text, "--\n"]
   else
     let empty_lines_pat = '\(^\|\n\)\zs\(\s*\n\+\)\+'
     let no_empty_lines = substitute(a:text, empty_lines_pat, "", "g")

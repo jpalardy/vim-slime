@@ -5,7 +5,7 @@
 function! s:ScreenSend(config, text)
   call s:WritePasteFile(a:text)
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
-        \ " -X eval \"readreg p " . s:paste_file() . "\"")
+        \ " -X eval \"readreg p " . slime#config#resolve("paste_file") . "\"")
   call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
         \ " -X paste p")
 endfunction
@@ -27,7 +27,7 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:KittySend(config, text)
-  let bracketed_paste = slime#config#resolve("bracketed_paste", 0)
+  let bracketed_paste = slime#config#resolve("bracketed_paste")
 
   let [text_to_paste, has_crlf] = [a:text, 0]
   if bracketed_paste
@@ -70,7 +70,7 @@ function! s:ZellijSend(config, text)
   if a:config["relative_pane"] != "current"
     call system("zellij " . target_session . " action move-focus " . shellescape(a:config["relative_pane"]))
   end
-  let bracketed_paste = slime#config#resolve("bracketed_paste", 0)
+  let bracketed_paste = slime#config#resolve("bracketed_paste")
 
   let [text_to_paste, has_crlf] = [a:text, 0]
   if bracketed_paste
@@ -123,7 +123,7 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:WeztermSend(config, text)
-  let bracketed_paste = slime#config#resolve("bracketed_paste", 0)
+  let bracketed_paste = slime#config#resolve("bracketed_paste")
 
   let [text_to_paste, has_crlf] = [a:text, 0]
   if bracketed_paste
@@ -171,7 +171,7 @@ function! s:TmuxCommand(config, args)
 endfunction
 
 function! s:TmuxSend(config, text)
-  let bracketed_paste = slime#config#resolve("bracketed_paste", 0)
+  let bracketed_paste = slime#config#resolve("bracketed_paste")
 
   let [text_to_paste, has_crlf] = [a:text, 0]
   if bracketed_paste
@@ -188,7 +188,7 @@ function! s:TmuxSend(config, text)
   for i in range(0, len(text_to_paste) / chunk_size)
     let chunk = text_to_paste[i * chunk_size : (i + 1) * chunk_size - 1]
     call s:WritePasteFile(chunk)
-    call s:TmuxCommand(a:config, "load-buffer " . s:paste_file())
+    call s:TmuxCommand(a:config, "load-buffer " . slime#config#resolve("paste_file"))
     call s:TmuxCommand(a:config, "send-keys -X -t " . shellescape(a:config["target_pane"]) . " cancel")
     if bracketed_paste
       call s:TmuxCommand(a:config, "paste-buffer -d -p -t " . shellescape(a:config["target_pane"]))
@@ -389,18 +389,12 @@ function! s:SID()
   return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
 endfun
 
-" some targets (screen, tmux, ...) need a paste_file: set a default if not configured
-function! s:paste_file()
-  return slime#config#resolve("paste_file", expand("$HOME/.slime_paste"))
-endfunction
-
 function! s:WritePasteFile(text)
-  let paste_file = s:paste_file()
-  let paste_dir = fnamemodify(paste_file, ":p:h")
+  let paste_dir = fnamemodify(slime#config#resolve("paste_file"), ":p:h")
   if !isdirectory(paste_dir)
     call mkdir(paste_dir, "p")
   endif
-  let output = system("cat > " . shellescape(paste_file), a:text)
+  let output = system("cat > " . shellescape(slime#config#resolve("paste_file")), a:text)
   if v:shell_error
     echoerr output
   endif
@@ -494,9 +488,8 @@ function! slime#send_lines(count) abort
 endfunction
 
 function! slime#send_cell() abort
-  let cell_delimiter = slime#config#resolve("cell_delimiter", v:null)
+  let cell_delimiter = slime#config#resolve("cell_delimiter")
   if cell_delimiter == v:null
-    echoerr "slime_cell_delimiter is not defined"
     return
   endif
 
@@ -514,13 +507,13 @@ function! slime#send_cell() abort
 endfunction
 
 function! slime#store_curpos()
-  if slime#config#resolve("preserve_curpos", 1) == 1
+  if slime#config#resolve("preserve_curpos")
     let s:cur = winsaveview()
   endif
 endfunction
 
 function! s:SlimeRestoreCurPos()
-  if slime#config#resolve("preserve_curpos", 1) == 1 && exists("s:cur")
+  if slime#config#resolve("preserve_curpos") && exists("s:cur")
     call winrestview(s:cur)
     unlet s:cur
   endif
@@ -560,7 +553,7 @@ function! s:SlimeDispatch(name, ...)
   if exists("*SlimeOverride" . a:name)
     return call("SlimeOverride" . a:name, a:000)
   end
-  let target = slime#config#resolve("target", "screen")
+  let target = slime#config#resolve("target")
   let capitalized_target = substitute(tolower(target), '\(.\)', '\u\1', '')
   return call("s:" . capitalized_target . a:name, a:000)
 endfunction
