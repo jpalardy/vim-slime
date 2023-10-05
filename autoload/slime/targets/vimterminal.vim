@@ -1,24 +1,5 @@
 
-function! s:VimterminalSend(config, text)
-  let bufnr = str2nr(get(a:config,"bufnr",""))
-  if len(term_getstatus(bufnr))==0
-    echoerr "Invalid terminal. Use :SlimeConfig to select a terminal"
-    return
-  endif
-  " send the text, translating newlines to enter keycode for Windows or any
-  " other platforms where they are not the same
-  call term_sendkeys(bufnr,substitute(a:text,'\n',"\r",'g'))
-endfunction
-
-function! s:VimterminalDescription(idx,info)
-  let title = term_gettitle(a:info.bufnr)
-  if len(title)==0
-    let title = term_getstatus(a:info.bufnr)
-  endif
-  return printf("%2d.%4d %s [%s]",a:idx,a:info.bufnr,a:info.name,title)
-endfunction
-
-function! s:VimterminalConfig() abort
+function! slime#targets#vimterminal#config() abort
   if !exists("*term_start")
     echoerr "vimterminal support requires vim built with :terminal support"
     return
@@ -57,5 +38,26 @@ function! s:VimterminalConfig() abort
       let b:slime_config["bufnr"] = terms[choice-1].bufnr
     endif
   endif
+endfunction
+
+function! slime#targets#vimterminal#send(config, text)
+  let bufnr = str2nr(get(a:config,"bufnr",""))
+  if len(term_getstatus(bufnr))==0
+    echoerr "Invalid terminal. Use :SlimeConfig to select a terminal"
+    return
+  endif
+  " send the text, translating newlines to enter keycode for Windows or any
+  " other platforms where they are not the same
+  call term_sendkeys(bufnr,substitute(a:text,'\n',"\r",'g'))
+endfunction
+
+" -------------------------------------------------
+
+function! s:VimterminalDescription(idx,info)
+  let title = term_gettitle(a:info.bufnr)
+  if len(title)==0
+    let title = term_getstatus(a:info.bufnr)
+  endif
+  return printf("%2d.%4d %s [%s]",a:idx,a:info.bufnr,a:info.name,title)
 endfunction
 
