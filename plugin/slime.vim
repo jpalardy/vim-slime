@@ -38,7 +38,7 @@ endif
 
 " for neovim (only), make slime_last_channel contain
 " the channel id of the last opened terminal
-if get(g:, "slime_target", "") == "neovim"
+if slime#config#resolve("target") == "neovim"
   augroup nvim_slime
     autocmd!
     autocmd TermOpen * let g:slime_last_channel = &channel

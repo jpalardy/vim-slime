@@ -1,6 +1,8 @@
 
+let g:slime_config_defaults["scala_ammonite"] = 0
+
 function! _EscapeText_scala(text)
-  if exists('g:slime_scala_ammonite')
+  if slime#config#resolve("scala_ammonite")
     return ["{\n", a:text, "}\n"]
   end
   " \x04 is ctrl-d
