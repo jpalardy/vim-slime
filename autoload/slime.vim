@@ -3,21 +3,6 @@
 " Helpers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-function! s:SID()
-  return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_SID$')
-endfun
-
-function! s:WritePasteFile(text)
-  let paste_dir = fnamemodify(slime#config#resolve("paste_file"), ":p:h")
-  if !isdirectory(paste_dir)
-    call mkdir(paste_dir, "p")
-  endif
-  let output = system("cat > " . shellescape(slime#config#resolve("paste_file")), a:text)
-  if v:shell_error
-    echoerr output
-  endif
-endfunction
-
 function! s:_EscapeText(text)
   if exists("&filetype")
     let custom_escape = "_EscapeText_" . substitute(&filetype, "[.]", "_", "g")
@@ -55,7 +40,7 @@ function! s:SlimeGetConfig()
     return
   end
   " prompt user
-  call s:SlimeDispatch('Config')
+  call s:SlimeDispatch('config')
 endfunction
 
 function! slime#send_op(type, ...) abort
@@ -154,25 +139,23 @@ function! slime#send(text)
         execute 'sleep' piece . 'm'
       endif
     else
-      call s:SlimeDispatch('Send', b:slime_config, piece)
+      call s:SlimeDispatch('send', b:slime_config, piece)
     end
   endfor
 endfunction
 
 function! slime#config() abort
   call inputsave()
-  call s:SlimeDispatch('Config')
+  call s:SlimeDispatch('config')
   call inputrestore()
 endfunction
 
 " delegation
 function! s:SlimeDispatch(name, ...)
   " allow custom override
-  if exists("*SlimeOverride" . a:name)
-    return call("SlimeOverride" . a:name, a:000)
-  end
-  let target = slime#config#resolve("target")
-  let capitalized_target = substitute(tolower(target), '\(.\)', '\u\1', '')
-  return call("s:" . capitalized_target . a:name, a:000)
+  " if exists("*SlimeOverride" . a:name)
+    " return call("SlimeOverride" . a:name, a:000)
+  " end
+  return call("slime#targets#" . slime#config#resolve("target") . "#" . a:name, a:000)
 endfunction
 

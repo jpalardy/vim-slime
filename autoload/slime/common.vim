@@ -18,3 +18,15 @@ endfunction
 function! slime#common#unlines(lines) abort
   return join(a:lines, "\n") . "\n"
 endfunction
+
+function! slime#common#write_paste_file(text)
+  let paste_dir = fnamemodify(slime#config#resolve("paste_file"), ":p:h")
+  if !isdirectory(paste_dir)
+    call mkdir(paste_dir, "p")
+  endif
+  let output = system("cat > " . shellescape(slime#config#resolve("paste_file")), a:text)
+  if v:shell_error
+    echoerr output
+  endif
+endfunction
+
