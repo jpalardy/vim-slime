@@ -30,3 +30,7 @@ function! slime#common#write_paste_file(text)
   endif
 endfunction
 
+function! slime#common#capitalize(text)
+  return substitute(tolower(a:text), '\(.\)', '\u\1', '')
+endfunction
+

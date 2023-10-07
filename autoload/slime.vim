@@ -4,12 +4,13 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! s:_EscapeText(text)
+  let escape_text_fn = "_EscapeText_" . substitute(&filetype, "[.]", "_", "g")
   if exists("&filetype")
-    let custom_escape = "_EscapeText_" . substitute(&filetype, "[.]", "_", "g")
-    if exists("*SlimeOverride" . custom_escape)
-      let result = call("SlimeOverride" . custom_escape, [a:text])
-    elseif exists("*" . custom_escape)
-      let result = call(custom_escape, [a:text])
+    let override_fn = "SlimeOverride" . escape_text_fn
+    if exists("*" . override_fn)
+      let result = call(override_fn, [a:text])
+    elseif exists("*" . escape_text_fn)
+      let result = call(escape_text_fn, [a:text])
     end
   end
 
@@ -153,9 +154,10 @@ endfunction
 " delegation
 function! s:SlimeDispatch(name, ...)
   " allow custom override
-  " if exists("*SlimeOverride" . a:name)
-    " return call("SlimeOverride" . a:name, a:000)
-  " end
+  let override_fn = "SlimeOverride" . slime#common#capitalize(a:name)
+  if exists("*" . override_fn)
+    return call(override_fn, a:000)
+  end
   return call("slime#targets#" . slime#config#resolve("target") . "#" . a:name, a:000)
 endfunction
 
