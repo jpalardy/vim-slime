@@ -58,6 +58,7 @@ Many targets are supported, check their documentation for details:
 - [wezterm](assets/doc/targets/wezterm.md)
 - [whimrepl](assets/doc/targets/whimrepl.md)
 - [x11](assets/doc/targets/x11.md)
+- [zellij](assets/doc/targets/zellij.md)
 
 Installation
 ------------

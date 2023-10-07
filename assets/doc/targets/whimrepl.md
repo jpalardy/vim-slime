@@ -1,11 +1,13 @@
 
 ### whimrepl
 
-[whimrepl](https://github.com/malyn/lein-whimrepl) is *not* the default, to use it you will have to add this line to your .vimrc:
+[whimrepl](https://github.com/malyn/lein-whimrepl) is *not* the default, to use it you will have to add this line to your `.vimrc`:
 
-    let g:slime_target = "whimrepl"
+```vim
+let g:slime_target = "whimrepl"
+```
 
-When you invoke vim-slime for the first time, you will be prompted for more configuration.
+When you invoke `vim-slime` for the first time, you will be prompted for more configuration.
 
 whimrepl server name
 

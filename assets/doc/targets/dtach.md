@@ -1,11 +1,13 @@
 
 ### dtach
 
-[dtach](http://dtach.sourceforge.net/) is *not* the default, to use it you will have to add this line to your .vimrc:
+[dtach](http://dtach.sourceforge.net/) is *not* the default, to use it you will have to add this line to your `.vimrc`:
 
-    let g:slime_target = "dtach"
+```vim
+let g:slime_target = "dtach"
+```
 
-When you invoke vim-slime for the first time, you will be prompted for more configuration.
+When you invoke `vim-slime` for the first time, you will be prompted for more configuration.
 
 socket_path:
 

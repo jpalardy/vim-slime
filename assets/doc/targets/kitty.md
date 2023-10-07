@@ -1,11 +1,13 @@
 
 ### kitty
 
-[kitty](https://sw.kovidgoyal.net/kitty/) is *not* the default, to use it you will have to add this line to your .vimrc:
+[kitty](https://sw.kovidgoyal.net/kitty/) is *not* the default, to use it you will have to add this line to your `.vimrc`:
 
-    let g:slime_target = "kitty"
+```vim
+let g:slime_target = "kitty"
+```
 
-When you invoke vim-slime for the first time, you will be prompted for more configuration.
+When you invoke `vim-slime` for the first time, you will be prompted for more configuration.
 
 kitty target window
 
