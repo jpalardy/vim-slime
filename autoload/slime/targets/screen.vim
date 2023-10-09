@@ -9,15 +9,13 @@ endfunction
 
 function! slime#targets#screen#send(config, text)
   call slime#common#write_paste_file(a:text)
-  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
-        \ " -X eval \"readreg p " . slime#config#resolve("paste_file") . "\"")
-  call system("screen -S " . shellescape(a:config["sessionname"]) . " -p " . shellescape(a:config["windowname"]) .
-        \ " -X paste p")
+  call slime#common#system('screen -S %s -p %s -X eval "readreg p %s"', [a:config["sessionname"], a:config["windowname"], slime#config#resolve("paste_file")])
+  call slime#common#system('screen -S %s -p %s -X paste p', [a:config["sessionname"], a:config["windowname"]])
 endfunction
 
 " -------------------------------------------------
 
 function! slime#targets#screen#session_names(A,L,P)
-  return system("screen -ls | awk '/Attached/ {print $1}'")
+  return slime#common#system("screen -ls | awk '/Attached/ {print $1}'", [])
 endfunction
 

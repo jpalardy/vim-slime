@@ -3,7 +3,7 @@ function! slime#targets#kitty#config() abort
   if !exists("b:slime_config")
     let b:slime_config = {"window_id": 1, "listen_on": ""}
   end
-  let b:slime_config["window_id"] = str2nr(system("kitty @ select-window --self"))
+  let b:slime_config["window_id"] = str2nr(slime#common#system("kitty @ select-window --self", []))
   if v:shell_error || b:slime_config["window_id"] == $KITTY_WINDOW_ID
     let b:slime_config["window_id"] = input("kitty window_id: ", b:slime_config["window_id"])
   endif
@@ -23,11 +23,16 @@ function! slime#targets#kitty#send(config, text)
     let text_to_paste = "\e[200~" . text_to_paste . "\e[201~"
   endif
 
-  let to_flag = ""
-  if a:config["listen_on"] != ""
-    let to_flag = " --to " . shellescape(a:config["listen_on"])
-  end
+  let target_cmd = s:target_cmd(a:config["listen_on"])
+  call slime#common#system(target_cmd . " send-text --match id:%s --stdin", [a:config["window_id"]], text_to_paste)
+endfunction
 
-  call system("kitty @" . to_flag . " send-text --match id:" . shellescape(a:config["window_id"]) . " --stdin", text_to_paste)
+" -------------------------------------------------
+
+function! s:target_cmd(listen_on)
+  if a:listen_on != ""
+    return "kitty @ --to " . shellescape(a:listen_on)
+  end
+  return "kitty @"
 endfunction
 
