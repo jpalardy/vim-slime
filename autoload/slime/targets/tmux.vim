@@ -51,10 +51,8 @@ function! slime#targets#tmux#pane_names(A,L,P)
 endfunction
 
 function! s:TmuxCommand(config, cmd_template, ...)
-  " For an absolute path to the socket, use tmux -S.
-  " For a relative path to the socket in tmux's temporary directory, use tmux -L.
-  " Case sensitivity does not matter here, but let's follow good practice.
-  " TODO: Make this cross-platform. Windows supports tmux as of mid-2016.
+  " socket with absolute path: use tmux -S
+  " socket with relative path: use tmux -L
   if a:config["socket_name"] =~ "^/"
     let tmux_cmd = "tmux -S %s " . a:cmd_template
   else
