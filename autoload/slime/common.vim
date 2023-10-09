@@ -34,3 +34,7 @@ function! slime#common#capitalize(text)
   return substitute(tolower(a:text), '\(.\)', '\u\1', '')
 endfunction
 
+function! slime#common#system(cmd_template, args, ...)
+  let escaped_args = map(copy(a:args), "shellescape(v:val)")
+  return call('system', [call('printf', [a:cmd_template] + escaped_args)] + a:000)
+endfunction

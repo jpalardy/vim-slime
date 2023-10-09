@@ -28,18 +28,18 @@ function! slime#targets#tmux#send(config, text)
   for i in range(0, len(text_to_paste) / chunk_size)
     let chunk = text_to_paste[i * chunk_size : (i + 1) * chunk_size - 1]
     call slime#common#write_paste_file(chunk)
-    call s:TmuxCommand(a:config, "load-buffer " . slime#config#resolve("paste_file"))
-    call s:TmuxCommand(a:config, "send-keys -X -t " . shellescape(a:config["target_pane"]) . " cancel")
+    call s:TmuxCommand(a:config, "load-buffer %s", slime#config#resolve("paste_file"))
+    call s:TmuxCommand(a:config, "send-keys -X -t %s cancel", a:config["target_pane"])
     if bracketed_paste
-      call s:TmuxCommand(a:config, "paste-buffer -d -p -t " . shellescape(a:config["target_pane"]))
+      call s:TmuxCommand(a:config, "paste-buffer -d -p -t %s", a:config["target_pane"])
     else
-      call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
+      call s:TmuxCommand(a:config, "paste-buffer -d -t %s", a:config["target_pane"])
     end
   endfor
 
   " trailing newline
   if has_crlf
-    call s:TmuxCommand(a:config, "send-keys -t " . shellescape(a:config["target_pane"]) . " Enter")
+    call s:TmuxCommand(a:config, "send-keys -t %s Enter", a:config["target_pane"])
   end
 endfunction
 
@@ -47,16 +47,19 @@ endfunction
 
 function! slime#targets#tmux#pane_names(A,L,P)
   let format = '#{pane_id} #{session_name}:#{window_index}.#{pane_index} #{window_name}#{?window_active, (active),}'
-  return s:TmuxCommand(b:slime_config, "list-panes -a -F " . shellescape(format))
+  return s:TmuxCommand(b:slime_config, "list-panes -a -F %s", format)
 endfunction
 
-function! s:TmuxCommand(config, args)
-  let l:socket = a:config["socket_name"]
+function! s:TmuxCommand(config, cmd_template, ...)
   " For an absolute path to the socket, use tmux -S.
   " For a relative path to the socket in tmux's temporary directory, use tmux -L.
   " Case sensitivity does not matter here, but let's follow good practice.
   " TODO: Make this cross-platform. Windows supports tmux as of mid-2016.
-  let l:socket_option = l:socket[0] ==? "/" ? "-S" : "-L"
-  return system("tmux " . l:socket_option . " " . shellescape(l:socket) . " " . a:args)
+  if a:config["socket_name"] =~ "^/"
+    let tmux_cmd = "tmux -S %s " . a:cmd_template
+  else
+    let tmux_cmd = "tmux -L %s " . a:cmd_template
+  endif
+  return slime#common#system(tmux_cmd, [a:config["socket_name"]] + a:000)
 endfunction
 
