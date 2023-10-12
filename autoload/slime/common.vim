@@ -24,7 +24,7 @@ function! slime#common#write_paste_file(text)
   if !isdirectory(paste_dir)
     call mkdir(paste_dir, "p")
   endif
-  let output = system("cat > " . shellescape(slime#config#resolve("paste_file")), a:text)
+  let output = slime#common#system("cat > %s", [slime#config#resolve("paste_file")], a:text)
   if v:shell_error
     echoerr output
   endif
@@ -34,3 +34,7 @@ function! slime#common#capitalize(text)
   return substitute(tolower(a:text), '\(.\)', '\u\1', '')
 endfunction
 
+function! slime#common#system(cmd_template, args, ...)
+  let escaped_args = map(copy(a:args), "shellescape(v:val)")
+  return call('system', [call('printf', [a:cmd_template] + escaped_args)] + a:000)
+endfunction

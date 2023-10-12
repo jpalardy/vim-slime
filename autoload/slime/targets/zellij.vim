@@ -21,12 +21,9 @@ function! slime#targets#zellij#config() abort
 endfunction
 
 function! slime#targets#zellij#send(config, text)
-  let target_session = ""
-  if a:config["session_id"] != "current"
-    let target_session = "-s " . shellescape(a:config["session_id"])
-  end
+  let target_cmd = s:target_cmd(a:config["session_id"])
   if a:config["relative_pane"] != "current"
-    call system("zellij " . target_session . " action move-focus " . shellescape(a:config["relative_pane"]))
+    call slime#common#system(target_cmd . " action move-focus %s",  [a:config["relative_pane"]])
   end
   let bracketed_paste = slime#config#resolve("bracketed_paste")
 
@@ -40,18 +37,27 @@ function! slime#targets#zellij#send(config, text)
   endif
 
   if bracketed_paste
-    call system("zellij " . target_session . " action write 27 91 50 48 48 126")
-    call system("zellij " . target_session . " action write-chars " . shellescape(text_to_paste))
-    call system("zellij " . target_session . " action write 27 91 50 48 49 126")
+    call slime#common#system(target_cmd . " action write 27 91 50 48 48 126", [])
+    call slime#common#system(target_cmd . " action write-chars %s", [text_to_paste])
+    call slime#common#system(target_cmd . " action write 27 91 50 48 49 126", [])
     if has_crlf
-      call system("zellij " . target_session . " action write 10")
+      call slime#common#system(target_cmd . " action write 10", [])
     endif
   else
-    call system("zellij " . target_session . " action write-chars " . shellescape(text_to_paste))
+    call slime#common#system(target_cmd . " action write-chars %s", [text_to_paste])
   endif
 
   if a:config["relative_pane"] != "current"
-    call system("zellij " . target_session . " action move-focus " . shellescape(a:config["relative_move_back"]))
+    call slime#common#system(target_cmd . " action move-focus %s", [a:config["relative_move_back"]])
   end
+endfunction
+
+" -------------------------------------------------
+
+function! s:target_cmd(session_id)
+  if a:session_id != "current"
+    return "zellij -s " . shellescape(a:session_id)
+  end
+  return "zellij"
 endfunction
 
