@@ -36,5 +36,14 @@ endfunction
 
 function! slime#common#system(cmd_template, args, ...)
   let escaped_args = map(copy(a:args), "shellescape(v:val)")
-  return call('system', [call('printf', [a:cmd_template] + escaped_args)] + a:000)
+  let cmd = call('printf', [a:cmd_template] + escaped_args)
+
+  if slime#config#resolve("debug")
+    echom "slime system: " . cmd
+  endif
+
+  if a:0 == 0
+    return system(cmd)
+  endif
+  return system(cmd, a:1)
 endfunction

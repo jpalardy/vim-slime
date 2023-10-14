@@ -4,6 +4,7 @@ let g:slime_config_defaults["target"] = "screen"
 let g:slime_config_defaults["preserve_curpos"] = 1
 let g:slime_config_defaults["paste_file"] = expand("$HOME/.slime_paste")
 let g:slime_config_defaults["bracketed_paste"] = 0
+let g:slime_config_defaults["debug"] = 0
 
 " -------------------------------------------------
 
