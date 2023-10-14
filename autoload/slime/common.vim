@@ -51,14 +51,12 @@ endfunction
 function! slime#common#bracketed_paste(text)
   let bracketed_paste = slime#config#resolve("bracketed_paste")
 
-  let [text_to_paste, has_crlf] = [a:text, 0]
-  if bracketed_paste
-    if a:text[-2:] == "\r\n"
-      let [text_to_paste, has_crlf] = [a:text[:-3], 1]
-    elseif a:text[-1:] == "\r" || a:text[-1:] == "\n"
-      let [text_to_paste, has_crlf] = [a:text[:-2], 1]
-    endif
+  if bracketed_paste == 0
+    return [bracketed_paste, a:text, 0]
   endif
+
+  let text_to_paste = substitute(a:text, '\(\r\n\|\r\|\n\)$', '', '')
+  let has_crlf = strlen(a:text) != strlen(text_to_paste)
 
   return [bracketed_paste, text_to_paste, has_crlf]
 endfunction
