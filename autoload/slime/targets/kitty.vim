@@ -11,7 +11,7 @@ function! slime#targets#kitty#config() abort
 endfunction
 
 function! slime#targets#kitty#send(config, text)
-  let [bracketed_paste, text_to_paste, _has_crlf] = slime#common#bracketed_paste(a:text)
+  let [bracketed_paste, text_to_paste, has_crlf] = slime#common#bracketed_paste(a:text)
 
   if bracketed_paste
     let text_to_paste = "\e[200~" . text_to_paste . "\e[201~"
@@ -19,6 +19,11 @@ function! slime#targets#kitty#send(config, text)
 
   let target_cmd = s:target_cmd(a:config["listen_on"])
   call slime#common#system(target_cmd . " send-text --match id:%s --stdin", [a:config["window_id"]], text_to_paste)
+
+  " trailing newline
+  if has_crlf
+    call slime#common#system(target_cmd . " send-text --match id:%s --stdin", [a:config["window_id"]], "\n")
+  endif
 endfunction
 
 " -------------------------------------------------
