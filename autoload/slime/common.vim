@@ -47,3 +47,18 @@ function! slime#common#system(cmd_template, args, ...)
   endif
   return system(cmd, a:1)
 endfunction
+
+function! slime#common#bracketed_paste(text)
+  let bracketed_paste = slime#config#resolve("bracketed_paste")
+
+  let [text_to_paste, has_crlf] = [a:text, 0]
+  if bracketed_paste
+    if a:text[-2:] == "\r\n"
+      let [text_to_paste, has_crlf] = [a:text[:-3], 1]
+    elseif a:text[-1:] == "\r" || a:text[-1:] == "\n"
+      let [text_to_paste, has_crlf] = [a:text[:-2], 1]
+    endif
+  endif
+
+  return [bracketed_paste, text_to_paste, has_crlf]
+endfunction

@@ -11,15 +11,9 @@ function! slime#targets#kitty#config() abort
 endfunction
 
 function! slime#targets#kitty#send(config, text)
-  let bracketed_paste = slime#config#resolve("bracketed_paste")
+  let [bracketed_paste, text_to_paste, _has_crlf] = slime#common#bracketed_paste(a:text)
 
-  let [text_to_paste, has_crlf] = [a:text, 0]
   if bracketed_paste
-    if a:text[-2:] == "\r\n"
-      let [text_to_paste, has_crlf] = [a:text[:-3], 1]
-    elseif a:text[-1:] == "\r" || a:text[-1:] == "\n"
-      let [text_to_paste, has_crlf] = [a:text[:-2], 1]
-    endif
     let text_to_paste = "\e[200~" . text_to_paste . "\e[201~"
   endif
 

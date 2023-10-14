@@ -12,16 +12,7 @@ endfunction
 
 function! slime#targets#tmux#send(config, text)
   let target_cmd = s:target_cmd(a:config["socket_name"])
-  let bracketed_paste = slime#config#resolve("bracketed_paste")
-
-  let [text_to_paste, has_crlf] = [a:text, 0]
-  if bracketed_paste
-    if a:text[-2:] == "\r\n"
-      let [text_to_paste, has_crlf] = [a:text[:-3], 1]
-    elseif a:text[-1:] == "\r" || a:text[-1:] == "\n"
-      let [text_to_paste, has_crlf] = [a:text[:-2], 1]
-    endif
-  endif
+  let [bracketed_paste, text_to_paste, has_crlf] = slime#common#bracketed_paste(a:text)
 
   " reasonable hardcode, will become config if needed
   let chunk_size = 1000
