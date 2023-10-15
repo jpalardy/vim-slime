@@ -10,16 +10,7 @@ function! slime#targets#wezterm#config() abort
 endfunction
 
 function! slime#targets#wezterm#send(config, text)
-  let bracketed_paste = slime#config#resolve("bracketed_paste")
-
-  let [text_to_paste, has_crlf] = [a:text, 0]
-  if bracketed_paste
-    if a:text[-2:] == "\r\n"
-      let [text_to_paste, has_crlf] = [a:text[:-3], 1]
-    elseif a:text[-1:] == "\r" || a:text[-1:] == "\n"
-      let [text_to_paste, has_crlf] = [a:text[:-2], 1]
-    endif
-  endif
+  let [bracketed_paste, text_to_paste, has_crlf] = slime#common#bracketed_paste(a:text)
 
   if bracketed_paste
     call slime#common#system("wezterm cli send-text --pane-id=%s", [a:config["pane_id"]], text_to_paste)

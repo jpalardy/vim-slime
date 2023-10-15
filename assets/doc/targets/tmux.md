@@ -53,14 +53,16 @@ Or, more reliably, by leveraging [a special token](http://man.openbsd.org/OpenBS
 let g:slime_default_config = {"socket_name": "default", "target_pane": "{last}"}
 ```
 
-tmux bracketed-paste
+### bracketed-paste
 
 Some REPLs can interfere with your text pasting. The [bracketed-paste](https://cirw.in/blog/bracketed-paste) mode exists to allow raw pasting.
 
-`tmux` knows how to handle bracketed-paste, use:
+`tmux` supports bracketed-paste, use:
 
 ```vim
 let g:slime_bracketed_paste = 1
+" or
+let b:slime_bracketed_paste = 1
 ```
 
 (It is disabled by default because it can create issues with ipython; see [#265](https://github.com/jpalardy/vim-slime/pull/265)).

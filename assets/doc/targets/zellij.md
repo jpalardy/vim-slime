@@ -30,3 +30,17 @@ a split zellij window with a REPL to the right it could look like this:
 let g:slime_default_config = {"session_id": "current", "relative_pane": "right"}
 ```
 
+### bracketed-paste
+
+Some REPLs can interfere with your text pasting. The [bracketed-paste](https://cirw.in/blog/bracketed-paste) mode exists to allow raw pasting.
+
+`zellij` supports bracketed-paste, use:
+
+```vim
+let g:slime_bracketed_paste = 1
+" or
+let b:slime_bracketed_paste = 1
+```
+
+(It is disabled by default because it can create issues with ipython; see [#265](https://github.com/jpalardy/vim-slime/pull/265)).
+
