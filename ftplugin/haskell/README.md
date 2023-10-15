@@ -9,16 +9,20 @@ To support older GHC versions, code is processed in order to comply with the
 syntax rules that are specific to interactive mode. For instance when sending
 the following snippet to `ghci`:
 
-    -- make in triplicate
-    f :: a -> [a]
-    f = replicate 3
+```haskell
+-- make in triplicate
+f :: a -> [a]
+f = replicate 3
+```
 
 This translates to the following:
 
-    :{
-    let f :: a -> [a]
-        f = replicate 3
-    :}
+```haskell
+:{
+let f :: a -> [a]
+    f = replicate 3
+:}
+```
 
 Some of this behavior can be selectively turned off so that what is run is more
 faithful to the actual code in your buffer, but requires a recent enough GHC:
@@ -37,15 +41,19 @@ Haskell and I write these script files as if I were writing in `ghci`, sometimes
 the syntax translation would get in the way. E.g. I would write a function call
 to test a certain function and check it's type:
 
-    (++) "This is a: " "TEST"
-    :type (++)
+```haskell
+(++) "This is a: " "TEST"
+:type (++)
+```
 
 and it get translated to:
 
-    :{
-    let (++) "This is a: " "TEST"
-        :type (++)
-    :}
+```haskell
+:{
+let (++) "This is a: " "TEST"
+    :type (++)
+:}
+```
 
 which is not what I wanted obviously.
 
@@ -54,7 +62,9 @@ in vim is set to `haskell.script`. If you want access to this handler call `set
 ft=haskell.script` or create a new ftdetect file which does this for you for a
 certain file extension. For instance, I have:
 
-    au BufRead,BufNewFile,BufNew *.hss setl ft=haskell.script
+```vim
+au BufRead,BufNewFile,BufNew *.hss setl ft=haskell.script
+```
 
 in `~/.vim/ftdetect/hss.vim`.
 

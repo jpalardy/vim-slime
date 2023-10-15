@@ -10,24 +10,25 @@ interpreter.
 error-free pasting. In order for vim-slime to make use of this feature for
 Python buffers, you need to set the corresponding variable in your .vimrc:
 
-    let g:slime_python_ipython = 1
+```vim
+let g:slime_python_ipython = 1
+```
 
 Note: if you're using IPython 5, you _need_ to set `g:slime_python_ipython` for
 pasting to work correctly.
 
-#### Note for `tmux` users
+#### Note for `tmux`, `kitty`, `wezterm`, `zellij` users
 
-If you're using `tmux`, it's better to _not_ set `g:slime_python_ipython`, but
-instead use [bracketed-paste](https://cirw.in/blog/bracketed-paste) by setting 
-either
+If your target supports [bracketed-paste](https://cirw.in/blog/bracketed-paste), that's
+a better option than `g:slime_python_ipython`:
 
-    let g:slime_bracketed_paste = 1
+```vim
+" in .vimrc
+let g:slime_bracketed_paste = 1
+" or, in ftplugin/python.vim
+let b:slime_bracketed_paste = 1
+```
 
-in your `vimrc` or
+This lets your target deal with all the problems with indentation and avoids depending `%cpaste`,
+which occassionally causes issues (e.g., [#327](https://github.com/jpalardy/vim-slime/issues/327))
 
-    let b:slime_bracketed_paste = 1
-
-in `ftplugin/python.vim`.
-
-This lets `tmux` deal with all the problems with indentation and avoids depending 
-`%cpaste`, which occassionally causes issues (e.g., [#327](https://github.com/jpalardy/vim-slime/issues/327))
