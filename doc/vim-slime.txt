@@ -121,8 +121,8 @@ Use bracketed-paste mode~
 Sometimes REPL are too smart for their own good, e.g. autocompleting a bracket
 that should not be autocompleted when pasting code from a file. In this case
 it can be useful to rely on bracketed-paste
-(https://cirw.in/blog/bracketed-paste). Luckily, tmux knows how to handle
-that. See tmux's manual.
+(https://cirw.in/blog/bracketed-paste). Luckily, some targets (https://github.com/jpalardy/vim-slime#targets) know how to handle
+that.
 
 You can enable bracketed-paste using eiter
 >
@@ -321,10 +321,6 @@ g:slime_default_config	Set to dictionary of pre-filled prompt answer. See
 						*g:slime_dont_ask_default*
 g:slime_dont_ask_default	Works with g:slime_default_config. See
 			the README for details: https://github.com/jpalardy/vim-slime
-
-g:slime_bracketed_paste Set to non zero value to enable bracketed paste in
-                        tmux. See |slime-tmux| or the README for details: 
-                        https://github.com/jpalardy/vim-slime 
 
 Mappings~
 
