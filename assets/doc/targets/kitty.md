@@ -34,7 +34,11 @@ listen_on unix:/tmp/mykitty
 
 ### SSH
 
-For slime use over ssh, you can also [forward the remote control](https://sw.kovidgoyal.net/kitty/kittens/ssh/#opt-kitten-ssh.forward_remote_control). Although note the additional security concerns: **this should only be done on trusted remote hosts**.
+For slime use over ssh, you can also [forward the remote control](https://sw.kovidgoyal.net/kitty/kittens/ssh/#opt-kitten-ssh.forward_remote_control).
+
+
+Note the additional security concerns, however: **this should only be done on
+trusted remote hosts**.
 
 ### bracketed-paste
 
