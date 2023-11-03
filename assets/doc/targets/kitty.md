@@ -9,19 +9,15 @@ let g:slime_target = "kitty"
 
 When you invoke `vim-slime` for the first time, you will be prompted for more configuration.
 
-kitty target window
+`kitty target window`
 
-    This is the id of the kitty window that you wish to target.
-    See e.g. the value of $KITTY_WINDOW_ID in the target window.
+    This is the id of the kitty window that you wish to target. See e.g. the
+    value of $KITTY_WINDOW_ID in the target window.
 
-kitty listen on
+`kitty listen on`
 
-    Specifies where kitty should listen to control messages.
-    See e.g. the value of $KITTY_LISTEN_ON in the target window.
-
-    Can be left blank if:
-    - KITTY_LISTEN_ON is exported in the shell running vim
-    - running vim (but not nvim) inside kitty
+    Specifies where kitty should listen to control messages, by default the
+    value of $KITTY_LISTEN_ON in the target window.
 
 To work properly, `kitty` must also be started with the following options:
 
@@ -35,6 +31,8 @@ See more [here](https://sw.kovidgoyal.net/kitty/remote-control.html). This can a
 allow_remote_control yes
 listen_on unix:/tmp/mykitty
 ```
+
+For slime use over ssh, you can also [forward the remote control](https://sw.kovidgoyal.net/kitty/kittens/ssh/#opt-kitten-ssh.forward_remote_control). Although note the additional security concerns: **this should only be done on trusted remote hosts**.
 
 ### bracketed-paste
 
