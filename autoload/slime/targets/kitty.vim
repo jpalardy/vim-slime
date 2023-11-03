@@ -7,7 +7,10 @@ function! slime#targets#kitty#config() abort
   if v:shell_error || b:slime_config["window_id"] == $KITTY_WINDOW_ID
     let b:slime_config["window_id"] = input("kitty window_id: ", b:slime_config["window_id"])
   endif
-  let b:slime_config["listen_on"] = input("kitty listen on: ", b:slime_config["listen_on"])
+  let b:slime_config["listen_on"] = $KITTY_LISTEN_ON
+  if b:slime_config["listen_on"] == ""
+    let b:slime_config["listen_on"] = input("kitty listen on: ", b:slime_config["listen_on"])
+  endif
 endfunction
 
 function! slime#targets#kitty#send(config, text)
