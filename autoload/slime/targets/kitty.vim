@@ -1,7 +1,7 @@
 
 function! slime#targets#kitty#config() abort
   if !exists("b:slime_config")
-    let b:slime_config = {"window_id": 1, "listen_on": ""}
+    let b:slime_config = {"window_id": 1, "listen_on": $KITTY_LISTEN_ON}
   end
   let b:slime_config["window_id"] = str2nr(slime#common#system("kitty @ select-window --self", []))
   if v:shell_error || b:slime_config["window_id"] == $KITTY_WINDOW_ID
