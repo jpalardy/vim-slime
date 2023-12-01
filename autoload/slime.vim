@@ -11,35 +11,35 @@ function! s:_EscapeText(text)
       let result = call(override_fn, [a:text])
     elseif exists("*" . escape_text_fn)
       let result = call(escape_text_fn, [a:text])
-    end
-  end
+    endif
+  endif
 
   " use a:text if the ftplugin didn't kick in
   if !exists("result")
     let result = a:text
-  end
+  endif
 
   " return an array, regardless
   if type(result) == type("")
     return [result]
   else
     return result
-  end
+  endif
 endfunction
 
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
   if exists("b:slime_config")
     return
-  end
+  endif
   " assume defaults, if they exist
   if exists("g:slime_default_config")
     let b:slime_config = g:slime_default_config
-  end
+  endif
   " skip confirmation, if configured
   if exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
     return
-  end
+  endif
   " prompt user
   call s:SlimeDispatch('config')
 endfunction
@@ -141,7 +141,7 @@ function! slime#send(text)
       endif
     else
       call s:SlimeDispatch('send', b:slime_config, piece)
-    end
+    endif
   endfor
 endfunction
 
@@ -157,7 +157,7 @@ function! s:SlimeDispatch(name, ...)
   let override_fn = "SlimeOverride" . slime#common#capitalize(a:name)
   if exists("*" . override_fn)
     return call(override_fn, a:000)
-  end
+  endif
   return call("slime#targets#" . slime#config#resolve("target") . "#" . a:name, a:000)
 endfunction
 
