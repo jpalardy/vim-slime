@@ -93,7 +93,7 @@ To use vim-style mappings:
 let g:slime_no_mappings = 1
 
 "send visual selection
-xmap <leader>s <Plug>SlimeRegionSend 
+xmap <leader>s <Plug>SlimeRegionSend
 
 "send based on motion or text object
 nmap <leader>s <Plug>SlimeMotionSend
