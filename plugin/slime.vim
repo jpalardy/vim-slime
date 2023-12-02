@@ -45,7 +45,5 @@ if slime#config#resolve("target") == "neovim"
     autocmd TermOpen * call slime#targets#neovim#SlimeAddChannel()
     " keeping track when terminals are closed
     autocmd TermClose * let b:terminal_closed = 1 | call slime#targets#neovim#SlimeClearChannel()
-    " setting status line to show job id and pid of terminal
-    autocmd TermOpen * call slime#targets#neovim#SetStatusline()
   augroup END
 endif

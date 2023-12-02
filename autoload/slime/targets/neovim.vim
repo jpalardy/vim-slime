@@ -57,17 +57,6 @@ function slime#targets#neovim#SlimeClearChannel()
   endif
 endfunction
 
-" Sets the status line if the appropriate flags are enabled.
-function! slime#targets#neovim#SetStatusline()
-  if exists("g:override_status") && g:override_status
-    if exists("g:ruled_status") && g:ruled_status
-      setlocal statusline=%{bufname()}%=%-14.(%l,%c%V%)\ %P\ \|\ id:\ %{b:terminal_job_id}\ pid:\ %{b:terminal_job_pid}
-    else
-      setlocal statusline=%{bufname()}%=id:\ %{b:terminal_job_id}\ pid:\ %{b:terminal_job_pid}
-    endif
-  endif
-endfunction
-
 function! s:translate_pid_to_id(pid)
   for ch in g:slime_last_channel
     if ch['pid'] == a:pid
