@@ -5,9 +5,9 @@ function! slime#targets#kitty#config() abort
   end
   let b:slime_config["window_id"] = str2nr(slime#common#system("kitty @ select-window --self", []))
   if v:shell_error || b:slime_config["window_id"] == $KITTY_WINDOW_ID
-    let b:slime_config["window_id"] = input("kitty window_id: ", b:slime_config["window_id"])
+    let b:slime_config["window_id"] = input("kitty window_id ($KITTY_WINDOW_ID): ", b:slime_config["window_id"])
   endif
-  let b:slime_config["listen_on"] = input("kitty listen on: ", b:slime_config["listen_on"])
+  let b:slime_config["listen_on"] = input("kitty listen on ($KITTY_LISTEN_ON): ", b:slime_config["listen_on"])
 endfunction
 
 function! slime#targets#kitty#send(config, text)
