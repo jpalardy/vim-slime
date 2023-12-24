@@ -1,5 +1,15 @@
 
 function! slime#targets#neovim#config() abort
+
+  if exists("b:slime_config")
+    let bufinfo = s:get_filter_bufinfo()
+    let current_jobid = get(b:slime_config, "jobid", "-1")
+    if index(bufinfo, current_jobid) == -1
+      unlet b:slime_config
+    endif
+  endif
+
+
   if !exists("b:slime_config")
     let last_pid = get(get(g:slime_last_channel, -1, {}), 'pid', '')
     let last_job = get(get(g:slime_last_channel, -1, {}), 'jobid', '')
@@ -41,20 +51,52 @@ function! slime#targets#neovim#SlimeAddChannel()
     let g:slime_last_channel = [{'jobid': &channel, 'pid': b:terminal_job_pid}]
   else
     call add(g:slime_last_channel, {'jobid': &channel, 'pid': b:terminal_job_pid})
+    echom "adding channel: "..join(g:slime_last_channel, ",")
   endif
 endfunction
 
-function slime#targets#neovim#SlimeClearChannel()
+function! slime#targets#neovim#SlimeClearChannel()
+  let current_buffer_jobid = get(b:,"terminal_job_id",-1)
+
   if !exists("g:slime_last_channel")
+    if exists("b:slime_config")
+      unlet b:slime_config 
+    endif
     return
   elseif len(g:slime_last_channel) == 1
     unlet g:slime_last_channel
+    if exists("b:slime_config")
+      unlet b:slime_config
+    endif
   else
-    let bufinfo = getbufinfo()
-    call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id") && has_key(val['variables'], "terminal_job_pid") && !get(val['variables'],"terminal_closed",0)})
-    call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] })
-    call filter(g:slime_last_channel, {_, val -> index(bufinfo, val["jobid"]) >= 0})
+    let bufinfo = s:get_filter_bufinfo()
+
+
+    " tests ifusing a version of Neovim that 
+    " doesn't automatically close bufers when closed
+    " or there is no autocommand that does that
+    if len(bufinfo) == len(g:slime_last_channel)
+      call filter(bufinfo, {_, val -> val != current_buffer_jobid})
+    endif
+
+    call filter(g:slime_last_channel, {_, val -> index(bufinfo, str2nr(val["jobid"])) >= 0})
+
+    echom "cleari channel: "..join(g:slime_last_channel, ",")
+
   endif
+endfunction
+
+function! s:get_filter_bufinfo()
+  let bufinfo = getbufinfo()
+  "getting terminal buffers
+
+  call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id")
+        \ && has_key(val['variables'], "terminal_job_pid") 
+        \    && get(val,"listed",0)})
+  " only need the job id
+  call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] })
+
+  return bufinfo
 endfunction
 
 function! s:translate_pid_to_id(pid)
@@ -75,3 +117,5 @@ function! s:translate_id_to_pid(id)
   endtry
   return pid_out
 endfunction
+
+

@@ -44,6 +44,6 @@ if slime#config#resolve("target") == "neovim"
     " keeping track of channels that are open
     autocmd TermOpen * call slime#targets#neovim#SlimeAddChannel()
     " keeping track when terminals are closed
-    autocmd TermClose * let b:terminal_closed = 1 | call slime#targets#neovim#SlimeClearChannel()
+    autocmd TermClose * call slime#targets#neovim#SlimeClearChannel()
   augroup END
 endif
