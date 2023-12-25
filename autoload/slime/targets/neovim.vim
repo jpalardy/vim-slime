@@ -51,7 +51,6 @@ function! slime#targets#neovim#SlimeAddChannel()
     let g:slime_last_channel = [{'jobid': &channel, 'pid': b:terminal_job_pid}]
   else
     call add(g:slime_last_channel, {'jobid': &channel, 'pid': b:terminal_job_pid})
-    echom "adding channel: "..join(g:slime_last_channel, ",")
   endif
 endfunction
 
@@ -85,6 +84,77 @@ function! slime#targets#neovim#SlimeClearChannel()
 
   endif
 endfunction
+
+
+
+"evaluates whether ther is a terminal running; if there isn't then no config can be valid
+function! slime#targets#neovim#valid_env() abort
+  if s:NotExistsLastChannel()
+    echo "Terminal not detected: Open a Neovim terminal and try again. "
+    return 0
+  endif
+  return 1
+endfunction
+
+" "checks that a configuration is valid
+" returns boolean of whether the supplied config is valid
+function! slime#targets#neovim#valid_config(config) abort
+
+  if s:NotExistsLastChannel()
+    echom "Terminal not detected: Open a neovim terminal and try again. "
+    return 0
+  endif
+
+  if !exists("a:config") ||  a:config is v:null
+    echom "Config does not exist."
+    return 0
+  endif
+
+  " Ensure the config is a dictionary and a previous channel exists
+  if type(a:config) != v:t_dict 
+    echom "Config type not valid."
+    return 0
+  endif
+
+  if empty(a:config)
+    echom "Config is empty."
+    return 0
+  endif
+
+  " Ensure the correct keys exist within the configuration
+
+  if !(has_key(a:config, 'neovim') && has_key(a:config['neovim'], 'jobid') )
+    echom "Improper configuration structure Try again"
+    return 0
+  endif
+
+  if a:config["neovim"]["jobid"] == -1  "the id wasn't found translate_pid_to_id
+    echom "No matching job id for the provided pid. Try again"
+    return 0
+  endif
+
+
+
+  if !(index( s:channel_to_array(g:slime_last_channel), a:config['neovim']['jobid']) >= 0)
+    echom "Job ID not found. Try again."
+    return 0
+  endif
+
+  return 1
+
+endfunction
+
+
+" Transforms a channel dictionary into an array of job IDs.
+function! s:channel_to_array(channel_dict)
+  return map(copy(a:channel_dict), {_, val -> val["jobid"]})
+endfunction
+
+" Checks if a previous channel does not exist or is empty.
+function! s:NotExistsLastChannel() abort
+  return (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1)
+endfunction
+
 
 function! s:get_filter_bufinfo()
   let bufinfo = getbufinfo()
