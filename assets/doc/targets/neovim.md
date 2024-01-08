@@ -31,7 +31,7 @@ Another way to easily see the `PID` and job ID is to override the status bar of 
  autocmd TermOpen * setlocal statusline=%{bufname()}%=id:\ %{b:terminal_job_id}\ pid:\ %{b:terminal_job_pid}
 ```
 
-See `h:statusline` in Vim's documentiation for more details.
+See `h:statusline` in NeoVim's documentiation for more details.
 
 If you are using a plugin to manage your status line, see plugin's documentation to see how to confiugre the status line to display `b:terminal_job_id` and `b:terminal_job_pid`.
 
