@@ -158,6 +158,13 @@ function! s:SlimeDispatch(name, ...)
   if exists("*" . override_fn)
     return call(override_fn, a:000)
   endif
-  return call("slime#targets#" . slime#config#resolve("target") . "#" . a:name, a:000)
+
+  let fun_string = "slime#targets#" . slime#config#resolve("target") . "#" . a:name
+  if exists("*" . fun_string)
+    return call(fun_string, a:000)
+  endif
+
+  "zero means false
+  return 0
 endfunction
 
