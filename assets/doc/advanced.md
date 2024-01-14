@@ -11,6 +11,19 @@ If you don't want the default key mappings, set:
 let g:slime_no_mappings = 1
 ```
 
+*before* the plugin is loaded.
+
+If you are using [lazy.nvim](https://github.com/folke/lazy.nvim) as package manager, this can also be done within the `init` function:
+
+```lua
+{
+    "jpalardy/vim-slime",
+    init = function()
+        vim.g.slime_no_mappings = 1
+    end
+}
+```
+
 The default mappings are:
 
 ```vim
