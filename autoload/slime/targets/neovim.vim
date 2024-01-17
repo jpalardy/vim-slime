@@ -80,7 +80,7 @@ function! slime#targets#neovim#SlimeClearChannel()
 
     call filter(g:slime_last_channel, {_, val -> index(bufinfo, str2nr(val["jobid"])) >= 0})
 
-    echom "cleari channel: "..join(g:slime_last_channel, ",")
+    echom "clearing channel: "..join(g:slime_last_channel, ",")
 
   endif
 endfunction
@@ -88,7 +88,7 @@ endfunction
 
 
 "evaluates whether ther is a terminal running; if there isn't then no config can be valid
-function! slime#targets#neovim#valid_env() abort
+function! slime#targets#neovim#ValidEnv() abort
   if s:NotExistsLastChannel()
     echo "Terminal not detected: Open a Neovim terminal and try again. "
     return 0
@@ -98,7 +98,7 @@ endfunction
 
 " "checks that a configuration is valid
 " returns boolean of whether the supplied config is valid
-function! slime#targets#neovim#valid_config(config) abort
+function! slime#targets#neovim#ValidConfig(config) abort
 
   if s:NotExistsLastChannel()
     echom "Terminal not detected: Open a neovim terminal and try again. "
@@ -111,7 +111,7 @@ function! slime#targets#neovim#valid_config(config) abort
   endif
 
   " Ensure the config is a dictionary and a previous channel exists
-  if type(a:config) != v:t_dict 
+  if type(a:config) != v:t_dict
     echom "Config type not valid."
     return 0
   endif
@@ -140,7 +140,7 @@ function! slime#targets#neovim#valid_config(config) abort
     return 0
   endif
 
-  return 1
+  return 1 && s:SlimeDispatch("ValidConfig")
 
 endfunction
 

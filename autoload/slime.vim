@@ -29,19 +29,30 @@ endfunction
 
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
-  if exists("b:slime_config")
-    return
+  if exists("b:slime_config") 
+    if s:SlimeDispatch("ValidConfig", b:slime_config)
+      return
+    endif
   endif
   " assume defaults, if they exist
   if exists("g:slime_default_config")
     let b:slime_config = g:slime_default_config
   endif
+
+	if b:slime_config is v:null  || !s:SlimeDispatch("ValidConfig" , b:slime_config) 
+		let b:slime_config = {}
+    echo
+	endif
   " skip confirmation, if configured
   if exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
     return
   endif
   " prompt user
   call s:SlimeDispatch('config')
+  
+  if !s:SlimeDispatch('ValidConfig',b:config)
+  endif
+
 endfunction
 
 function! slime#send_op(type, ...) abort
@@ -128,22 +139,25 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! slime#send(text)
-  call s:SlimeGetConfig()
+  if s:SlimeDispatch("ValidEnv")
+    call s:SlimeGetConfig()
 
-  " this used to return a string, but some receivers (coffee-script)
-  " will flush the rest of the buffer given a special sequence (ctrl-v)
-  " so we, possibly, send many strings -- but probably just one
-  let pieces = s:_EscapeText(a:text)
-  for piece in pieces
-    if type(piece) == 0  " a number
-      if piece > 0  " sleep accepts only positive count
-        execute 'sleep' piece . 'm'
+    " this used to return a string, but some receivers (coffee-script)
+    " will flush the rest of the buffer given a special sequence (ctrl-v)
+    " so we, possibly, send many strings -- but probably just one
+    let pieces = s:_EscapeText(a:text)
+    for piece in pieces
+      if type(piece) == 0  " a number
+        if piece > 0  " sleep accepts only positive count
+          execute 'sleep' piece . 'm'
+        endif
+      else
+        call s:SlimeDispatch('send', b:slime_config, piece)
       endif
-    else
-      call s:SlimeDispatch('send', b:slime_config, piece)
-    endif
-  endfor
+    endfor
+  endif
 endfunction
+
 
 function! slime#config() abort
   call inputsave()
@@ -164,7 +178,7 @@ function! s:SlimeDispatch(name, ...)
     return call(fun_string, a:000)
   endif
 
-  "zero means false
-  return 0
+  "zero means true
+  return 1
 endfunction
 
