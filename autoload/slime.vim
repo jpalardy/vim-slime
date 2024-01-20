@@ -3,6 +3,31 @@
 " Helpers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" takes any number of strings as arguments: if one of those strings exists
+" as an environment variable in vim, return its value, if none of them exist
+" return v:null
+function! s:resolve(...)
+	for name in a:000
+		if exists(name)
+			return eval(name)
+		endif
+	endfor
+	return v:null
+endfunction
+
+" takes any number of strings as arguments: if one of those strings exists
+" as an environment variable in vim, return its value, if none of them exist
+" return 'default' arg
+function! s:resolve_default(default, ...)
+	for name in a:000
+		if exists(name)
+			return eval(name)
+		endif
+	endfor
+  " 0 means false
+	return a:default
+endfunction
+
 function! s:_EscapeText(text)
   let escape_text_fn = "_EscapeText_" . substitute(&filetype, "[.]", "_", "g")
   if exists("&filetype")
@@ -27,33 +52,33 @@ function! s:_EscapeText(text)
   endif
 endfunction
 
-function! s:SlimeGetConfig()
-  " b:slime_config already configured...
-  if exists("b:slime_config") 
-    if s:SlimeDispatch("ValidConfig", b:slime_config)
-      return
-    endif
-  endif
-  " assume defaults, if they exist
-  if exists("g:slime_default_config")
-    let b:slime_config = g:slime_default_config
-  endif
-
-	if b:slime_config is v:null  || !s:SlimeDispatch("ValidConfig" , b:slime_config) 
-		let b:slime_config = {}
-    echo
-	endif
-  " skip confirmation, if configured
-  if exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
-    return
-  endif
-  " prompt user
-  call s:SlimeDispatch('config')
-  
-  if !s:SlimeDispatch('ValidConfig',b:config)
-  endif
-
-endfunction
+"function! s:SlimeGetConfig()
+"  " b:slime_config already configured...
+"  if exists("b:slime_config") 
+"    if s:SlimeDispatch("ValidConfig", b:slime_config)
+"      return
+"    endif
+"  endif
+"  " assume defaults, if they exist
+"  if exists("g:slime_default_config")
+"    let b:slime_config = g:slime_default_config
+"  endif
+"
+"	if b:slime_config is v:null  || !s:SlimeDispatch("ValidConfig" , b:slime_config) 
+"		let b:slime_config = {}
+"    echo
+"	endif
+"  " skip confirmation, if configured
+"  if exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
+"    return
+"  endif
+"  " prompt user
+"  call s:SlimeDispatch('config')
+"  
+"  if !s:SlimeDispatch('ValidConfig',b:config)
+"  endif
+"
+"endfunction
 
 function! slime#send_op(type, ...) abort
   call s:SlimeGetConfig()
@@ -139,7 +164,9 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! slime#send(text)
-  if s:SlimeDispatch("ValidEnv")
+
+  "recall that vimscript comparison operators short circuit
+  if !s:resolve_defaault(0,"b:slime_validate_env","g:slime_validate_env") || s:SlimeDispatch("ValidEnv")
     call s:SlimeGetConfig()
 
     " this used to return a string, but some receivers (coffee-script)
@@ -161,7 +188,9 @@ endfunction
 
 function! slime#config() abort
   call inputsave()
-  call s:SlimeDispatch('config')
+  if s:SlimeDispatch("ValidEnv")
+    call s:SlimeDispatch('config')
+  endif
   call inputrestore()
 endfunction
 
@@ -178,7 +207,7 @@ function! s:SlimeDispatch(name, ...)
     return call(fun_string, a:000)
   endif
 
-  "zero means true
+  "1 means true
   return 1
 endfunction
 
