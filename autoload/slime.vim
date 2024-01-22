@@ -92,17 +92,17 @@ function! s:SlimeGetConfig()
   " assume defaults, if they exist
   if exists("g:slime_default_config")
     let b:slime_config = g:slime_default_config
-  endif
 
-  " skip confirmation, if configured
-  if exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
-    return
-  endif
+    " skip confirmation, if configured
+    if exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
+      return
+    endif
 
-  if !s:SlimeDispatch("ValidConfig", b:slime_config)
-    unlet b:slime_config
-  endif
+    if !s:SlimeDispatch("ValidConfig", b:slime_config)
+      unlet b:slime_config
+    endif
 
+  endif
   " prompt user
   call s:SlimeDispatch('config')
 
