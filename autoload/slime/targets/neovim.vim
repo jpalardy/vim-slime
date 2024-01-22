@@ -51,7 +51,6 @@ function! slime#targets#neovim#SlimeAddChannel()
     let g:slime_last_channel = [{'jobid': &channel, 'pid': b:terminal_job_pid}]
   else
     call add(g:slime_last_channel, {'jobid': &channel, 'pid': b:terminal_job_pid})
-    echom "adding channel: "..join(g:slime_last_channel, ",")
   endif
 endfunction
 
