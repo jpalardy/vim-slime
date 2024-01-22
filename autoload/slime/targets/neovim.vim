@@ -129,19 +129,19 @@ echomsg string(a:config)
     return 0
   endif
 
-  if a:config["neovim"]["jobid"] == -1  "the id wasn't found translate_pid_to_id
+  if a:config["jobid"] == -1  "the id wasn't found translate_pid_to_id
     echom "No matching job id for the provided pid. Try again"
     return 0
   endif
 
 
 
-  if !(index( s:channel_to_array(g:slime_last_channel), a:config['neovim']['jobid']) >= 0)
+  if !(index( s:channel_to_array(g:slime_last_channel), a:config['jobid']) >= 0)
     echom "Job ID not found. Try again."
     return 0
   endif
 
-  return 1 && s:SlimeDispatch("ValidConfig")
+  return 1
 
 endfunction
 
