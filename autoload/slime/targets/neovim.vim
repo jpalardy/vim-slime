@@ -80,8 +80,6 @@ function! slime#targets#neovim#SlimeClearChannel()
 
     call filter(g:slime_last_channel, {_, val -> index(bufinfo, str2nr(val["jobid"])) >= 0})
 
-    echom "cleari channel: "..join(g:slime_last_channel, ",")
-
   endif
 endfunction
 
