@@ -102,6 +102,8 @@ nmap <leader>s <Plug>SlimeMotionSend
 nmap <leader>ss <Plug>SlimeLineSend
 ```
 
+Of course these mappings are just examples; you can set them according to your preference.
+
 Config prompt
 --------------
 
