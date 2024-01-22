@@ -100,6 +100,7 @@ endfunction
 " returns boolean of whether the supplied config is valid
 function! slime#targets#neovim#ValidConfig(config) abort
 
+echomsg string(a:config)
   if s:NotExistsLastChannel()
     echom "Terminal not detected: Open a neovim terminal and try again. "
     return 0
@@ -123,8 +124,8 @@ function! slime#targets#neovim#ValidConfig(config) abort
 
   " Ensure the correct keys exist within the configuration
 
-  if !(has_key(a:config, 'neovim') && has_key(a:config['neovim'], 'jobid') )
-    echom "Improper configuration structure Try again"
+  if !(has_key(a:config, 'jobid'))
+    echom "Configration object lacks 'jobid'. Try again"
     return 0
   endif
 
