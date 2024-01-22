@@ -122,6 +122,7 @@ function! slime#send_op(type, ...) abort
     try
       call s:SlimeGetConfig()
     catch \invalid config\
+      return
     endtry
 
     let sel_save = &selection
@@ -154,6 +155,7 @@ function! slime#send_range(startline, endline) abort
     try
       call s:SlimeGetConfig()
     catch \invalid config\
+      return
     endtry
 
     let rv = getreg('"')
@@ -169,6 +171,7 @@ function! slime#send_lines(count) abort
     try
       call s:SlimeGetConfig()
     catch \invalid config\
+      return
     endtry
 
     let rv = getreg('"')
@@ -221,6 +224,7 @@ function! slime#send(text)
     try
       call s:SlimeGetConfig()
     catch \invalid config\
+      return
     endtry
 
     " this used to return a string, but some receivers (coffee-script)
