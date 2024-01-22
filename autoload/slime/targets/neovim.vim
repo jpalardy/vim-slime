@@ -1,6 +1,7 @@
 
 function! slime#targets#neovim#config() abort
 
+  " unlet current config if its jobid doesn't exist
   if exists("b:slime_config")
     let bufinfo = s:get_filter_bufinfo()
     let current_jobid = get(b:slime_config, "jobid", "-1")
@@ -16,6 +17,7 @@ function! slime#targets#neovim#config() abort
     let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
   endif
 
+  "include option to input pid
   if exists("g:slime_input_pid") && g:slime_input_pid
     let pid_in = input("pid: ", str2nr(jobpid(b:slime_config["jobid"])))
     let id_in = s:translate_pid_to_id(pid_in)
