@@ -52,34 +52,6 @@ function! s:_EscapeText(text)
   endif
 endfunction
 
-"function! s:SlimeGetConfig()
-"  " b:slime_config already configured...
-"  if exists("b:slime_config") 
-"    if s:SlimeDispatch("ValidConfig", b:slime_config)
-"      return
-"    endif
-"  endif
-"  " assume defaults, if they exist
-"  if exists("g:slime_default_config")
-"    let b:slime_config = g:slime_default_config
-"  endif
-"
-"	if b:slime_config is v:null  || !s:SlimeDispatch("ValidConfig" , b:slime_config) 
-"		let b:slime_config = {}
-"    echo
-"	endif
-"  " skip confirmation, if configured
-"  if exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
-"    return
-"  endif
-"  " prompt user
-"  call s:SlimeDispatch('config')
-"  
-"  if !s:SlimeDispatch('ValidConfig',b:config)
-"  endif
-"
-"endfunction
-
 
 
 function! s:SlimeGetConfig()
