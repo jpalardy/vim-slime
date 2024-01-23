@@ -73,7 +73,7 @@ function! slime#targets#neovim#SlimeClearChannel()
     let bufinfo = s:get_filter_bufinfo()
 
 
-    " tests ifusing a version of Neovim that 
+    " tests if using a version of Neovim that 
     " doesn't automatically close bufers when closed
     " or there is no autocommand that does that
     if len(bufinfo) == len(g:slime_last_channel)
