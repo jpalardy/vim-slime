@@ -81,7 +81,7 @@ let g:slime_preserve_curpos = 0
 
 ## Send Delimited Cells
 
-If you want to send blocks of code between two delimiters, emulating the cell-like mode of REPL environments like ipython, matlab, etc., you can set the cell delimiter to the `b:slime_cell_delimiter` or `g:slime_cell_delimiter` variable and use the `<Plug>SlimeSendCell` mapping to send the block of code. For example, if you are using ipython you could use the following:
+If you want to send blocks of code between two delimiters, emulating the cell-like mode of REPL environments like ipython, matlab, etc., you can set the cell delimiter to any buffer-local variable `b:slime_cell_delimiter` or global `g:slime_cell_delimiter` variable and use the `<Plug>SlimeSendCell` mapping to send the block of code. For example, if you are using ipython you could use the following:
 
 ```vim
 let g:slime_cell_delimiter = "#%%"
