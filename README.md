@@ -84,25 +84,9 @@ The current paragraph — what would be selected if you typed `vip` — is autom
 
 To control exactly what is sent, you can manually select text before calling `vim-slime`.
 
-## Vim-like mappings
+## Vim Style Mappings
 
-To use vim-style mappings, such as operator + motion or operator + text object see:
-
-```vim
-"disables mappings from previous usage section
-let g:slime_no_mappings = 1
-
-"send visual selection
-xmap <leader>s <Plug>SlimeRegionSend
-
-"send based on motion or text object
-nmap <leader>s <Plug>SlimeMotionSend
-
-"send line
-nmap <leader>ss <Plug>SlimeLineSend
-```
-
-Of course these mappings are just examples; you can set them according to your preference.
+To use vim-style mappings, such as operator + motion or operator + text object see the appropriate [advanced configuration secltion]
 
 Config prompt
 --------------
