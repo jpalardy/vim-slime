@@ -85,7 +85,7 @@ If you want to send blocks of code between two delimiters, emulating the cell-li
 
 ```vim
 let g:slime_cell_delimiter = "#%%"
-nmap <leader>s <Plug>SlimeSendCell
+nmap <leader>sc <Plug>SlimeSendCell
 ```
 
 ⚠️  it's recommended to use `b:slime_cell_delimiter` and set the variable in `ftplugin` for each relevant filetype.
