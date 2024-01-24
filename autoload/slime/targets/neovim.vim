@@ -10,7 +10,6 @@ function! slime#targets#neovim#config() abort
     endif
   endif
 
-
   if !exists("b:slime_config")
     let last_pid = get(get(g:slime_last_channel, -1, {}), 'pid', '')
     let last_job = get(get(g:slime_last_channel, -1, {}), 'jobid', '')
