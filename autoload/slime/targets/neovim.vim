@@ -61,7 +61,7 @@ function! slime#targets#neovim#SlimeClearChannel()
 
   if !exists("g:slime_last_channel")
     if exists("b:slime_config")
-      unlet b:slime_config 
+      unlet b:slime_config
     endif
     return
   elseif len(g:slime_last_channel) == 1
@@ -72,9 +72,8 @@ function! slime#targets#neovim#SlimeClearChannel()
   else
     let bufinfo = s:get_filter_bufinfo()
 
-
-    " tests if using a version of Neovim that 
-    " doesn't automatically close bufers when closed
+    " tests if using a version of Neovim that
+    " doesn't automatically close buffers when closed
     " or there is no autocommand that does that
     if len(bufinfo) == len(g:slime_last_channel)
       call filter(bufinfo, {_, val -> val != current_buffer_jobid})
@@ -90,7 +89,7 @@ function! s:get_filter_bufinfo()
   "getting terminal buffers
 
   call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id")
-        \ && has_key(val['variables'], "terminal_job_pid") 
+        \ && has_key(val['variables'], "terminal_job_pid")
         \    && get(val,"listed",0)})
   " only need the job id
   call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] })

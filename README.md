@@ -86,7 +86,7 @@ To control exactly what is sent, you can manually select text before calling `vi
 
 ## Vim-like mappings
 
-To use vim-style mappings:
+To use vim-style mappings, such as operator + motion or operator + text object see:
 
 ```vim
 "disables mappings from previous usage section

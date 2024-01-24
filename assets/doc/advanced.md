@@ -2,6 +2,7 @@
 Advanced Configuration
 ----------------------
 
+## Mappings
 If you need this, you might as well refer to [the code](https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim#L233-L245).
 The code is not as complicated as you think. 😄
 
@@ -18,6 +19,8 @@ xmap <c-c><c-c> <Plug>SlimeRegionSend
 nmap <c-c><c-c> <Plug>SlimeParagraphSend
 nmap <c-c>v     <Plug>SlimeConfig
 ```
+
+## Vim Style Mappings
 
 If you want `vim-slime` to prefill the prompt answers, you can set a default configuration:
 
