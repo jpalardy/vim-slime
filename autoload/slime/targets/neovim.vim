@@ -115,5 +115,3 @@ function! s:translate_id_to_pid(id)
   endtry
   return pid_out
 endfunction
-
-
