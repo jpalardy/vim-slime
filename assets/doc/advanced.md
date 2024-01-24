@@ -53,7 +53,7 @@ nmap <leader>ss <Plug>SlimeLineSend
 
 Of course these mappings are just examples; you can set them according to your preference.
 
-## Default Config
+## Set a Custom Default Config
 
 If you want `vim-slime` to prefill the prompt answers, you can set a default configuration:
 
