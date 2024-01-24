@@ -17,7 +17,7 @@ function! slime#targets#neovim#config() abort
     let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
   endif
 
-  "include option to input pid
+  " include option to input pid
   if exists("g:slime_input_pid") && g:slime_input_pid
     let pid_in = input("pid: ", str2nr(jobpid(b:slime_config["jobid"])))
     let id_in = s:translate_pid_to_id(pid_in)
