@@ -41,6 +41,9 @@ endif
 if slime#config#resolve("target") == "neovim"
   augroup nvim_slime
     autocmd!
-    autocmd TermOpen * let g:slime_last_channel = &channel
+    " keeping track of channels that are open
+    autocmd TermOpen * call slime#targets#neovim#SlimeAddChannel()
+    " keeping track when terminals are closed
+    autocmd TermClose * call slime#targets#neovim#SlimeClearChannel()
   augroup END
-end
+endif
