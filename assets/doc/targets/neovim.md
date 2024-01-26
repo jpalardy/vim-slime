@@ -70,7 +70,7 @@ Those confused by the syntax of the vimscript string passed as an argument to `v
 
 ### Automatic Configuration
 
-Instead of then prompted process input detailed above, you can specify a lua function that will automatically configure slime with a job id:
+Instead of the prompted job id input method detailed above, you can specify a lua function that will automatically configure vim-slime with a job id:
 
 
 ```lua
@@ -81,4 +81,4 @@ end
 
 The details of how to implement this are left to the user.
 
-This is not possible or straightforward to do in pure vimscript due to capitalization rules.
+This is not possible or straightforward to do in pure vimscript due to capitalization rules of functions stored as variables in Vimscript.
