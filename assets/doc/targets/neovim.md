@@ -82,3 +82,5 @@ end
 The details of how to implement this are left to the user.
 
 This is not possible or straightforward to do in pure vimscript due to capitalization rules of functions stored as variables in Vimscript.
+
+ `vim.api.nvim_eval` (see `:h nvim_eval()`) and other Neovim API functions are available to access all or almost all vimscript capabilities from Lua.
