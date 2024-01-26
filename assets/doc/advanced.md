@@ -2,6 +2,7 @@
 Advanced Configuration
 ----------------------
 
+## Mappings
 If you need this, you might as well refer to [the code](https://github.com/jpalardy/vim-slime/blob/master/plugin/slime.vim#L233-L245).
 The code is not as complicated as you think. 😄
 
@@ -11,6 +12,19 @@ If you don't want the default key mappings, set:
 let g:slime_no_mappings = 1
 ```
 
+*before* the plugin is loaded.
+
+If you are using [lazy.nvim](https://github.com/folke/lazy.nvim) as package manager, this can also be done within the `init` function:
+
+```lua
+{
+    "jpalardy/vim-slime",
+    init = function()
+        vim.g.slime_no_mappings = 1
+    end
+}
+```
+
 The default mappings are:
 
 ```vim
@@ -18,6 +32,28 @@ xmap <c-c><c-c> <Plug>SlimeRegionSend
 nmap <c-c><c-c> <Plug>SlimeParagraphSend
 nmap <c-c>v     <Plug>SlimeConfig
 ```
+
+### Vim Style Mappings
+
+Example of how to set vim-style mappings:
+
+```vim
+"disables default bindings
+let g:slime_no_mappings = 1
+
+"send visual selection
+xmap <leader>s <Plug>SlimeRegionSend
+
+"send based on motion or text object
+nmap <leader>s <Plug>SlimeMotionSend
+
+"send line
+nmap <leader>ss <Plug>SlimeLineSend
+```
+
+Of course these mappings are just examples; you can set them according to your preference.
+
+## Set a Custom Default Config
 
 If you want `vim-slime` to prefill the prompt answers, you can set a default configuration:
 
@@ -35,17 +71,21 @@ If you want `vim-slime` to bypass the prompt and use the specified default confi
 let g:slime_dont_ask_default = 1
 ```
 
+## Don't Restore Cursor Position
+
 By default, `vim-slime` will try to restore your cursor position after it runs. If you don't want that behavior, unset the `g:slime_preserve_curpos` option:
 
 ```vim
 let g:slime_preserve_curpos = 0
 ```
 
-If you want to send blocks of code between two delimiters, emulating the cell-like mode of REPL environments like ipython, matlab, etc., you can set the cell delimiter on the `g:slime_cell_delimiter` variable and use the `<Plug>SlimeSendCell` mapping to send the block of code. For example, if you are using ipython you could use the following:
+## Send Delimited Cells
+
+If you want to send blocks of code between two delimiters, emulating the cell-like mode of REPL environments like ipython, matlab, etc., you can set the cell delimiter to any buffer-local variable `b:slime_cell_delimiter` or global `g:slime_cell_delimiter` variable and use the `<Plug>SlimeSendCell` mapping to send the block of code. For example, if you are using ipython you could use the following:
 
 ```vim
 let g:slime_cell_delimiter = "#%%"
-nmap <leader>s <Plug>SlimeSendCell
+nmap <leader>sc <Plug>SlimeSendCell
 ```
 
 ⚠️  it's recommended to use `b:slime_cell_delimiter` and set the variable in `ftplugin` for each relevant filetype.

@@ -1,6 +1,7 @@
 
 function! slime#targets#neovim#config() abort
 
+  " unlet current config if its jobid doesn't exist
   if exists("b:slime_config")
     let bufinfo = s:get_filter_bufinfo()
     let current_jobid = get(b:slime_config, "jobid", "-1")
@@ -9,13 +10,13 @@ function! slime#targets#neovim#config() abort
     endif
   endif
 
-
   if !exists("b:slime_config")
     let last_pid = get(get(g:slime_last_channel, -1, {}), 'pid', '')
     let last_job = get(get(g:slime_last_channel, -1, {}), 'jobid', '')
     let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
   endif
 
+  " include option to input pid
   if exists("g:slime_input_pid") && g:slime_input_pid
     let pid_in = input("pid: ", str2nr(jobpid(b:slime_config["jobid"])))
     let id_in = s:translate_pid_to_id(pid_in)
@@ -48,9 +49,9 @@ endfunction
 
 function! slime#targets#neovim#SlimeAddChannel()
   if !exists("g:slime_last_channel")
-    let g:slime_last_channel = [{'jobid': &channel, 'pid': b:terminal_job_pid}]
+    let g:slime_last_channel = [{'jobid': &channel, 'pid': jobpid(&channel)}]
   else
-    call add(g:slime_last_channel, {'jobid': &channel, 'pid': b:terminal_job_pid})
+    call add(g:slime_last_channel, {'jobid': &channel, 'pid': jobpid(&channel)})
   endif
 endfunction
 
@@ -59,7 +60,7 @@ function! slime#targets#neovim#SlimeClearChannel()
 
   if !exists("g:slime_last_channel")
     if exists("b:slime_config")
-      unlet b:slime_config 
+      unlet b:slime_config
     endif
     return
   elseif len(g:slime_last_channel) == 1
@@ -70,17 +71,14 @@ function! slime#targets#neovim#SlimeClearChannel()
   else
     let bufinfo = s:get_filter_bufinfo()
 
-
-    " tests ifusing a version of Neovim that 
-    " doesn't automatically close bufers when closed
+    " tests if using a version of Neovim that
+    " doesn't automatically close buffers when closed
     " or there is no autocommand that does that
     if len(bufinfo) == len(g:slime_last_channel)
       call filter(bufinfo, {_, val -> val != current_buffer_jobid})
     endif
 
     call filter(g:slime_last_channel, {_, val -> index(bufinfo, str2nr(val["jobid"])) >= 0})
-
-    echom "clearing channel: "..join(g:slime_last_channel, ",")
 
   endif
 endfunction
@@ -162,7 +160,7 @@ function! s:get_filter_bufinfo()
   "getting terminal buffers
 
   call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id")
-        \ && has_key(val['variables'], "terminal_job_pid") 
+        \ && has_key(val['variables'], "terminal_job_pid")
         \    && get(val,"listed",0)})
   " only need the job id
   call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] })
@@ -188,5 +186,3 @@ function! s:translate_id_to_pid(id)
   endtry
   return pid_out
 endfunction
-
-
