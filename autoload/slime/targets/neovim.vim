@@ -11,20 +11,28 @@ function! slime#targets#neovim#config() abort
   endif
 
   if !exists("b:slime_config")
-    let last_pid = get(get(g:slime_last_channel, -1, {}), 'pid', '')
-    let last_job = get(get(g:slime_last_channel, -1, {}), 'jobid', '')
+    let last_pid = get(get(get(g:, 'slime_last_channel', []), -1, {}), 'pid', '')
+    let last_job = get(get(get(g:, 'slime_last_channel', []), -1, {}), 'jobid', '')
     let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
   endif
 
   " include option to input pid
   if exists("g:slime_input_pid") && g:slime_input_pid
-    let pid_in = input("pid: ", str2nr(jobpid(b:slime_config["jobid"])))
+    let default_pid = jobpid(b:slime_config["jobid"])
+    if !empty(default_pid)
+      let default_pid = str2nr(default_pid)
+    end
+    let pid_in = input("pid: ", default_pid)
     let id_in = s:translate_pid_to_id(pid_in)
   else
     if exists("g:slime_get_jobid")
       let id_in = g:slime_get_jobid()
     else
-      let id_in = input("jobid: ", str2nr(b:slime_config["jobid"]))
+      let default_jid = b:slime_config["jobid"]
+      if !empty(default_jid)
+        let default_jid = str2nr(default_jid)
+      end
+      let id_in = input("jobid: ", default_jid)
       let id_in = str2nr(id_in)
     endif
     let pid_in = s:translate_id_to_pid(id_in)
