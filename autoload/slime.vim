@@ -52,8 +52,6 @@ function! s:_EscapeText(text)
   endif
 endfunction
 
-
-
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
   if exists("b:slime_config")
