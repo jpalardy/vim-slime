@@ -49,9 +49,9 @@ endfunction
 
 function! slime#targets#neovim#SlimeAddChannel()
   if !exists("g:slime_last_channel")
-    let g:slime_last_channel = [{'jobid': &channel, 'pid': b:terminal_job_pid}]
+    let g:slime_last_channel = [{'jobid': &channel, 'pid': jobpid(&channel)}]
   else
-    call add(g:slime_last_channel, {'jobid': &channel, 'pid': b:terminal_job_pid})
+    call add(g:slime_last_channel, {'jobid': &channel, 'pid': jobpid(&channel)})
   endif
 endfunction
 
