@@ -58,6 +58,13 @@ endfunction
 function! slime#targets#neovim#SlimeClearChannel()
   let current_buffer_jobid = get(b:,"terminal_job_id",-1)
 
+  let related_bufs = filter(getbufinfo(), {_, val -> has_key(val['variables'], "slime_config")
+      \ && get(val['variables']['slime_config'], 'jobid', -2) == current_buffer_jobid})
+
+  for buf in related_bufs
+    call setbufvar(buf['bufnr'], 'slime_config', {})
+  endfor
+    
   if !exists("g:slime_last_channel")
     if exists("b:slime_config")
       unlet b:slime_config
