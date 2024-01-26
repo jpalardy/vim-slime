@@ -4,6 +4,7 @@ function! slime#targets#wezterm#config() abort
     let b:slime_config = {"pane_id": 1}
   elseif exists("b:slime_config.pane_direction")
     let pane_id = slime#common#system("wezterm cli get-pane-direction %s", [b:slime_config["pane_direction"]])
+    let pane_id = trim(pane_id)
     let b:slime_config = {"pane_id": pane_id}
   endif
   let b:slime_config["pane_id"] = input("wezterm pane_id: ", b:slime_config["pane_id"])
