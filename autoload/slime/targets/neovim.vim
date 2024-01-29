@@ -1,14 +1,6 @@
 
 function! slime#targets#neovim#config() abort
 
-  " unlet current config if its jobid doesn't exist
-  if exists("b:slime_config")
-    let bufinfo = s:get_filter_bufinfo()
-    let current_jobid = get(b:slime_config, "jobid", "-1")
-    if index(bufinfo, current_jobid) == -1
-      unlet b:slime_config
-    endif
-  endif
 
   if !exists("b:slime_config")
     let last_pid = get(get(g:slime_last_channel, -1, {}), 'pid', '')
@@ -99,6 +91,8 @@ endfunction
 function! slime#targets#neovim#ValidConfig(config) abort
 
 echomsg string(a:config)
+
+
   if s:NotExistsLastChannel()
     echom "Terminal not detected: Open a neovim terminal and try again. "
     return 0
@@ -135,6 +129,13 @@ echomsg string(a:config)
 
 
   if !(index( s:channel_to_array(g:slime_last_channel), a:config['jobid']) >= 0)
+    echom "Job ID not found. Try again."
+    return 0
+  endif
+
+  let bufinfo = s:get_filter_bufinfo()
+  let current_jobid = get(b:slime_config, "jobid", "-1")
+  if index(bufinfo, current_jobid) == -1
     echom "Job ID not found. Try again."
     return 0
   endif
