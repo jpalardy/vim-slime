@@ -29,7 +29,7 @@ endfunction
 
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
-  if exists("b:slime_config")
+  if exists("b:slime_config") && !empty(b:slime_config)
     return
   endif
   " assume defaults, if they exist
