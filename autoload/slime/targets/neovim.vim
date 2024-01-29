@@ -2,11 +2,9 @@
 function! slime#targets#neovim#config() abort
 
 
-  if !exists("b:slime_config")
-    let last_pid = get(get(g:slime_last_channel, -1, {}), 'pid', '')
-    let last_job = get(get(g:slime_last_channel, -1, {}), 'jobid', '')
-    let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
-  endif
+  let last_pid = get(get(g:slime_last_channel, -1, {}), 'pid', '')
+  let last_job = get(get(g:slime_last_channel, -1, {}), 'jobid', '')
+  let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
 
   " include option to input pid
   if exists("g:slime_input_pid") && g:slime_input_pid
