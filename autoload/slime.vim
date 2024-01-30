@@ -3,6 +3,31 @@
 " Helpers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" takes any number of strings as arguments: if one of those strings exists
+" as an environment variable in vim, return its value, if none of them exist
+" return v:null
+function! s:resolve(...)
+  for name in a:000
+    if exists(name)
+      return eval(name)
+    endif
+  endfor
+  return v:null
+endfunction
+
+" takes any number of strings as arguments: if one of those strings exists
+" as an environment variable in vim, return its value, if none of them exist
+" return 'default' arg
+function! s:resolve_default(default, ...)
+  for name in a:000
+    if exists(name)
+      return eval(name)
+    endif
+  endfor
+  " 0 means false
+  return a:default
+endfunction
+
 function! s:_EscapeText(text)
   let escape_text_fn = "_EscapeText_" . substitute(&filetype, "[.]", "_", "g")
   if exists("&filetype")
@@ -30,65 +55,101 @@ endfunction
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
   if exists("b:slime_config")
-    return
+    if s:SlimeDispatch("ValidConfig", b:slime_config)
+      return
+    endif
   endif
   " assume defaults, if they exist
   if exists("g:slime_default_config")
     let b:slime_config = g:slime_default_config
-  endif
-  " skip confirmation, if configured
-  if exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
-    return
+
+    " skip confirmation, if configured
+    if exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
+      return
+    endif
+
+    if !s:SlimeDispatch("ValidConfig", b:slime_config)
+      unlet b:slime_config
+    endif
+
   endif
   " prompt user
   call s:SlimeDispatch('config')
-endfunction
 
-function! slime#send_op(type, ...) abort
-  call s:SlimeGetConfig()
-
-  let sel_save = &selection
-  let &selection = "inclusive"
-  let rv = getreg('"')
-  let rt = getregtype('"')
-
-  if a:0  " Invoked from Visual mode, use '< and '> marks.
-    silent exe "normal! `<" . a:type . '`>y'
-  elseif a:type == 'line'
-    silent exe "normal! '[V']y"
-  elseif a:type == 'block'
-    silent exe "normal! `[\<C-V>`]\y"
+  if s:SlimeDispatch("ValidConfig", b:slime_config)
+    return
   else
-    silent exe "normal! `[v`]y"
+    unlet b:slime_config
+    throw "invalid config"
   endif
 
-  call setreg('"', @", 'V')
-  call slime#send(@")
+endfunction
 
-  let &selection = sel_save
-  call setreg('"', rv, rt)
 
-  call s:SlimeRestoreCurPos()
+
+function! slime#send_op(type, ...) abort
+  if s:SlimeDispatch("ValidEnv")
+    try
+      call s:SlimeGetConfig()
+    catch \invalid config\
+      return
+    endtry
+
+    let sel_save = &selection
+    let &selection = "inclusive"
+    let rv = getreg('"')
+    let rt = getregtype('"')
+
+    if a:0  " Invoked from Visual mode, use '< and '> marks.
+      silent exe "normal! `<" . a:type . '`>y'
+    elseif a:type == 'line'
+      silent exe "normal! '[V']y"
+    elseif a:type == 'block'
+      silent exe "normal! `[\<C-V>`]\y"
+    else
+      silent exe "normal! `[v`]y"
+    endif
+
+    call setreg('"', @", 'V')
+    call slime#send(@")
+
+    let &selection = sel_save
+    call setreg('"', rv, rt)
+
+    call s:SlimeRestoreCurPos()
+  endif
 endfunction
 
 function! slime#send_range(startline, endline) abort
-  call s:SlimeGetConfig()
+  if s:SlimeDispatch("ValidEnv")
+    try
+      call s:SlimeGetConfig()
+    catch \invalid config\
+      return
+    endtry
 
-  let rv = getreg('"')
-  let rt = getregtype('"')
-  silent exe a:startline . ',' . a:endline . 'yank'
-  call slime#send(@")
-  call setreg('"', rv, rt)
+    let rv = getreg('"')
+    let rt = getregtype('"')
+    silent exe a:startline . ',' . a:endline . 'yank'
+    call slime#send(@")
+    call setreg('"', rv, rt)
+  endif
 endfunction
 
 function! slime#send_lines(count) abort
-  call s:SlimeGetConfig()
+  if s:SlimeDispatch("ValidEnv")
+    try
+      call s:SlimeGetConfig()
+    catch \invalid config\
+      return
+    endtry
 
-  let rv = getreg('"')
-  let rt = getregtype('"')
-  silent exe 'normal! ' . a:count . 'yy'
-  call slime#send(@")
-  call setreg('"', rv, rt)
+    let rv = getreg('"')
+    let rt = getregtype('"')
+    silent exe 'normal! ' . a:count . 'yy'
+    call slime#send(@")
+    call setreg('"', rv, rt)
+  endif
 endfunction
 
 function! slime#send_cell() abort
@@ -128,26 +189,41 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! slime#send(text)
-  call s:SlimeGetConfig()
 
-  " this used to return a string, but some receivers (coffee-script)
-  " will flush the rest of the buffer given a special sequence (ctrl-v)
-  " so we, possibly, send many strings -- but probably just one
-  let pieces = s:_EscapeText(a:text)
-  for piece in pieces
-    if type(piece) == 0  " a number
-      if piece > 0  " sleep accepts only positive count
-        execute 'sleep' piece . 'm'
+  if s:SlimeDispatch("ValidEnv")
+    try
+      call s:SlimeGetConfig()
+    catch \invalid config\
+      return
+    endtry
+
+    " this used to return a string, but some receivers (coffee-script)
+    " will flush the rest of the buffer given a special sequence (ctrl-v)
+    " so we, possibly, send many strings -- but probably just one
+    let pieces = s:_EscapeText(a:text)
+    for piece in pieces
+      if type(piece) == 0  " a number
+        if piece > 0  " sleep accepts only positive count
+          execute 'sleep' piece . 'm'
+        endif
+      else
+        call s:SlimeDispatch('send', b:slime_config, piece)
       endif
-    else
-      call s:SlimeDispatch('send', b:slime_config, piece)
-    endif
-  endfor
+    endfor
+  endif
 endfunction
+
 
 function! slime#config() abort
   call inputsave()
-  call s:SlimeDispatch('config')
+  if s:SlimeDispatch("ValidEnv")
+    call s:SlimeDispatch('config')
+
+    if !s:SlimeDispatch("ValidConfig", b:slime_config)
+      unlet b:slime_config
+      throw "invalid config"
+    endif
+  endif
   call inputrestore()
 endfunction
 
@@ -158,6 +234,13 @@ function! s:SlimeDispatch(name, ...)
   if exists("*" . override_fn)
     return call(override_fn, a:000)
   endif
-  return call("slime#targets#" . slime#config#resolve("target") . "#" . a:name, a:000)
+
+  let fun_string = "slime#targets#" . slime#config#resolve("target") . "#" . a:name
+  if exists("*" . fun_string)
+    return call(fun_string, a:000)
+  endif
+
+  "1 means true
+  return 1
 endfunction
 
