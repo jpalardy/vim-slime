@@ -96,9 +96,6 @@ endfunction
 " returns boolean of whether the supplied config is valid
 function! slime#targets#neovim#ValidConfig(config) abort
 
-  echomsg string(a:config)
-
-
   if s:NotExistsLastChannel()
     echom "Terminal not detected: Open a neovim terminal and try again. "
     return 0
@@ -121,28 +118,28 @@ function! slime#targets#neovim#ValidConfig(config) abort
   endif
 
   " Ensure the correct keys exist within the configuration
-
   if !(has_key(a:config, 'jobid'))
-    echom "Configration object lacks 'jobid'. Try again"
+    echom "Configration object lacks 'jobid'."
     return 0
   endif
 
   if a:config["jobid"] == -1  "the id wasn't found translate_pid_to_id
-    echom "No matching job id for the provided pid. Try again"
+    echom "No matching job id for the provided pid."
     return 0
   endif
-
-
 
   if !(index( s:channel_to_array(g:slime_last_channel), a:config['jobid']) >= 0)
-    echom "Job ID not found. Try again."
+    echom "Job ID not found."
     return 0
   endif
 
-  let bufinfo = s:get_filter_bufinfo()
-  let current_jobid = get(b:slime_config, "jobid", "-1")
-  if index(bufinfo, current_jobid) == -1
-    echom "Job ID not found. Try again."
+  if !(index(s:get_filter_bufinfo(), a:config['jobid'])) >= 0
+    echom "Job ID not found."
+    return 0
+  endif
+
+  if empty(jobpid(a:config))
+    echom "Job ID not linked to a PID."
     return 0
   endif
 
@@ -167,7 +164,6 @@ function! s:get_filter_bufinfo()
   "getting terminal buffers
 
   call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id")
-        \ && has_key(val['variables'], "terminal_job_pid")
         \    && get(val,"listed",0)})
   " only need the job id
   call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] })
