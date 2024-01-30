@@ -55,7 +55,7 @@ endfunction
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
   if exists("b:slime_config")
-    if s:SlimeDispatch("ValidConfig", b:slime_config)
+    if s:SlimeDispatchValidate("ValidConfig", b:slime_config)
       return
     endif
   endif
@@ -68,7 +68,7 @@ function! s:SlimeGetConfig()
       return
     endif
 
-    if !s:SlimeDispatch("ValidConfig", b:slime_config)
+    if !s:SlimeDispatchValidate("ValidConfig", b:slime_config)
       unlet b:slime_config
     endif
 
@@ -76,7 +76,7 @@ function! s:SlimeGetConfig()
   " prompt user
   call s:SlimeDispatch('config')
 
-  if s:SlimeDispatch("ValidConfig", b:slime_config)
+  if s:SlimeDispatchValidate("ValidConfig", b:slime_config)
     return
   else
     unlet b:slime_config
@@ -88,7 +88,7 @@ endfunction
 
 
 function! slime#send_op(type, ...) abort
-  if s:SlimeDispatch("ValidEnv")
+  if s:SlimeDispatchValidate("ValidEnv")
     try
       call s:SlimeGetConfig()
     catch \invalid config\
@@ -121,7 +121,7 @@ function! slime#send_op(type, ...) abort
 endfunction
 
 function! slime#send_range(startline, endline) abort
-  if s:SlimeDispatch("ValidEnv")
+  if s:SlimeDispatchValidate("ValidEnv")
     try
       call s:SlimeGetConfig()
     catch \invalid config\
@@ -137,7 +137,7 @@ function! slime#send_range(startline, endline) abort
 endfunction
 
 function! slime#send_lines(count) abort
-  if s:SlimeDispatch("ValidEnv")
+  if s:SlimeDispatchValidate("ValidEnv")
     try
       call s:SlimeGetConfig()
     catch \invalid config\
@@ -190,7 +190,7 @@ endfunction
 
 function! slime#send(text)
 
-  if s:SlimeDispatch("ValidEnv")
+  if s:SlimeDispatchValidate("ValidEnv")
     try
       call s:SlimeGetConfig()
     catch \invalid config\
@@ -216,10 +216,10 @@ endfunction
 
 function! slime#config() abort
   call inputsave()
-  if s:SlimeDispatch("ValidEnv")
+  if s:SlimeDispatchValidate("ValidEnv")
     call s:SlimeDispatch('config')
 
-    if !s:SlimeDispatch("ValidConfig", b:slime_config)
+    if !s:SlimeDispatchValidate("ValidConfig", b:slime_config)
       unlet b:slime_config
       throw "invalid config"
     endif
@@ -228,7 +228,7 @@ function! slime#config() abort
 endfunction
 
 " delegation
-function! s:SlimeDispatch(name, ...)
+function! s:SlimeDispatchValidate(name, ...)
   " allow custom override
   let override_fn = "SlimeOverride" . slime#common#capitalize(a:name)
   if exists("*" . override_fn)
@@ -244,3 +244,12 @@ function! s:SlimeDispatch(name, ...)
   return 1
 endfunction
 
+" delegation
+function! s:SlimeDispatch(name, ...)
+  " allow custom override
+  let override_fn = "SlimeOverride" . slime#common#capitalize(a:name)
+  if exists("*" . override_fn)
+    return call(override_fn, a:000)
+  endif
+  return call("slime#targets#" . slime#config#resolve("target") . "#" . a:name, a:000)
+endfunction
