@@ -2,9 +2,12 @@
 function! slime#targets#neovim#config() abort
 
   " unlet current config if its jobid doesn't exist
+  let last_channels = get(g:, 'slime_last_channel', [])
+  let most_recent_channel = get(last_channels, -1, {})
 
-  let last_pid = get(get(get(g:, 'slime_last_channel', []), -1, {}), 'pid', '')
-  let last_job = get(get(get(g:, 'slime_last_channel', []), -1, {}), 'jobid', '')
+  let last_pid = get(most_recent_channel, 'pid', '')
+  let last_job = get(most_recent_channel, 'jobid', '')
+
   let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
 
   " include option to input pid
@@ -133,7 +136,7 @@ function! slime#targets#neovim#ValidConfig(config) abort
     return 0
   endif
 
-  if !(index(s:get_filter_bufinfo(), a:config['jobid'])) >= 0
+  if !(index(s:get_filter_bufinfo(), a:config['jobid']) >= 0)
     echom "Job ID not found."
     return 0
   endif
