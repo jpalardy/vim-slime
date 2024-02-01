@@ -89,7 +89,7 @@ endfunction
 "evaluates whether ther is a terminal running; if there isn't then no config can be valid
 function! slime#targets#neovim#ValidEnv() abort
   if s:NotExistsLastChannel()
-    echo "Terminal not detected: Open a Neovim terminal and try again. "
+    echon "Terminal not detected: Open a Neovim terminal and try again. "
     return 0
   endif
   return 1
@@ -100,49 +100,49 @@ endfunction
 function! slime#targets#neovim#ValidConfig(config) abort
 
   if s:NotExistsLastChannel()
-    echom "Terminal not detected: Open a neovim terminal and try again. "
+    echon "\rTerminal not detected: Open a neovim terminal and try again. "
     return 0
   endif
 
   if !exists("a:config") ||  a:config is v:null
-    echom "Config does not exist."
+    echon "\rConfig does not exist."
     return 0
   endif
 
   " Ensure the config is a dictionary and a previous channel exists
   if type(a:config) != v:t_dict
-    echom "Config type not valid."
+    echon "\rConfig type not valid."
     return 0
   endif
 
   if empty(a:config)
-    echom "Config is empty."
+    echon "\rConfig is empty."
     return 0
   endif
 
   " Ensure the correct keys exist within the configuration
   if !(has_key(a:config, 'jobid'))
-    echom "Configration object lacks 'jobid'."
+    echon "\rConfigration object lacks 'jobid'."
     return 0
   endif
 
   if a:config["jobid"] == -1  "the id wasn't found translate_pid_to_id
-    echom "No matching job id for the provided pid."
+    echon "\rNo matching job id for the provided pid."
     return 0
   endif
 
   if !(index( s:channel_to_array(g:slime_last_channel), a:config['jobid']) >= 0)
-    echom "Job ID not found."
+    echon "\rJob ID not found."
     return 0
   endif
 
   if !(index(s:get_filter_bufinfo(), a:config['jobid']) >= 0)
-    echom "Job ID not found."
+    echon "\rJob ID not found."
     return 0
   endif
 
-  if empty(jobpid(a:config))
-    echom "Job ID not linked to a PID."
+  if empty(jobpid(a:config['jobid']))
+    echon "\rJob ID not linked to a PID."
     return 0
   endif
 

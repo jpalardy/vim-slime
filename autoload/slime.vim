@@ -221,7 +221,6 @@ function! slime#config() abort
 
     if !s:SlimeDispatchValidate("ValidConfig", b:slime_config)
       unlet b:slime_config
-      throw "invalid config"
     endif
   endif
   call inputrestore()
