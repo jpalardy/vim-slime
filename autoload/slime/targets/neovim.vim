@@ -100,49 +100,49 @@ endfunction
 function! slime#targets#neovim#ValidConfig(config) abort
 
   if s:NotExistsLastChannel()
-    echon "\rTerminal not detected."
+    echon "\nTerminal not detected."
     return 0
   endif
 
   if !exists("a:config") ||  a:config is v:null
-    echon "\rConfig does not exist."
+    echon "\nConfig does not exist."
     return 0
   endif
 
   " Ensure the config is a dictionary and a previous channel exists
   if type(a:config) != v:t_dict
-    echon "\rConfig type not valid."
+    echon "\nConfig type not valid."
     return 0
   endif
 
   if empty(a:config)
-    echon "\rConfig is empty."
+    echon "\nConfig is empty."
     return 0
   endif
 
   " Ensure the correct keys exist within the configuration
   if !(has_key(a:config, 'jobid'))
-    echon "\rConfigration object lacks 'jobid'."
+    echon "\nConfigration object lacks 'jobid'."
     return 0
   endif
 
   if a:config["jobid"] == -1  "the id wasn't found translate_pid_to_id
-    echon "\rNo matching job id for the provided pid."
+    echon "\nNo matching job id for the provided pid."
     return 0
   endif
 
   if !(index( s:channel_to_array(g:slime_last_channel), a:config['jobid']) >= 0)
-    echon "\rJob ID not found."
+    echon "\nJob ID not found."
     return 0
   endif
 
   if !(index(s:get_filter_bufinfo(), a:config['jobid']) >= 0)
-    echon "\rJob ID not found."
+    echon "\nJob ID not found."
     return 0
   endif
 
   if empty(jobpid(a:config['jobid']))
-    echon "\rJob ID not linked to a PID."
+    echon "\nJob ID not linked to a PID."
     return 0
   endif
 
