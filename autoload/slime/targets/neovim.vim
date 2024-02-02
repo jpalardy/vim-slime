@@ -89,7 +89,7 @@ endfunction
 "evaluates whether ther is a terminal running; if there isn't then no config can be valid
 function! slime#targets#neovim#ValidEnv() abort
   if s:NotExistsLastChannel()
-    echon "Terminal not detected: Open a Neovim terminal and try again. "
+    echon "Terminal not detected."
     return 0
   endif
   return 1
@@ -100,7 +100,7 @@ endfunction
 function! slime#targets#neovim#ValidConfig(config) abort
 
   if s:NotExistsLastChannel()
-    echon "\rTerminal not detected: Open a neovim terminal and try again. "
+    echon "\rTerminal not detected."
     return 0
   endif
 
