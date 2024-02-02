@@ -88,13 +88,6 @@ endfunction
 
 
 function! slime#send_op(type, ...) abort
-  if s:SlimeDispatchValidate("ValidEnv")
-    try
-      call s:SlimeGetConfig()
-    catch \invalid config\
-      return
-    endtry
-
     let sel_save = &selection
     let &selection = "inclusive"
     let rv = getreg('"')
@@ -117,39 +110,23 @@ function! slime#send_op(type, ...) abort
     call setreg('"', rv, rt)
 
     call s:SlimeRestoreCurPos()
-  endif
 endfunction
 
 function! slime#send_range(startline, endline) abort
-  if s:SlimeDispatchValidate("ValidEnv")
-    try
-      call s:SlimeGetConfig()
-    catch \invalid config\
-      return
-    endtry
 
     let rv = getreg('"')
     let rt = getregtype('"')
     silent exe a:startline . ',' . a:endline . 'yank'
     call slime#send(@")
     call setreg('"', rv, rt)
-  endif
 endfunction
 
 function! slime#send_lines(count) abort
-  if s:SlimeDispatchValidate("ValidEnv")
-    try
-      call s:SlimeGetConfig()
-    catch \invalid config\
-      return
-    endtry
-
     let rv = getreg('"')
     let rt = getregtype('"')
     silent exe 'normal! ' . a:count . 'yy'
     call slime#send(@")
     call setreg('"', rv, rt)
-  endif
 endfunction
 
 function! slime#send_cell() abort
