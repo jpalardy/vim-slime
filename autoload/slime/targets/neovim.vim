@@ -50,7 +50,7 @@ function! slime#targets#neovim#SlimeAddChannel()
 endfunction
 
 function! slime#targets#neovim#SlimeClearChannel()
-  let current_buffer_jobid = get(b:,"terminal_job_id",-1)
+  let current_buffer_jobid = &channel
 
   let related_bufs = filter(getbufinfo(), {_, val -> has_key(val['variables'], "slime_config")
         \ && get(val['variables']['slime_config'], 'jobid', -2) == current_buffer_jobid})
