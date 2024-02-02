@@ -12,13 +12,13 @@ function! slime#targets#neovim#config() abort
 
   " include option to input pid
   if exists("g:slime_input_pid") && g:slime_input_pid
-    let pid_in = input("pid: ", str2nr(jobpid(b:slime_config["jobid"])))
+    let pid_in = input("Configuring vim-slime. Input pid: ", str2nr(jobpid(b:slime_config["jobid"])))
     let id_in = s:translate_pid_to_id(pid_in)
   else
     if exists("g:slime_get_jobid")
       let id_in = g:slime_get_jobid()
     else
-      let id_in = input("jobid: ", str2nr(b:slime_config["jobid"]))
+      let id_in = input("Configuring vim-slime. Input jobid: ", str2nr(b:slime_config["jobid"]))
       let id_in = str2nr(id_in)
     endif
     let pid_in = s:translate_id_to_pid(id_in)

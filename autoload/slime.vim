@@ -235,7 +235,7 @@ function! s:SlimeDispatchValidate(name, ...)
   endif
 
   let fun_string = "slime#targets#" . slime#config#resolve("target") . "#" . a:name
-  " usint try catcht because exists() doesn't detect autoload functions that aren't yet loaded
+  " using try catch because exists() doesn't detect autoload functions that aren't yet loaded
   try
     return call(fun_string, a:000)
   catch /^Vim\%((\a\+)\)\=:E117:/
