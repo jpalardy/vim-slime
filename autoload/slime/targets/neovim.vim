@@ -19,24 +19,24 @@ function! slime#targets#neovim#config() abort
     if !empty(default_pid)
       let default_pid = str2nr(default_pid)
       end
-      let pid_in = input("Configuring vim-slime. Input pid: ", default_pid)
+      let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'custom,s:last_channel_to_jobpid_string')
 
-      let id_in = s:translate_pid_to_id(pid_in)
+      let jobid_in = s:translate_pid_to_id(pid_in)
     else
       if exists("g:slime_get_jobid")
-        let id_in = g:slime_get_jobid()
+        let jobid_in = g:slime_get_jobid()
       else
         let default_jobid = b:slime_config["jobid"]
         if !empty(default_jobid)
           let default_jobid = str2nr(default_jobid)
         endif
-        let id_in = input("Configuring vim-slime. Input jobid: ", default_jobid)
-        let id_in = str2nr(id_in)
+        let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'custom,s:last_channel_to_jobid_string')
+        let jobid_in = str2nr(jobid_in)
       endif
-      let pid_in = s:translate_id_to_pid(id_in)
+      let pid_in = s:translate_id_to_pid(jobid_in)
     endif
 
-    let b:slime_config["jobid"] = id_in
+    let b:slime_config["jobid"] = jobid_in
     let b:slime_config["pid"] = pid_in
   endfunction
 
@@ -143,7 +143,7 @@ function! slime#targets#neovim#config() abort
       return 0
     endif
 
-    if !(index( s:channel_to_array(g:slime_last_channel), a:config['jobid']) >= 0)
+    if !(index( s:last_channel_to_jobid_array(g:slime_last_channel), a:config['jobid']) >= 0)
       echon "\nJob ID not found."
       return 0
     endif
@@ -163,9 +163,26 @@ function! slime#targets#neovim#config() abort
   endfunction
 
 
-  " Transforms a channel dictionary into an array of job IDs.
-  function! s:channel_to_array(channel_dict)
+  " Transforms a channel dictionary with job ida and pid into an array of job IDs.
+  function! s:last_channel_to_jobid_array(channel_dict)
     return map(copy(a:channel_dict), {_, val -> val["jobid"]})
+  endfunction
+
+  function! s:last_channel_to_jobid_string(channel_dict)
+    "they will be transformed into pids so caling them by theier final identity
+    let jobids = s:last_channel_to_jobid_array(g:slime_last_channel)
+    return join(jobids,"\n")
+
+  endfunction
+
+  " Transforms a channel dictionary with job ida and pid into an array of job IDs.
+  function! s:last_channel_to_jobpid_string(channel_dict)
+    "they will be transformed into pids so caling them by theier final identity
+    let job_pids = map(copy(a:channel_dict), {_, val -> val["jobid"]})
+     map(job_pids, {_, val -> s:translate_id_to_pid(val)})
+    call filter(job_pids, {_,val -> val != -1})
+    return join(jobpids,"\n")
+
   endfunction
 
   " Checks if a previous channel does not exist or is empty.
