@@ -163,27 +163,29 @@ function! slime#targets#neovim#config() abort
   endfunction
 
 
-  " Transforms a channel dictionary with job ida and pid into an array of job IDs.
-  function! s:last_channel_to_jobid_array(channel_dict)
-    return map(copy(a:channel_dict), {_, val -> val["jobid"]})
-  endfunction
+function! s:last_channel_to_jobid_array(channel_dict)
+  return map(copy(a:channel_dict), {_, val -> val["jobid"]})
+endfunction
 
-  function! s:last_channel_to_jobid_string(channel_dict)
-    "they will be transformed into pids so caling them by theier final identity
-    let jobids = s:last_channel_to_jobid_array(g:slime_last_channel)
-    return join(jobids,"\n")
+" Transforms a channel dictionary with job id and pid into an newline seaparated string  of job IDs.
+" for teh purposes of input completion
+function! s:last_channel_to_jobid_string(ArgLead, CmdLine, CursorPos)
+  "they will be transformed into pids so caling them by theier final identity
+  let jobids = s:last_channel_to_jobid_array(g:slime_last_channel)
+  return join(jobids,"\n")
 
-  endfunction
+endfunction
 
-  " Transforms a channel dictionary with job ida and pid into an array of job IDs.
-  function! s:last_channel_to_pid_string(channel_dict)
-    "they will be transformed into pids so caling them by theier final identity
-    let job_pids = map(copy(a:channel_dict), {_, val -> val["jobid"]})
-     map(job_pids, {_, val -> s:translate_id_to_pid(val)})
-    call filter(job_pids, {_,val -> val != -1})
-    return join(jobpids,"\n")
+" Transforms a channel dictionary with job ida and pid into an newline seaparated string  of job PIDs.
+" for the purposes of input completion
+function! s:last_channel_to_pid_string(ArgLead, CmdLine, CursorPos)
+  "they will be transformed into pids so caling them by theier final identity
+  let job_pids = map(copy(g:slime_last_channel), {_, val -> val["jobid"]})
+  map(job_pids, {_, val -> s:translate_id_to_pid(val)})
+  call filter(job_pids, {_,val -> val != -1})
+  return join(jobpids,"\n")
 
-  endfunction
+endfunction
 
   " Checks if a previous channel does not exist or is empty.
   function! s:NotExistsLastChannel() abort
