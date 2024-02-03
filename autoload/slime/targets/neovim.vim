@@ -21,7 +21,7 @@ function! slime#targets#neovim#config() abort
       end
       let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'custom,s:last_channel_to_pid_string')
 
-      let jobid_in = s:translate_pid_to_id(pid_in)
+      let jobid_in = str2nr(s:translate_pid_to_id(pid_in))
     else
       if exists("g:slime_get_jobid")
         let jobid_in = g:slime_get_jobid()
