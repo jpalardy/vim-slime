@@ -12,7 +12,15 @@ function! slime#targets#neovim#config() abort
 
   " include option to input pid
   if exists("g:slime_input_pid") && g:slime_input_pid
-    let pid_in = input("Configuring vim-slime. Input pid: ", str2nr(jobpid(b:slime_config["jobid"])))
+
+    let default_pid = jobpid(b:slime_config["jobid"])
+    "if everything does right this validation should be redundant
+    "validation of the environment with ValidEnv should prevent the empty string
+    if !empty(default_pid)
+      let default_pid = str2nr(default_pid)
+    end
+    let pid_in = input("pid: ", default_pid)
+
     let id_in = s:translate_pid_to_id(pid_in)
   else
     if exists("g:slime_get_jobid")
