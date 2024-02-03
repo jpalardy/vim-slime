@@ -19,7 +19,7 @@ function! slime#targets#neovim#config() abort
     if !empty(default_pid)
       let default_pid = str2nr(default_pid)
       end
-      let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'custom,s:last_channel_to_jobpid_string')
+      let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'custom,s:last_channel_to_pid_string')
 
       let jobid_in = s:translate_pid_to_id(pid_in)
     else
@@ -176,7 +176,7 @@ function! slime#targets#neovim#config() abort
   endfunction
 
   " Transforms a channel dictionary with job ida and pid into an array of job IDs.
-  function! s:last_channel_to_jobpid_string(channel_dict)
+  function! s:last_channel_to_pid_string(channel_dict)
     "they will be transformed into pids so caling them by theier final identity
     let job_pids = map(copy(a:channel_dict), {_, val -> val["jobid"]})
      map(job_pids, {_, val -> s:translate_id_to_pid(val)})
