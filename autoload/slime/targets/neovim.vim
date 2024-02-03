@@ -173,7 +173,6 @@ function! s:last_channel_to_jobid_string(ArgLead, CmdLine, CursorPos)
   "they will be transformed into pids so caling them by theier final identity
   let jobids = s:last_channel_to_jobid_array(g:slime_last_channel)
   return join(jobids,"\n")
-
 endfunction
 
 " Transforms a channel dictionary with job ida and pid into an newline seaparated string  of job PIDs.
@@ -184,7 +183,6 @@ function! s:last_channel_to_pid_string(ArgLead, CmdLine, CursorPos)
   map(job_pids, {_, val -> s:translate_id_to_pid(val)})
   call filter(job_pids, {_,val -> val != -1})
   return join(jobpids,"\n")
-
 endfunction
 
   " Checks if a previous channel does not exist or is empty.
