@@ -9,7 +9,7 @@ let g:slime_target = "neovim"
 
 #### Manual/Prompted Configuration
 
-When you invoke `vim-slime` for the first time, you will be prompted for more configuration. The last terminal you opened before calling vim-slime will determine which `job-id` is presented as default. If that terminal is closed, one of the previously opened terminals will be suggested.
+When you invoke `vim-slime` for the first time, you will be prompted for more configuration. The last terminal you opened before calling vim-slime will determine which `job-id` is presented as default. If that terminal is closed, one of the previously opened terminals will be suggested on subsequent configurations. The user can tab through a popup menu of valid configuration values.
 
 To use the terminal's PID as input instead of Neovim's internal job-id of the terminal:
 
@@ -34,7 +34,7 @@ Another way to easily see the `PID` and job ID is to override the status bar of 
 autocmd TermOpen * setlocal statusline=%{bufname()}%=id:\ %{&channel}\ pid:\ %{jobpid(&channel)}
 ```
 
-See `h:statusline` in NeoVim's documentiation for more details.
+See `h:statusline` in Neovim's documentiation for more details.
 
 If you are using a plugin to manage your status line, see that plugin's documentation to see how to confiugre the status line to display `&channel` and `jobpid(&channel)`.
 
