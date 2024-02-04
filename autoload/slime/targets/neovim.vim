@@ -46,11 +46,6 @@ function! slime#targets#neovim#send(config, text)
   " So this `write_paste_file` can help as a small lock & delay
   call slime#common#write_paste_file(a:text)
   call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
-  " if b:slime_config is {"jobid": ""} and not configured
-  " then unset it for automatic configuration next time
-  if b:slime_config["jobid"]  == ""
-    unlet b:slime_config
-  endif
 endfunction
 
 function! slime#targets#neovim#SlimeAddChannel()
@@ -64,12 +59,7 @@ endfunction
 function! slime#targets#neovim#SlimeClearChannel()
   let current_buffer_jobid = &channel
 
-  let related_bufs = filter(getbufinfo(), {_, val -> has_key(val['variables'], "slime_config")
-        \ && get(val['variables']['slime_config'], 'jobid', -2) == current_buffer_jobid})
-
-  for buf in related_bufs
-    call setbufvar(buf['bufnr'], 'slime_config', {})
-  endfor
+  call s:clear_related_bufs(current_buffer_jobid)
 
   if !exists("g:slime_last_channel")
     if exists("b:slime_config")
@@ -163,6 +153,43 @@ function! slime#targets#neovim#ValidConfig(config) abort
 endfunction
 
 
+function! s:translate_pid_to_id(pid)
+  for ch in g:slime_last_channel
+    if ch['pid'] == a:pid
+      return ch['jobid']
+    endif
+  endfor
+  return -1
+endfunction
+
+function! s:translate_id_to_pid(id)
+  let pid_out = -1
+  try
+    let pid_out = jobpid(a:id)
+  catch /E900: Invalid channel id/
+    let pid_out = -1
+  endtry
+  return pid_out
+endfunction
+
+
+" Checks if a previous channel does not exist or is empty.
+function! s:NotExistsLastChannel() abort
+  return (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1)
+endfunction
+
+function! s:get_terminal_jobids()
+  let bufinfo = getbufinfo()
+  "getting terminal buffers
+
+  call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id")
+        \    && get(val,"listed",0)})
+  " only need the job id
+  call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] })
+
+  return bufinfo
+endfunction
+
 function! s:last_channel_to_jobid_array(channel_dict)
   return map(copy(a:channel_dict), {_, val -> val["jobid"]})
 endfunction
@@ -186,39 +213,13 @@ function! Last_channel_to_pid(ArgLead, CmdLine, CursorPos)
   return jobpids
 endfunction
 
-" Checks if a previous channel does not exist or is empty.
-function! s:NotExistsLastChannel() abort
-  return (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1)
-endfunction
 
+" clears all buffers with a certain invalid configuration
+function! s:clear_related_bufs(id_in)
+  let related_bufs = filter(getbufinfo(), {_, val -> has_key(val['variables'], "slime_config")
+        \ && get(val['variables']['slime_config'], 'jobid', -2) == a:id_in})
 
-function! s:get_terminal_jobids()
-  let bufinfo = getbufinfo()
-  "getting terminal buffers
-
-  call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id")
-        \    && get(val,"listed",0)})
-  " only need the job id
-  call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] })
-
-  return bufinfo
-endfunction
-
-function! s:translate_pid_to_id(pid)
-  for ch in g:slime_last_channel
-    if ch['pid'] == a:pid
-      return ch['jobid']
-    endif
+  for buf in related_bufs
+    call setbufvar(buf['bufnr'], 'slime_config', {})
   endfor
-  return -1
-endfunction
-
-function! s:translate_id_to_pid(id)
-  let pid_out = -1
-  try
-    let pid_out = jobpid(a:id)
-  catch /E900: Invalid channel id/
-    let pid_out = -1
-  endtry
-  return pid_out
 endfunction
