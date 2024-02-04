@@ -19,7 +19,7 @@ function! slime#targets#neovim#config() abort
     if !empty(default_pid)
       let default_pid = str2nr(default_pid)
     endif
-    let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'custom,s:last_channel_to_pid_string')
+    let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'customlist,Last_channel_to_pid')
 
     let jobid_in = str2nr(s:translate_pid_to_id(pid_in))
   else
@@ -30,7 +30,7 @@ function! slime#targets#neovim#config() abort
       if !empty(default_jobid)
         let default_jobid = str2nr(default_jobid)
       endif
-      let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'custom,s:last_channel_to_jobid_string')
+      let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'customlist,Last_channel_to_jobid')
       let jobid_in = str2nr(jobid_in)
     endif
     let pid_in = s:translate_id_to_pid(jobid_in)
@@ -82,7 +82,7 @@ function! slime#targets#neovim#SlimeClearChannel()
       unlet b:slime_config
     endif
   else
-    let bufinfo = s:get_filter_bufinfo()
+    let bufinfo = s:get_terminal_jobids()
 
     " tests if using a version of Neovim that
     " doesn't automatically close buffers when closed
@@ -148,7 +148,7 @@ function! slime#targets#neovim#ValidConfig(config) abort
     return 0
   endif
 
-  if !(index(s:get_filter_bufinfo(), a:config['jobid']) >= 0)
+  if !(index(s:get_terminal_jobids(), a:config['jobid']) >= 0)
     echon "\nJob ID not found."
     return 0
   endif
@@ -169,19 +169,21 @@ endfunction
 
 " Transforms a channel dictionary with job id and pid into an newline separated string  of job IDs.
 " for the purposes of input completion
-function! s:last_channel_to_jobid_string(ArgLead, CmdLine, CursorPos)
+function! Last_channel_to_jobid(ArgLead, CmdLine, CursorPos)
   let jobids = s:last_channel_to_jobid_array(g:slime_last_channel)
-  return join(jobids,"\n")
+  call map(jobids, {_, val -> string(val)})
+  return jobids
 endfunction
 
 " Transforms a channel dictionary with job ida and pid into an newline separated string  of job PIDs.
 " for the purposes of input completion
-function! s:last_channel_to_pid_string(ArgLead, CmdLine, CursorPos)
-  "they will be transformed into pids so caling them by their final identity
-  let job_pids = map(copy(g:slime_last_channel), {_, val -> val["jobid"]})
-  map(job_pids, {_, val -> s:translate_id_to_pid(val)})
-  call filter(job_pids, {_,val -> val != -1})
-  return join(jobpids,"\n")
+function! Last_channel_to_pid(ArgLead, CmdLine, CursorPos)
+  "they will be transformed into pids so naming them by their final identity
+  let jobpids = map(copy(g:slime_last_channel), {_, val -> val["jobid"]})
+  call map(jobpids, {_, val -> s:translate_id_to_pid(val)})
+  call filter(jobpids, {_,val -> val != -1})
+  call map(jobpids, {_, val -> string(val)})
+  return jobpids
 endfunction
 
 " Checks if a previous channel does not exist or is empty.
@@ -190,7 +192,7 @@ function! s:NotExistsLastChannel() abort
 endfunction
 
 
-function! s:get_filter_bufinfo()
+function! s:get_terminal_jobids()
   let bufinfo = getbufinfo()
   "getting terminal buffers
 
