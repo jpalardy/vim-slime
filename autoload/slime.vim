@@ -3,31 +3,6 @@
 " Helpers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" takes any number of strings as arguments: if one of those strings exists
-" as an environment variable in vim, return its value, if none of them exist
-" return v:null
-function! s:resolve(...)
-  for name in a:000
-    if exists(name)
-      return eval(name)
-    endif
-  endfor
-  return v:null
-endfunction
-
-" takes any number of strings as arguments: if one of those strings exists
-" as an environment variable in vim, return its value, if none of them exist
-" return 'default' arg
-function! s:resolve_default(default, ...)
-  for name in a:000
-    if exists(name)
-      return eval(name)
-    endif
-  endfor
-  " 0 means false
-  return a:default
-endfunction
-
 function! s:_EscapeText(text)
   let escape_text_fn = "_EscapeText_" . substitute(&filetype, "[.]", "_", "g")
   if exists("&filetype")
