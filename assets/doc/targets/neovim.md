@@ -1,5 +1,4 @@
-
-### NeoVim :terminal
+# NeoVim :terminal
 
 [NeoVim :terminal](https://neovim.io/doc/user/nvim_terminal_emulator.html) is *not* the default, to use it you will have to add this line to your `.vimrc`:
 
@@ -7,7 +6,8 @@
 let g:slime_target = "neovim"
 ```
 
-#### Manual/Prompted Configuration
+
+## Manual/Prompted Configuration
 
 When you invoke `vim-slime` for the first time, you will be prompted for more configuration. The last terminal you opened before calling vim-slime will determine which `job-id` is presented as default. If that terminal is closed, one of the previously opened terminals will be suggested on subsequent configurations. The user can tab through a popup menu of valid configuration values.
 
@@ -18,7 +18,43 @@ let g:slime_input_pid=1
 ```
 PIDs of processes of potential target terminals are visible to Neovim on Windows as well as MacOS and Linux.
 
-##### Process Identification
+
+
+## List Prompted Configuration
+
+To be prompted with a numbered list of all available terminals which the user can select from by inputting a number, or, if the mouse is enabled, clicking on an entry, set `g:slime_menu_config` to a nonzero value.
+
+```vim
+let g:slime_input_list=1
+```
+
+This takes precedence over `g:slime_input_pid`.
+
+The default order of fields in each terminal description in the menu is 
+
+1. `pid`  The system process identifier of the shell.
+2. `jobid` The Neovim internal job number of the terminal.
+3. `term_title` Usually either the systemname, username, and current directory of the shell, or the name of the currently running process in that shell. (unlabeled by default)
+4. `name` The name of the terminal buffer (unlabeled by default).
+
+The user can reorder these items and set their labels in the menu in the menu by setting a global variable,  `g:slime_neovim_menu_order`, that should be an array of dictionaries. Keys should be exactly the names of the fields, shown above, and the values (which should  be strings) will be the labels in the menu, according to user preference.  Use empty strings for no label.  The dictionaries in the array can be in the user's preferred order.
+
+For example:
+
+```vim
+let g:slime_neovim_menu_order = [{'name': 'buffer name: '}, {'pid': 'shell process identifier: '}, {'jobid': 'neovim internal job identifier: '}, {'term_title': 'process or pwd: '}]
+```
+
+The user can also set the delimeter (including whitespace) string between the fields (`, ` by default) with `g:slime_neovim_menu_delimiter`.
+
+```vim
+let g:slime_neovim_menu_delimiter = ' | '
+```
+
+No validation is performed on these customization values so be sure they are properly set.
+
+
+## Terminal Process Identification
 
 To manually check the right value of `job-id`  (but not `PID`) try:
 
@@ -58,7 +94,7 @@ end
 
 Those confused by the syntax of the vimscript string passed as an argument to `vim.api.nvim_eval` should consult `:h ternary`.
 
-### Automatic Configuration
+## Automatic Configuration
 
 Instead of the prompted job id input method detailed above, you can specify a lua function that will automatically configure vim-slime with a job id:
 

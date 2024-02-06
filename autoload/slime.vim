@@ -29,19 +29,17 @@ endfunction
 
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
-  if exists("b:slime_config")
-    if s:SlimeDispatchValidate("ValidConfig", b:slime_config)
-      return
-    endif
+  if s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
+    return
   endif
   " assume defaults, if they exist
 
   if exists("g:slime_default_config")
     let b:slime_config = g:slime_default_config
-    if !s:SlimeDispatchValidate("ValidConfig", b:slime_config)
-      unlet b:slime_config
-    elseif exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
-      return
+    if !s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
+      if exists("b:slime_config")
+        unlet b:slime_config
+      endif
     endif
   endif
 
@@ -53,10 +51,12 @@ function! s:SlimeGetConfig()
   " prompt user
   call s:SlimeDispatch('config')
 
-  if s:SlimeDispatchValidate("ValidConfig", b:slime_config)
+  if s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
     return
   else
-    unlet b:slime_config
+    if exists("b:slime_config")
+      unlet b:slime_config
+    endif
     throw "invalid config"
   endif
 
@@ -65,45 +65,45 @@ endfunction
 
 
 function! slime#send_op(type, ...) abort
-    let sel_save = &selection
-    let &selection = "inclusive"
-    let rv = getreg('"')
-    let rt = getregtype('"')
+  let sel_save = &selection
+  let &selection = "inclusive"
+  let rv = getreg('"')
+  let rt = getregtype('"')
 
-    if a:0  " Invoked from Visual mode, use '< and '> marks.
-      silent exe "normal! `<" . a:type . '`>y'
-    elseif a:type == 'line'
-      silent exe "normal! '[V']y"
-    elseif a:type == 'block'
-      silent exe "normal! `[\<C-V>`]\y"
-    else
-      silent exe "normal! `[v`]y"
-    endif
+  if a:0  " Invoked from Visual mode, use '< and '> marks.
+    silent exe "normal! `<" . a:type . '`>y'
+  elseif a:type == 'line'
+    silent exe "normal! '[V']y"
+  elseif a:type == 'block'
+    silent exe "normal! `[\<C-V>`]\y"
+  else
+    silent exe "normal! `[v`]y"
+  endif
 
-    call setreg('"', @", 'V')
-    call slime#send(@")
+  call setreg('"', @", 'V')
+  call slime#send(@")
 
-    let &selection = sel_save
-    call setreg('"', rv, rt)
+  let &selection = sel_save
+  call setreg('"', rv, rt)
 
-    call s:SlimeRestoreCurPos()
+  call s:SlimeRestoreCurPos()
 endfunction
 
 function! slime#send_range(startline, endline) abort
 
-    let rv = getreg('"')
-    let rt = getregtype('"')
-    silent exe a:startline . ',' . a:endline . 'yank'
-    call slime#send(@")
-    call setreg('"', rv, rt)
+  let rv = getreg('"')
+  let rt = getregtype('"')
+  silent exe a:startline . ',' . a:endline . 'yank'
+  call slime#send(@")
+  call setreg('"', rv, rt)
 endfunction
 
 function! slime#send_lines(count) abort
-    let rv = getreg('"')
-    let rt = getregtype('"')
-    silent exe 'normal! ' . a:count . 'yy'
-    call slime#send(@")
-    call setreg('"', rv, rt)
+  let rv = getreg('"')
+  let rt = getregtype('"')
+  silent exe 'normal! ' . a:count . 'yy'
+  call slime#send(@")
+  call setreg('"', rv, rt)
 endfunction
 
 function! slime#send_cell() abort
@@ -173,8 +173,10 @@ function! slime#config() abort
   if s:SlimeDispatchValidate("ValidEnv")
     call s:SlimeDispatch('config')
 
-    if !s:SlimeDispatchValidate("ValidConfig", b:slime_config)
-      unlet b:slime_config
+    if !s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
+      if exists("b:slime_config")
+        unlet b:slime_config
+      endif
     endif
   endif
   call inputrestore()
