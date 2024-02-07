@@ -67,7 +67,17 @@ from the buffer running your terminal.
 Another way to easily see the `PID` and job ID is to override the status bar of terminals to show the job id and PID.
 
 ```vim
-autocmd TermOpen * setlocal statusline=%{bufname()}%=id:\ %{&channel}\ pid:\ %{jobpid(&channel)}
+" in case an external process kills the terminal's shell and &channel doesn't exist anymore
+function Safe_jobpid(channel_in)
+  let pid_out = ""
+  try
+    let pid_out = string(jobpid(a:channel_in))
+  catch /^Vim\%((\a\+)\)\=:E900/
+  endtry
+  return pid_out
+endfunction
+
+autocmd TermOpen * setlocal statusline=%{bufname()}%=id:\ %{&channel}\ pid:\ %{Safe_jobpid(&channel)}
 ```
 
 See `h:statusline` in Neovim's documentiation for more details.
