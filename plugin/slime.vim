@@ -42,8 +42,8 @@ if slime#config#resolve("target") == "neovim"
   augroup nvim_slime
     autocmd!
     " keeping track of channels that are open
-    autocmd TermOpen * call slime#targets#neovim#SlimeAddChannel()
+    autocmd TermOpen * call slime#targets#neovim#SlimeAddChannel(expand('<abuf>'))
     " keeping track when terminals are closed
-    autocmd TermClose * call slime#targets#neovim#SlimeClearChannel()
+    autocmd TermClose * call slime#targets#neovim#SlimeClearChannel(expand('<abuf>'))
   augroup END
 endif

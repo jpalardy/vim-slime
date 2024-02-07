@@ -2,7 +2,7 @@
 function! slime#targets#neovim#config() abort
 
   if exists("g:slime_menu_config") && g:slime_menu_config
-    call s:config_with_list()
+    call s:config_with_menu()
   else
     " unlet current config if its jobid doesn't exist
     let last_channels = get(g:, 'slime_last_channel', [])
@@ -52,44 +52,58 @@ function! slime#targets#neovim#send(config, text)
   call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
 endfunction
 
-function! slime#targets#neovim#SlimeAddChannel()
+function! slime#targets#neovim#SlimeAddChannel(buf_in)
+  let buf_in = str2nr(a:buf_in)
+  let jobid = getbufvar(buf_in, "&channel")
+  let jobpid = jobpid(jobid)
+
   if !exists("g:slime_last_channel")
-    let g:slime_last_channel = [{'jobid': &channel, 'pid': jobpid(&channel)}]
+    let g:slime_last_channel = [{'jobid': jobid, 'pid': jobpid}]
   else
-    call add(g:slime_last_channel, {'jobid': &channel, 'pid': jobpid(&channel)})
+    call add(g:slime_last_channel, {'jobid': jobid, 'pid': jobpid})
   endif
 endfunction
 
-function! slime#targets#neovim#SlimeClearChannel()
-  let current_buffer_jobid = &channel
+function! slime#targets#neovim#SlimeClearChannel(buf_in)
 
-  call s:clear_related_bufs(current_buffer_jobid)
+  let bufinfo = getbufinfo()
 
   if !exists("g:slime_last_channel")
-    if exists("b:slime_config")
-      unlet b:slime_config
-    endif
+    echom "slime last channel not found"
+    call s:clear_all_buffs()
     return
-  elseif len(g:slime_last_channel) == 1
-    unlet g:slime_last_channel
-    if exists("b:slime_config")
-      unlet b:slime_config
-    endif
+  elseif len(g:slime_last_channel) <= 1
+    echom "len slime last chanel is one or less"
+    call s:clear_all_buffs()
+    let g:slime_last_channel = []
   else
-    let bufinfo = s:get_terminal_jobids()
+    echom "len slime last greater than one"
+    let buf_in = str2nr(a:buf_in)
+    "filtering for the buffer info with the terminal job
+    let target_buffer =  filter(copy(bufinfo), {_, val -> val['bufnr'] == buf_in})
 
-    " tests if using a version of Neovim that
-    " doesn't automatically close buffers when closed
-    " or there is no autocommand that does that
-    if len(bufinfo) == len(g:slime_last_channel)
-      call filter(bufinfo, {_, val -> val != current_buffer_jobid})
+    if len(target_buffer) == 1
+      " getbufinfo was able to detect the terminal buffer
+      let jobid = getbufvar(buf_in, "&channel")
+      if jobid == ""
+        " the buffer somehow go wiped out
+        let jobid = s:job_id_when_buffer_cleared()
+      endif
+    else
+      let jobid = s:job_id_when_buffer_cleared()
     endif
-
-    call filter(g:slime_last_channel, {_, val -> index(bufinfo, str2nr(val["jobid"])) >= 0})
-
+    call s:clear_related_bufs(jobid)
+    call filter(g:slime_last_channel, {_, val -> str2nr(val['jobid']) != jobid})
   endif
 endfunction
 
+function! s:job_id_when_buffer_cleared()
+      let listed_term_jobs = s:get_terminal_jobids()
+      let last_term_jobs =  map(copy(g:slime_last_channel),{_, val -> val['jobid']})
+      call filter(last_term_jobs, {_, val -> index(listed_term_jobs, val) == -1})
+      let jobid = last_term_jobs[0]
+      return jobid
+endfunction
 
 
 "evaluates whether ther is a terminal running; if there isn't then no config can be valid
@@ -111,49 +125,49 @@ function! slime#targets#neovim#ValidConfig(config) abort
     let config_in = eval(a:config)
 
     if s:NotExistsLastChannel()
-      echo "\nTerminal not found."
+      echo "Terminal not found."
       return 0
     endif
 
     if !exists("config_in") ||  config_in is v:null
-      echo "\nConfig does not exist."
+      echo "Config does not exist."
       return 0
     endif
 
     " Ensure the config is a dictionary and a previous channel exists
     if type(config_in) != v:t_dict
-      echo "\nConfig type not valid."
+      echo "Config type not valid."
       return 0
     endif
 
     if empty(config_in)
-      echo "\nConfig is empty."
+      echo "Config is empty."
       return 0
     endif
 
     " Ensure the correct keys exist within the configuration
     if !(has_key(config_in, 'jobid'))
-      echo "\nConfigration object lacks 'jobid'."
+      echo "Configration object lacks 'jobid'."
       return 0
     endif
 
     if config_in["jobid"] == -1  "the id wasn't found translate_pid_to_id
-      echo "\nNo matching job id for the provided pid."
+      echo "No matching job id for the provided pid."
       return 0
     endif
 
     if !(index( s:last_channel_to_jobid_array(g:slime_last_channel), config_in['jobid']) >= 0)
-      echo "\nJob ID not found."
+      echo "Job ID not found."
       return 0
     endif
 
     if !(index(s:get_terminal_jobids(), config_in['jobid']) >= 0)
-      echo "\nJob ID not found."
+      echo "Job ID not found."
       return 0
     endif
 
     if empty(jobpid(config_in['jobid']))
-      echo "\nJob ID not linked to a PID."
+      echo "Job ID not linked to a PID."
       return 0
     endif
 
@@ -188,15 +202,29 @@ function! s:NotExistsLastChannel() abort
 endfunction
 
 function! s:get_terminal_jobids()
-  let bufinfo = getbufinfo()
-  "getting terminal buffers
+  "transforming it so calling it by its final form
+  let job_ids = getbufinfo()
+  call filter(job_ids, {_, val -> get(val, "listed", 0)})
+  call map(job_ids, {_, val -> val['bufnr']})
+  call map(job_ids, {_, val -> getbufvar(val, '&channel')})
+  call filter(job_ids, {_, val -> val > 0})
+  return job_ids
+endfunction
 
-  call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id")
-        \    && get(val,"listed",0)})
-  " only need the job id
-  call map(bufinfo, {_, val -> val["variables"]["terminal_job_id"] }) "it is numeric
+function! s:get_terminal_bufinfo()
+  "get full bufinfo only of terminal buffers
+  let buf_info = getbufinfo()
+  call filter(buf_info, {_, val -> get(val, "listed", 0)})
+  let buf_nrs =  map(copy( buf_info ), {_, val -> val['bufnr']})
+  let job_ids =  map(copy(buf_nrs), {_, val -> getbufvar(val, '&channel')})
+  for i in range(len(job_ids) - 1)
+    if job_ids[i] == 0
+      let buf_info[i] = 0
+    endif
+  endfor
 
-  return bufinfo
+  call filter(buf_info, {_, val -> type(val) == v:t_dict})
+  return buf_info
 endfunction
 
 
@@ -236,13 +264,25 @@ function! s:clear_related_bufs(id_in)
   endfor
 endfunction
 
+" clears all buffers with a certain invalid configuration
+function! s:clear_all_buffs()
+  let target_bufs = filter(getbufinfo(), {_, val -> has_key(val['variables'], "slime_config") })
+
+  for buf in target_bufs
+    call setbufvar(buf['bufnr'], 'slime_config', {})
+  endfor
+endfunction
 
 function! s:extract_buffer_details(buffer)
+  let bufnr = get(a:buffer, 'bufnr', -3)
   let details = {}
   let details['name'] = get(a:buffer, 'name', 'N/A')
   let vars = get(a:buffer, 'variables', {})
   let details['term_title'] = get(vars, 'term_title', 'N/A')
-  let details['jobid'] = get(vars, 'terminal_job_id', 0)
+
+  if bufnr != -3
+    let details['jobid'] = getbufvar(bufnr, '&channel', 0)
+  endif
   return details
 endfunction
 
@@ -265,19 +305,20 @@ function! s:buffer_dictionary_to_string(dict_in)
   for i in range(len(menu_order))
     let menu_item = menu_order[i]
     let key = keys(menu_order[i])[0]
+    let label = get(menu_item, key, "")
+    let value = get(a:dict_in, key, "")
     if i != len(menu_order) - 1
-      let menu_string = menu_string . menu_item[key] . a:dict_in[key] . delimiter
+      let menu_string = menu_string . label . value . delimiter
     else
-      let menu_string = menu_string . menu_item[key] . a:dict_in[key]
+      let menu_string = menu_string . label . value
     endif
   endfor
 
   return menu_string
 endfunction
 
-function! s:config_with_list()
-  let bufinfo = getbufinfo()
-  call filter(bufinfo, {_, val -> has_key(val['variables'], "terminal_job_id") && get(val,"listed",0)})
+function! s:config_with_menu()
+  let bufinfo = s:get_terminal_bufinfo()
   call map(bufinfo, { _, val -> s:extract_buffer_details(val)})
   let valid_job_ids = s:last_channel_to_jobid_array(g:slime_last_channel)
   call filter(bufinfo, {_, val -> index( valid_job_ids, val['jobid']) >= 0})
