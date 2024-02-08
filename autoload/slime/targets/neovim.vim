@@ -98,11 +98,11 @@ function! slime#targets#neovim#SlimeClearChannel(buf_in)
 endfunction
 
 function! s:job_id_when_buffer_cleared()
-      let listed_term_jobs = s:get_terminal_jobids()
-      let last_term_jobs =  map(copy(g:slime_last_channel),{_, val -> val['jobid']})
-      call filter(last_term_jobs, {_, val -> index(listed_term_jobs, val) == -1})
-      let jobid = last_term_jobs[0]
-      return jobid
+  let listed_term_jobs = s:get_terminal_jobids()
+  let last_term_jobs =  map(copy(g:slime_last_channel),{_, val -> val['jobid']})
+  call filter(last_term_jobs, {_, val -> index(listed_term_jobs, val) == -1})
+  let jobid = last_term_jobs[0]
+  return jobid
 endfunction
 
 
