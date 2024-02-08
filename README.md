@@ -86,7 +86,7 @@ To control exactly what is sent, you can manually select text before calling `vi
 
 ## Vim Style Mappings
 
-To use vim-style mappings, such as operator+motion or operator+text object see the appropriate [section of the advanced configuration documentation](assets/doc/advanced.md#vim-style-mappings).
+To use vim-style mappings, such as `operator+motion` or `operator+text object` see the appropriate [section of the advanced configuration documentation](assets/doc/advanced.md#vim-style-mappings).
 
 Config prompt
 --------------
