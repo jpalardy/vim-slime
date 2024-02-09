@@ -211,8 +211,8 @@ function! s:extend_term_buffer_titles(specific_term_info, all_bufinfo) abort
   " all_bufinfo is the output of getbufinfo()
 
   " important to use copy here to avoid filtering in calling environment
-  let all_bufinfo_in = copy(all_bufinfo)
-  let specific_term_info_in = copy(specific_term_info)
+  let all_bufinfo_in = copy(a:all_bufinfo)
+  let specific_term_info_in = copy(a:specific_term_info)
 
   " get the term info
   let wanted_term = filter(all_bufinfo_in, {_, val -> val['bufnr'] == specific_term_info_in['bufnr']})[0]
