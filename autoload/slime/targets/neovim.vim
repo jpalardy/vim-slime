@@ -75,7 +75,6 @@ function! slime#targets#neovim#SlimeClearChannel(buf_in)
     call s:clear_all_buffs()
     let g:slime_last_channel = []
   else
-    echom "len slime last greater than one"
     let buf_in = str2nr(a:buf_in)
     "filtering for the buffer info with the terminal job
     let target_buffer =  filter(copy(bufinfo), {_, val -> val['bufnr'] == buf_in})
