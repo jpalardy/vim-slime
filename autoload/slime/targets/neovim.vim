@@ -50,7 +50,7 @@ function! slime#targets#neovim#config() abort
   let b:slime_config["pid"] = pid_in
 endfunction
 
-function! slime#targets#neovim#send(config, text)
+function! slime#targets#neovim#send(config, text) abort
   " Neovim jobsend is fully asynchronous, it causes some problems with
   " iPython %cpaste (input buffering: not all lines sent over)
   " So this `write_paste_file` can help as a small lock & delay
@@ -58,7 +58,7 @@ function! slime#targets#neovim#send(config, text)
   call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
 endfunction
 
-function! slime#targets#neovim#SlimeAddChannel(buf_in)
+function! slime#targets#neovim#SlimeAddChannel(buf_in) abort
   let buf_in = str2nr(a:buf_in)
   let jobid = getbufvar(buf_in, "&channel")
   let job_pid = jobpid(jobid)
@@ -70,7 +70,7 @@ function! slime#targets#neovim#SlimeAddChannel(buf_in)
   endif
 endfunction
 
-function! slime#targets#neovim#SlimeClearChannel(buf_in)
+function! slime#targets#neovim#SlimeClearChannel(buf_in) abort
   if !exists("g:slime_last_channel")
     call s:clear_all_buffs()
     return
@@ -148,7 +148,7 @@ function! slime#targets#neovim#ValidConfig(config) abort
   return 1
 endfunction
 
-function! s:translate_pid_to_id(pid)
+function! s:translate_pid_to_id(pid) abort
   for ch in g:slime_last_channel
     if ch['pid'] == a:pid
       return ch['jobid']
@@ -157,7 +157,7 @@ function! s:translate_pid_to_id(pid)
   return -1
 endfunction
 
-function! s:translate_id_to_pid(id)
+function! s:translate_id_to_pid(id) abort
   let pid_out = -1
   try
     let pid_out = jobpid(a:id)
@@ -168,7 +168,7 @@ endfunction
 
 " Transforms a channel dictionary with job id and pid into an newline separated string  of job IDs.
 " for the purposes of input completion
-function! Last_channel_to_jobid(ArgLead, CmdLine, CursorPos)
+function! Last_channel_to_jobid(ArgLead, CmdLine, CursorPos) abort
   let jobids = map(copy(g:slime_last_channel), {_, val -> val["jobid"]})
   call map(jobids, {_, val -> string(val)})
   return jobids
@@ -176,7 +176,7 @@ endfunction
 
 " Transforms a channel dictionary with job ida and pid into an newline separated string  of job PIDs.
 " for the purposes of input completion
-function! Last_channel_to_pid(ArgLead, CmdLine, CursorPos)
+function! Last_channel_to_pid(ArgLead, CmdLine, CursorPos) abort
   "they will be transformed into pids so naming them by their final identity
   let jobpids = map(copy(g:slime_last_channel), {_, val -> val["jobid"]})
   call map(jobpids, {_, val -> s:translate_id_to_pid(val)})
@@ -187,7 +187,7 @@ endfunction
 
 
 " clears all buffers with a certain invalid configuration
-function! s:clear_related_bufs(id_in)
+function! s:clear_related_bufs(id_in) abort
   let related_bufs = filter(getbufinfo(), {_, val -> has_key(val['variables'], "slime_config")
         \ && get(val['variables']['slime_config'], 'jobid', -2) == a:id_in})
 
@@ -197,7 +197,7 @@ function! s:clear_related_bufs(id_in)
 endfunction
 
 " clears all buffers with a certain invalid configuration
-function! s:clear_all_buffs()
+function! s:clear_all_buffs() abort
   let target_bufs = filter(getbufinfo(), {_, val -> has_key(val['variables'], "slime_config") })
 
   for buf in target_bufs
@@ -205,7 +205,7 @@ function! s:clear_all_buffs()
   endfor
 endfunction
 
-function! s:extend_term_buffer_titles(specific_term_info, all_bufinfo)
+function! s:extend_term_buffer_titles(specific_term_info, all_bufinfo) abort
   " add buffer name and terminal title to a dictionary that already has jobid, pid, buffer number
   "specific term info is a dictionary that contains jobid, pid, and bufnr
   " all_bufinfo is the output of getbufinfo()
@@ -220,7 +220,7 @@ function! s:extend_term_buffer_titles(specific_term_info, all_bufinfo)
 endfunction
 
 
-function! s:buffer_dictionary_to_string(dict_in)
+function! s:buffer_dictionary_to_string(dict_in) abort
   " dict in is an array of dictionaries that has the values of the menu items
 
   "menu order is an array of dictionaries
@@ -257,7 +257,7 @@ endfunction
 
 
 "get full bufinfo only of terminal buffers
-function! s:get_terminal_bufinfo()
+function! s:get_terminal_bufinfo() abort
   if !exists("g:slime_last_channel") || len(g:slime_last_channel) == 0 || empty(g:slime_last_channel)
     "there are no valid terminal buffers
     return []
@@ -268,7 +268,7 @@ function! s:get_terminal_bufinfo()
 endfunction
 
 
-function! s:config_with_menu()
+function! s:config_with_menu() abort
   " get info of running terminals, array of dictionaries
   let term_bufinfo = s:get_terminal_bufinfo()
 
