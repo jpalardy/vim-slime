@@ -97,10 +97,12 @@ endfunction
 " returns boolean of whether the supplied config is valid
 function! slime#targets#neovim#ValidConfig(config) abort
   "config is passed as a string, the name of the config variable
+
   if !exists(a:config)
-    echo "\nNo config found."
+    echo "No config found."
     return 0
   else
+
     let config_in = eval(a:config)
 
     if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
@@ -138,7 +140,7 @@ function! slime#targets#neovim#ValidConfig(config) abort
       return 0
     endif
 
-    if s:translate_id_to_pid(config_in['jobid'])
+    if s:translate_id_to_pid(config_in['jobid']) == -1
       echo "Job ID not linked to a PID."
       return 0
     endif
@@ -171,7 +173,7 @@ endfunction
 function! Last_channel_to_jobid(ArgLead, CmdLine, CursorPos) abort
   let jobids = map(copy(g:slime_last_channel), {_, val -> val["jobid"]})
   call map(jobids, {_, val -> string(val)})
-  return jobids
+  return reverse(jobids) " making correct order in menu
 endfunction
 
 " Transforms a channel dictionary with job ida and pid into an newline separated string  of job PIDs.
@@ -182,7 +184,7 @@ function! Last_channel_to_pid(ArgLead, CmdLine, CursorPos) abort
   call map(jobpids, {_, val -> s:translate_id_to_pid(val)})
   call filter(jobpids, {_,val -> val != -1})
   call map(jobpids, {_, val -> string(val)})
-  return jobpids
+  return reverse(jobpids) "making most recent the first selected
 endfunction
 
 
@@ -270,7 +272,8 @@ endfunction
 
 function! s:config_with_menu() abort
   " get info of running terminals, array of dictionaries
-  let term_bufinfo = s:get_terminal_bufinfo()
+  " reversing to make it appear in the right order in the menu
+  let term_bufinfo =  s:get_terminal_bufinfo()
 
   " turn each item into a string for the menu
   let menu_strings =  map(copy(term_bufinfo), {_, val -> s:buffer_dictionary_to_string(val)})
@@ -282,13 +285,13 @@ function! s:config_with_menu() abort
 
   let selection = str2nr(inputlist(menu_strings))
 
-  if selection <= 0 || selection >= len(term_bufinfo)
+  if selection <= 0 || selection >= len(menu_strings)
     return
   endif
 
-  let used_config = term_bufinfo[selection]
+  let used_config = term_bufinfo[selection - 1]
 
-  let b:slime_config = {"jobid": used_config["jobid"], "pid": term_bufinfo["pid"], }
+  let b:slime_config = {"jobid": used_config["jobid"], "pid": used_config["pid"] }
 endfunction
 
 
