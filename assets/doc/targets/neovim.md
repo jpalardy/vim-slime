@@ -25,7 +25,7 @@ PIDs of processes of potential target terminals are visible to Neovim on Windows
 To be prompted with a numbered menu of all available terminals which the user can select from by inputting a number, or, if the mouse is enabled, clicking on an entry, set `g:slime_menu_config` to a nonzero value.
 
 ```vim
-let g:slime_input_list=1
+let g:slime_menu_config=1
 ```
 
 This takes precedence over `g:slime_input_pid`.

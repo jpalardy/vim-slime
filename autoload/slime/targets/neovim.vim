@@ -136,7 +136,7 @@ function! slime#targets#neovim#ValidConfig(config) abort
           \map(copy(g:slime_last_channel), {_, val -> val["jobid"]}),
           \config_in['jobid']) >= 0
           \)
-      echo "Job ID not found."
+      echo "Invalid Job ID."
       return 0
     endif
 
