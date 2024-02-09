@@ -69,11 +69,9 @@ function! slime#targets#neovim#SlimeClearChannel(buf_in)
   let bufinfo = getbufinfo()
 
   if !exists("g:slime_last_channel")
-    echom "slime last channel not found"
     call s:clear_all_buffs()
     return
   elseif len(g:slime_last_channel) <= 1
-    echom "len slime last chanel is one or less"
     call s:clear_all_buffs()
     let g:slime_last_channel = []
   else

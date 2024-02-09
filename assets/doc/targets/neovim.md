@@ -20,9 +20,9 @@ PIDs of processes of potential target terminals are visible to Neovim on Windows
 
 
 
-## List Prompted Configuration
+## Menu Prompted Configuration
 
-To be prompted with a numbered list of all available terminals which the user can select from by inputting a number, or, if the mouse is enabled, clicking on an entry, set `g:slime_menu_config` to a nonzero value.
+To be prompted with a numbered menu of all available terminals which the user can select from by inputting a number, or, if the mouse is enabled, clicking on an entry, set `g:slime_menu_config` to a nonzero value.
 
 ```vim
 let g:slime_input_list=1
@@ -68,8 +68,9 @@ Another way to easily see the `PID` and job ID is to override the status bar of 
 
 ```vim
 " in case an external process kills the terminal's shell and &channel doesn't exist anymore
-function Safe_jobpid(channel_in)
+function! Safe_jobpid(channel_in)
   let pid_out = ""
+  " in case an external process kills the terminal's shell; jobpid will error
   try
     let pid_out = string(jobpid(a:channel_in))
   catch /^Vim\%((\a\+)\)\=:E900/
@@ -98,7 +99,17 @@ A useful Lua function to return the Job PID of a terminal is:
 
 ```lua
 local function get_chan_jobpid()
-  return vim.api.nvim_eval('&channel > 0 ? jobpid(&channel) : ""')
+  local out = vim.api.nvim_exec2([[
+  let pid_out = ""
+  
+  try
+  let pid_out = string(jobpid(&channel))
+  " in case an external process kills the terminal's shell; jobpid will error
+  catch /^Vim\%((\a\+)\)\=:E900/
+  endtry
+  		echo pid_out
+  ]], {output = true})
+  return out["output"] --returns as string
 end
 ```
 
@@ -113,6 +124,7 @@ vim.g.slime_get_jobid = function()
   -- some way to select and return jobid
 end
 ```
+
 The details of how to implement this are left to the user.
 
 This is not possible or straightforward to do in pure vimscript due to capitalization rules of functions stored as variables in Vimscript.
