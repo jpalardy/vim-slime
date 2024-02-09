@@ -72,14 +72,10 @@ endfunction
 
 function! slime#targets#neovim#SlimeClearChannel(buf_in) abort
   if !exists("g:slime_last_channel")
-    call s:clear_all_buffs()
     return
   elseif len(g:slime_last_channel) <= 1
-    call s:clear_all_buffs()
     unlet g:slime_last_channel
   else
-    let jobid_to_clear = filter(copy(g:slime_last_channel), {_, val -> val['bufnr'] == a:buf_in})[0]['jobid']
-    call s:clear_related_bufs(jobid_to_clear)
     call filter(g:slime_last_channel, {_, val -> val['bufnr'] != a:buf_in})
   endif
 endfunction
@@ -136,7 +132,7 @@ function! slime#targets#neovim#ValidConfig(config) abort
           \map(copy(g:slime_last_channel), {_, val -> val["jobid"]}),
           \config_in['jobid']) >= 0
           \)
-      echo "Job ID not found."
+      echo "Invalid job ID."
       return 0
     endif
 
@@ -187,25 +183,6 @@ function! Last_channel_to_pid(ArgLead, CmdLine, CursorPos) abort
   return reverse(jobpids) "making most recent the first selected
 endfunction
 
-
-" clears all buffers with a certain invalid configuration
-function! s:clear_related_bufs(id_in) abort
-  let related_bufs = filter(getbufinfo(), {_, val -> has_key(val['variables'], "slime_config")
-        \ && get(val['variables']['slime_config'], 'jobid', -2) == a:id_in})
-
-  for buf in related_bufs
-    call setbufvar(buf['bufnr'], 'slime_config', {})
-  endfor
-endfunction
-
-" clears all buffers with a certain invalid configuration
-function! s:clear_all_buffs() abort
-  let target_bufs = filter(getbufinfo(), {_, val -> has_key(val['variables'], "slime_config") })
-
-  for buf in target_bufs
-    call setbufvar(buf['bufnr'], 'slime_config', {})
-  endfor
-endfunction
 
 function! s:extend_term_buffer_titles(specific_term_info, all_bufinfo) abort
   " add buffer name and terminal title to a dictionary that already has jobid, pid, buffer number
