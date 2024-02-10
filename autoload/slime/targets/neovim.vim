@@ -6,6 +6,13 @@ function! slime#targets#neovim#config() abort
     return
   endif
 
+  if exists("g:slime_suggest_default") && g:slime_suggest_default
+    echom "it is 1"
+    let slime_suggest_default = 1
+  else
+    let slime_suggest_default = 0
+  endif
+
   " unlet current config if its jobid doesn't exist
   let last_channels = get(g:, 'slime_last_channel', [])
   let most_recent_channel = get(last_channels, -1, {})
@@ -17,8 +24,8 @@ function! slime#targets#neovim#config() abort
 
   " include option to input pid
   if exists("g:slime_input_pid") && g:slime_input_pid
-    let default_pid = s:translate_id_to_pid(b:slime_config["jobid"])
-    if default_pid != -1
+    let default_pid = slime_suggest_default ? s:translate_id_to_pid(b:slime_config["jobid"]) : ""
+    if default_pid == -1
       let default_pid = ""
     endif
     let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'customlist,Last_channel_to_pid')
@@ -37,8 +44,8 @@ function! slime#targets#neovim#config() abort
     return
   endif
 
-  "inputing pid
-  let default_jobid = b:slime_config["jobid"]
+  "inputing jobid
+  let default_jobid = slime_suggest_default ? b:slime_config["jobid"] : ""
   if !empty(default_jobid)
     let default_jobid = str2nr(default_jobid)
   endif
@@ -87,7 +94,7 @@ endfunction
 "evaluates whether ther is a terminal running; if there isn't then no config can be valid
 function! slime#targets#neovim#ValidEnv() abort
   if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
-    echon "Terminal not found."
+    echo "Terminal not found."
     return 0
   endif
   return 1

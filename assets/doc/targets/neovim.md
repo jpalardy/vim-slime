@@ -9,15 +9,24 @@ let g:slime_target = "neovim"
 
 ## Manual/Prompted Configuration
 
-When you invoke `vim-slime` for the first time, you will be prompted for more configuration. The last terminal you opened before calling vim-slime will determine which `job-id` is presented as default. If that terminal is closed, one of the previously opened terminals will be suggested on subsequent configurations. The user can tab through a popup menu of valid configuration values.
+When you invoke `vim-slime` for the first time, `:SlimeConfig` or one of the send functions, you will be prompted for more configuration.
+
+If the global variable `g:slime_suggest_default` is:
+
+- Nonzero (logical True): The last terminal you opened before calling vim-slime will determine which `job-id` is presented as default. If that terminal is closed, one of the previously opened terminals will be suggested on subsequent configurations. The user can tab through a popup menu of valid configuration values.
+
+- `0`: (logical False): No default will be suggested.
+
+
+In either case, in Neovim's default configuration, menu-based completion can be activated with `<Tab>`/`<S-Tab>`, and the menu can be navigated with `<Tab>`/`<S-Tab` or `<C-n>`/`<C-p>`.  Autocompletion plugins such as [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) can interfere with this.
 
 To use the terminal's PID as input instead of Neovim's internal job-id of the terminal:
 
 ```vim
 let g:slime_input_pid=1
 ```
-PIDs of processes of potential target terminals are visible to Neovim on Windows as well as MacOS and Linux.
 
+PIDs of processes of potential target terminals are visible to Neovim on Windows as well as MacOS and Linux.
 
 
 ## Menu Prompted Configuration
@@ -83,6 +92,7 @@ autocmd TermOpen * setlocal statusline=%{bufname()}%=id:\ %{&channel}\ pid:\ %{S
 
 See `h:statusline` in Neovim's documentiation for more details.
 
+### Statusline Plugins
 If you are using a plugin to manage your status line, see that plugin's documentation to see how to confiugre the status line to display `&channel` and `jobpid(&channel)`.
 
 Many status line plugins for Neovim are configured in lua.
@@ -114,6 +124,55 @@ end
 ```
 
 Those confused by the syntax of the vimscript string passed as an argument to `vim.api.nvim_eval` should consult `:h ternary`.
+
+## Status-Line Modifications for Configured Buffers
+
+Here is an example snippet of vimscrip to set the status line for buffers that are configured to send code to a terminal:
+
+```vim
+" Function to safely check for b:slime_config and return the jobid
+function! GetSlimeJobId()
+  if exists("b:slime_config") && type(b:slime_config) == v:t_dict && has_key(b:slime_config, 'jobid') && !empty(b:slime_config['jobid'])
+    return ' | jobid: ' . b:slime_config['jobid'] . ' '
+  endif
+  return ''
+endfunction
+
+" Function to safely check for b:slime_config and return the pid
+function! GetSlimePid()
+  if exists("b:slime_config") && type(b:slime_config) == v:t_dict && has_key(b:slime_config, 'pid') && !empty(b:slime_config['pid'])
+    return 'pid: ' . b:slime_config['pid']
+  endif
+  return ''
+endfunction
+
+
+"default statuslin with :set ruler
+set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
+" Append the custom function outputs to the right side of the status line, with " | " as a separator
+```
+
+### Lua Functions For Returning Config Components
+
+```lua
+local function get_slime_jobid()
+  if vim.b.slime_config and vim.b.slime_config.jobid then
+    return vim.b.slime_config.jobid
+  else
+    return ""
+  end
+end
+```
+
+```lua
+local function get_slime_pid()
+  if vim.b.slime_config and vim.b.slime_config.pid then
+    return vim.b.slime_config.pid
+  else
+    return ""
+  end
+end
+```
 
 ## Automatic Configuration
 
