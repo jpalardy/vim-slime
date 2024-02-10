@@ -300,8 +300,3 @@ function! s:config_with_menu() abort
 
   let b:slime_config = {"jobid": used_config["jobid"], "pid": used_config["pid"] }
 endfunction
-
-
-
-
-
