@@ -209,10 +209,11 @@ This is not possible or straightforward to do in pure vimscript due to capitaliz
 		vim.g.slime_input_pid = false
 		vim.g.slime_suggest_default = true
 		vim.g.slime_menu_config = false
+		-- called MotionSend but works with textobjects as well
 		vim.keymap.set("n", "gz", "<Plug>SlimeMotionSend", { remap = true, silent = false })
 		vim.keymap.set("n", "gzz", "<Plug>SlimeLineSend", { remap = true, silent = false })
 		vim.keymap.set("x", "gz", "<Plug>SlimeRegionSend", { remap = true, silent = false })
-		vim.keymap.set("x", "gzc", "<Plug>SlimeConfig", { remap = true, silent = false })
+		vim.keymap.set("n", "gzc", "<Plug>SlimeConfig", { remap = true, silent = false })
 	end,
 }
  ```
