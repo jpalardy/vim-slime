@@ -193,3 +193,26 @@ The details of how to implement this are left to the user.
 This is not possible or straightforward to do in pure vimscript due to capitalization rules of functions stored as variables in Vimscript.
 
  `vim.api.nvim_eval` (see `:h nvim_eval()`) and other Neovim API functions are available to access all or almost all vimscript capabilities from Lua.
+
+ ## Example Installation and Configuration with [lazy.nvim](https://github.com/folke/lazy.nvim)
+
+
+ ```lua
+{
+	"jpalardy/vim-slime",
+	init = function()
+		-- these two should be set before the plugin loads
+		vim.g.slime_target = "neovim"
+		vim.g.slime_no_mappings = true
+	end,
+	config = function()
+		vim.g.slime_input_pid = false
+		vim.g.slime_suggest_default = true
+		vim.g.slime_menu_config = false
+		vim.keymap.set("n", "gz", "<Plug>SlimeMotionSend", { remap = true, silent = false })
+		vim.keymap.set("n", "gzz", "<Plug>SlimeLineSend", { remap = true, silent = false })
+		vim.keymap.set("x", "gz", "<Plug>SlimeRegionSend", { remap = true, silent = false })
+		vim.keymap.set("x", "gzc", "<Plug>SlimeConfig", { remap = true, silent = false })
+	end,
+}
+ ```
