@@ -93,6 +93,7 @@ autocmd TermOpen * setlocal statusline=%{bufname()}%=id:\ %{&channel}\ pid:\ %{S
 See `h:statusline` in Neovim's documentiation for more details.
 
 ### Statusline Plugins
+
 If you are using a plugin to manage your status line, see that plugin's documentation to see how to confiugre the status line to display `&channel` and `jobpid(&channel)`.
 
 Many status line plugins for Neovim are configured in lua.
@@ -154,6 +155,7 @@ set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 
 ### Lua Functions For Returning Config Components
 
+
 ```lua
 local function get_slime_jobid()
   if vim.b.slime_config and vim.b.slime_config.jobid then
@@ -173,6 +175,8 @@ local function get_slime_pid()
   end
 end
 ```
+
+Can be useful for status line plugins.
 
 ## Automatic Configuration
 

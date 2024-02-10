@@ -7,7 +7,6 @@ function! slime#targets#neovim#config() abort
   endif
 
   if exists("g:slime_suggest_default") && g:slime_suggest_default
-    echom "it is 1"
     let slime_suggest_default = 1
   else
     let slime_suggest_default = 0
