@@ -151,7 +151,6 @@ function! slime#send(text)
       return
     endtry
 
-     colorscheme delek
     " this used to return a string, but some receivers (coffee-script)
     " will flush the rest of the buffer given a special sequence (ctrl-v)
     " so we, possibly, send many strings -- but probably just one
