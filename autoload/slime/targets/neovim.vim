@@ -104,17 +104,16 @@ endfunction
 function! slime#targets#neovim#ValidConfig(config) abort
   "config is passed as a string, the name of the config variable
 
+  if !slime#targets#neovim#ValidEnv()
+    return 0
+  endif
+
   if !exists(a:config)
     echo "No config found."
     return 0
   else
 
     let config_in = eval(a:config)
-
-    if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
-      echo "Terminal not found."
-      return 0
-    endif
 
     " Ensure the config is a dictionary and a previous channel exists
     if type(config_in) != v:t_dict

@@ -29,7 +29,7 @@ endfunction
 
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
-  if s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
+  if exists("b:slime_config") && s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
     return
   endif
   " assume defaults, if they exist
@@ -151,6 +151,7 @@ function! slime#send(text)
       return
     endtry
 
+     colorscheme delek
     " this used to return a string, but some receivers (coffee-script)
     " will flush the rest of the buffer given a special sequence (ctrl-v)
     " so we, possibly, send many strings -- but probably just one
