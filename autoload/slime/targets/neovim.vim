@@ -1,67 +1,94 @@
 
 function! slime#targets#neovim#config() abort
+  if slime#targets#neovim#ValidEnv()
 
-  if exists("g:slime_menu_config") && g:slime_menu_config
-    call s:config_with_menu()
-    return
-  endif
-
-  if exists("g:slime_suggest_default") && g:slime_suggest_default
-    let slime_suggest_default = 1
-  else
-    let slime_suggest_default = 0
-  endif
-
-  " unlet current config if its jobid doesn't exist
-  let last_channels = get(g:, 'slime_last_channel', [])
-  let most_recent_channel = get(last_channels, -1, {})
-
-  let last_pid = get(most_recent_channel, 'pid', '')
-  let last_job = get(most_recent_channel, 'jobid', '')
-
-  let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
-
-  " include option to input pid
-  if exists("g:slime_input_pid") && g:slime_input_pid
-    let default_pid = slime_suggest_default ? s:translate_id_to_pid(b:slime_config["jobid"]) : ""
-    if default_pid == -1
-      let default_pid = ""
+    if exists("b:slime_config")
+      if !slime#targets#neovim#ValidConfig(b:slime_config, 1)
+        call s:sure_clear_buf_config()
+        unlet b:slime_config
+      endif
     endif
-    let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'customlist,Last_channel_to_pid')
-    let jobid_in = str2nr(s:translate_pid_to_id(pid_in))
-    let b:slime_config["jobid"] = jobid_in
-    let b:slime_config["pid"] = pid_in
-    return
-  endif
 
 
-  if exists("g:slime_get_jobid")
-    let jobid_in = g:slime_get_jobid()
+    if exists("g:slime_menu_config") && g:slime_menu_config
+      call s:config_with_menu()
+      return
+    endif
+
+    if exists("g:slime_suggest_default") && g:slime_suggest_default
+      let slime_suggest_default = 1
+    else
+      let slime_suggest_default = 0
+    endif
+
+    " unlet current config if its jobid doesn't exist
+    let last_channels = get(g:, 'slime_last_channel', [])
+    let most_recent_channel = get(last_channels, -1, {})
+
+    let last_pid = get(most_recent_channel, 'pid', '')
+    let last_job = get(most_recent_channel, 'jobid', '')
+
+    let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
+
+    " include option to input pid
+    if exists("g:slime_input_pid") && g:slime_input_pid
+      let default_pid = slime_suggest_default ? s:translate_id_to_pid(b:slime_config["jobid"]) : ""
+      if default_pid == -1
+        let default_pid = ""
+      endif
+      let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'customlist,Last_channel_to_pid')
+      let jobid_in = str2nr(s:translate_pid_to_id(pid_in))
+      let b:slime_config["jobid"] = jobid_in
+      let b:slime_config["pid"] = pid_in
+      return
+    endif
+
+
+    if exists("g:slime_get_jobid")
+      let jobid_in = g:slime_get_jobid()
+      let pid_in = s:translate_id_to_pid(jobid_in)
+      let b:slime_config["jobid"] = jobid_in
+      let b:slime_config["pid"] = pid_in
+      return
+    endif
+
+    "inputing jobid
+    let default_jobid = slime_suggest_default ? b:slime_config["jobid"] : ""
+    if !empty(default_jobid)
+      let default_jobid = str2nr(default_jobid)
+    endif
+    let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'customlist,Last_channel_to_jobid')
+    let jobid_in = str2nr(jobid_in)
     let pid_in = s:translate_id_to_pid(jobid_in)
+
     let b:slime_config["jobid"] = jobid_in
     let b:slime_config["pid"] = pid_in
-    return
-  endif
 
-  "inputing jobid
-  let default_jobid = slime_suggest_default ? b:slime_config["jobid"] : ""
-  if !empty(default_jobid)
-    let default_jobid = str2nr(default_jobid)
+  if !exists("b:slime_config")
+    if !slime#targets#neovim#ValidConfig(b:slime_config, 0)
+      call s:sure_clear_buf_config()
+    endif
   endif
-  let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'customlist,Last_channel_to_jobid')
-  let jobid_in = str2nr(jobid_in)
-  let pid_in = s:translate_id_to_pid(jobid_in)
-
-  let b:slime_config["jobid"] = jobid_in
-  let b:slime_config["pid"] = pid_in
+  else
+    " so we don't get an error from the base send function
+    let b:slime_config = {}
+  endif
 endfunction
 
 function! slime#targets#neovim#send(config, text) abort
-  " Neovim jobsend is fully asynchronous, it causes some problems with
-  " iPython %cpaste (input buffering: not all lines sent over)
-  " So this `write_paste_file` can help as a small lock & delay
-  call slime#common#write_paste_file(a:text)
-  call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
+  " existence is thecked for in the base function
+  if slime#targets#neovim#ValidConfig(a:config,1)
+    " Neovim jobsend is fully asynchronous, it causes some problems with
+    " iPython %cpaste (input buffering: not all lines sent over)
+    " So this `write_paste_file` can help as a small lock & delay
+    call slime#common#write_paste_file(a:text)
+    call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
+  else
+    if exists("b:slime_config")
+      call s:sure_clear_buf_config()
+      unlet b:slime_config
+    endif
+  endif
 endfunction
 
 function! slime#targets#neovim#SlimeAddChannel(buf_in) abort
@@ -101,57 +128,64 @@ endfunction
 
 " "checks that a configuration is valid
 " returns boolean of whether the supplied config is valid
-function! slime#targets#neovim#ValidConfig(config) abort
+function! slime#targets#neovim#ValidConfig(config, silent) abort
   "config is passed as a string, the name of the config variable
 
   if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
-    echo "Terminal not found."
+    if !a:silent
+      echo "Terminal not found."
+    endif
     return 0
   endif
 
-  if !exists(a:config)
-    echo "No config found."
-    return 0
-  else
 
-    let config_in = eval(a:config)
-
-    " Ensure the config is a dictionary and a previous channel exists
-    if type(config_in) != v:t_dict
+  " Ensure the config is a dictionary and a previous channel exists
+  if type(config_in) != v:t_dict
+    if !a:silent
       echo "Config type not valid."
-      return 0
     endif
-
-    if empty(config_in)
-      echo "Config is empty."
-      return 0
-    endif
-
-    " Ensure the correct keys exist within the configuration
-    if !(has_key(config_in, 'jobid'))
-      echo "Configration object lacks 'jobid'."
-      return 0
-    endif
-
-    if config_in["jobid"] == -1  "the id wasn't found translate_pid_to_id
-      echo "No matching job id for the provided pid."
-      return 0
-    endif
-
-    if !(index(
-          \map(copy(g:slime_last_channel), {_, val -> val["jobid"]}),
-          \config_in['jobid']) >= 0
-          \)
-      echo "Invalid Job ID."
-      return 0
-    endif
-
-    if s:translate_id_to_pid(config_in['jobid']) == -1
-      echo "Job ID not linked to a PID."
-      return 0
-    endif
-
+    return 0
   endif
+
+  if empty(config_in)
+    if !a:silent
+      echo "Config is empty."
+    endif
+    return 0
+  endif
+
+  " Ensure the correct keys exist within the configuration
+  if !(has_key(config_in, 'jobid'))
+    if !a:silent
+      echo "Configration object lacks 'jobid'."
+    endif
+    return 0
+  endif
+
+  if config_in["jobid"] == -1  "the id wasn't found translate_pid_to_id
+    if !a:silent
+      echo "No matching job id for the provided pid."
+    endif
+    return 0
+  endif
+
+  if !(index(
+        \map(copy(g:slime_last_channel), {_, val -> val["jobid"]}),
+        \config_in['jobid']) >= 0
+        \)
+    if !a:silent
+      echo "Invalid Job ID."
+    endif
+    return 0
+  endif
+
+  if s:translate_id_to_pid(config_in['jobid']) == -1
+    if !a:silent
+      echo "Job ID not linked to a PID."
+    endif
+    return 0
+  endif
+
 
   return 1
 endfunction
@@ -298,4 +332,12 @@ function! s:config_with_menu() abort
   let used_config = term_bufinfo[selection - 1]
 
   let b:slime_config = {"jobid": used_config["jobid"], "pid": used_config["pid"] }
+endfunction
+
+
+"really make sure the config is cleared from the current buffer, and from all buffers with the same config
+function! s:sure_clear_buf_config()
+  if exists('b:slime_config')  && type(b:slime_config) == v:t_dict && !empty(b:slime_config) && has_key(b:slime_config, 'jobid') && type(b:slime_config['jobid']) == v:t_number
+    call s:clear_related_bufs(b:slime_config['jobid'])
+  endif
 endfunction
