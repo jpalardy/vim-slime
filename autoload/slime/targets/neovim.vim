@@ -140,14 +140,14 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
 
 
   " Ensure the config is a dictionary and a previous channel exists
-  if type(config_in) != v:t_dict
+  if type(a:config) != v:t_dict
     if !a:silent
       echo "Config type not valid."
     endif
     return 0
   endif
 
-  if empty(config_in)
+  if empty(a:config)
     if !a:silent
       echo "Config is empty."
     endif
@@ -155,14 +155,14 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
   endif
 
   " Ensure the correct keys exist within the configuration
-  if !(has_key(config_in, 'jobid'))
+  if !(has_key(a:config, 'jobid'))
     if !a:silent
       echo "Configration object lacks 'jobid'."
     endif
     return 0
   endif
 
-  if config_in["jobid"] == -1  "the id wasn't found translate_pid_to_id
+  if a:config["jobid"] == -1  "the id wasn't found translate_pid_to_id
     if !a:silent
       echo "No matching job id for the provided pid."
     endif
@@ -171,7 +171,7 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
 
   if !(index(
         \map(copy(g:slime_last_channel), {_, val -> val["jobid"]}),
-        \config_in['jobid']) >= 0
+        \a:config['jobid']) >= 0
         \)
     if !a:silent
       echo "Invalid Job ID."
@@ -179,7 +179,7 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
     return 0
   endif
 
-  if s:translate_id_to_pid(config_in['jobid']) == -1
+  if s:translate_id_to_pid(a:config['jobid']) == -1
     if !a:silent
       echo "Job ID not linked to a PID."
     endif
