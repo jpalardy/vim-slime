@@ -1,18 +1,14 @@
 
 function! slime#targets#neovim#config() abort
+  let config_set = 0
   if slime#targets#neovim#ValidEnv()
 
-    if exists("b:slime_config")
-      if !slime#targets#neovim#ValidConfig(b:slime_config, 1)
-        call s:sure_clear_buf_config()
-        unlet b:slime_config
-      endif
-    endif
+    "1
+    call s:protected_validation_and_clear(1,1)
 
-
-    if exists("g:slime_menu_config") && g:slime_menu_config
+    if exists("g:slime_menu_config") && g:slime_menu_config && !config_set
       call s:config_with_menu()
-      return
+      let config_set = 1
     endif
 
     if exists("g:slime_suggest_default") && g:slime_suggest_default
@@ -22,62 +18,84 @@ function! slime#targets#neovim#config() abort
     endif
 
     " unlet current config if its jobid doesn't exist
-    let last_channels = get(g:, 'slime_last_channel', [])
-    let most_recent_channel = get(last_channels, -1, {})
+    if !config_set
+      let last_channels = get(g:, 'slime_last_channel', [])
+      let most_recent_channel = get(last_channels, -1, {})
 
-    let last_pid = get(most_recent_channel, 'pid', '')
-    let last_job = get(most_recent_channel, 'jobid', '')
+      let last_pid = get(most_recent_channel, 'pid', '')
+      let last_job = get(most_recent_channel, 'jobid', '')
 
-    let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
+      let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
+    endif
 
     " include option to input pid
-    if exists("g:slime_input_pid") && g:slime_input_pid
+    if exists("g:slime_input_pid") && g:slime_input_pid && !config_set
       let default_pid = slime_suggest_default ? s:translate_id_to_pid(b:slime_config["jobid"]) : ""
       if default_pid == -1
         let default_pid = ""
       endif
       let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'customlist,Last_channel_to_pid')
+      redraw
       let jobid_in = str2nr(s:translate_pid_to_id(pid_in))
       let b:slime_config["jobid"] = jobid_in
       let b:slime_config["pid"] = pid_in
-      return
+      let config_set = 1
     endif
 
 
-    if exists("g:slime_get_jobid")
+    if exists("g:slime_get_jobid") && !config_set
       let jobid_in = g:slime_get_jobid()
       let pid_in = s:translate_id_to_pid(jobid_in)
       let b:slime_config["jobid"] = jobid_in
       let b:slime_config["pid"] = pid_in
-      return
+      let config_set = 1
     endif
 
     "inputing jobid
-    let default_jobid = slime_suggest_default ? b:slime_config["jobid"] : ""
-    if !empty(default_jobid)
-      let default_jobid = str2nr(default_jobid)
-    endif
-    let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'customlist,Last_channel_to_jobid')
-    let jobid_in = str2nr(jobid_in)
-    let pid_in = s:translate_id_to_pid(jobid_in)
+    if !config_set
+      let default_jobid = slime_suggest_default ? b:slime_config["jobid"] : ""
+      if !empty(default_jobid)
+        let default_jobid = str2nr(default_jobid)
+      endif
+      let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'customlist,Last_channel_to_jobid')
+      redraw
+      let jobid_in = str2nr(jobid_in)
+      let pid_in = s:translate_id_to_pid(jobid_in)
 
-    let b:slime_config["jobid"] = jobid_in
-    let b:slime_config["pid"] = pid_in
-
-  if !exists("b:slime_config")
-    if !slime#targets#neovim#ValidConfig(b:slime_config, 0)
-      call s:sure_clear_buf_config()
+      let b:slime_config["jobid"] = jobid_in
+      let b:slime_config["pid"] = pid_in
     endif
-  endif
+
+    call s:protected_validation_and_clear(0,0)
+
+
   else
     " so we don't get an error from the base send function
     let b:slime_config = {}
   endif
 endfunction
 
+
+"silent if it should output anything
+function! s:protected_validation_and_clear(silent, clear_current)
+  let valid = 0 
+  if exists("b:slime_config")
+    if !slime#targets#neovim#ValidConfig(b:slime_config, a:silent)
+      call s:sure_clear_buf_config()
+      if a:clear_current
+        unlet b:slime_config
+      endif
+      return valid
+    else
+      let valid = 1
+    endif
+  endif
+  return valid
+endfunction
+
 function! slime#targets#neovim#send(config, text) abort
   " existence is thecked for in the base function
-  if slime#targets#neovim#ValidConfig(a:config,1)
+  if slime#targets#neovim#ValidConfig(a:config,0)
     " Neovim jobsend is fully asynchronous, it causes some problems with
     " iPython %cpaste (input buffering: not all lines sent over)
     " So this `write_paste_file` can help as a small lock & delay
@@ -119,22 +137,27 @@ endfunction
 
 "evaluates whether ther is a terminal running; if there isn't then no config can be valid
 function! slime#targets#neovim#ValidEnv() abort
+  echohl WarningMsg
   if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
     echo "Terminal not found."
+    echohl none
     return 0
   endif
+    echohl none
   return 1
 endfunction
 
 " "checks that a configuration is valid
 " returns boolean of whether the supplied config is valid
 function! slime#targets#neovim#ValidConfig(config, silent) abort
-  "config is passed as a string, the name of the config variable
 
+  echohl WarningMsg
   if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
     if !a:silent
+      
       echo "Terminal not found."
     endif
+    echohl none
     return 0
   endif
 
@@ -142,30 +165,38 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
   " Ensure the config is a dictionary and a previous channel exists
   if type(a:config) != v:t_dict
     if !a:silent
+      
       echo "Config type not valid."
     endif
+    echohl none
     return 0
   endif
 
   if empty(a:config)
     if !a:silent
+      
       echo "Config is empty."
     endif
+    echohl none
     return 0
   endif
 
   " Ensure the correct keys exist within the configuration
   if !(has_key(a:config, 'jobid'))
     if !a:silent
+      
       echo "Configration object lacks 'jobid'."
     endif
+    echohl none
     return 0
   endif
 
   if a:config["jobid"] == -1  "the id wasn't found translate_pid_to_id
     if !a:silent
+      
       echo "No matching job id for the provided pid."
     endif
+    echohl none
     return 0
   endif
 
@@ -174,18 +205,23 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
         \a:config['jobid']) >= 0
         \)
     if !a:silent
+      
       echo "Invalid Job ID."
     endif
+    echohl none
     return 0
   endif
 
   if s:translate_id_to_pid(a:config['jobid']) == -1
     if !a:silent
+      
       echo "Job ID not linked to a PID."
     endif
+    echohl none
     return 0
   endif
 
+  echohl None
 
   return 1
 endfunction
@@ -238,7 +274,7 @@ function! s:clear_related_bufs(id_in) abort
   endfor
 endfunction
 
-" clears all buffers with a certain invalid configuration
+" clears all buffers of all configurations
 function! s:clear_all_buffs() abort
   let target_bufs = filter(getbufinfo(), {_, val -> has_key(val['variables'], "slime_config") })
 
@@ -326,6 +362,7 @@ function! s:config_with_menu() abort
   let selection = str2nr(inputlist(menu_strings))
 
   if selection <= 0 || selection >= len(menu_strings)
+  let b:slime_config = {}
     return
   endif
 

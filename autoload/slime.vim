@@ -130,6 +130,7 @@ function! slime#send(text)
   " this used to return a string, but some receivers (coffee-script)
   " will flush the rest of the buffer given a special sequence (ctrl-v)
   " so we, possibly, send many strings -- but probably just one
+
   let pieces = s:_EscapeText(a:text)
   for piece in pieces
     if type(piece) == 0  " a number
