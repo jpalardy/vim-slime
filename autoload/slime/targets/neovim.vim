@@ -7,7 +7,7 @@ function! slime#targets#neovim#config() abort
     call s:protected_validation_and_clear(1,1)
 
     if exists("g:slime_menu_config") && g:slime_menu_config && !config_set
-      call s:config_with_menu()
+      let temp_config =  s:config_with_menu()
       let config_set = 1
     endif
 
@@ -25,20 +25,20 @@ function! slime#targets#neovim#config() abort
       let last_pid = get(most_recent_channel, 'pid', '')
       let last_job = get(most_recent_channel, 'jobid', '')
 
-      let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
+      let temp_config =  {"jobid":  last_job, "pid": last_pid }
     endif
 
     " include option to input pid
     if exists("g:slime_input_pid") && g:slime_input_pid && !config_set
-      let default_pid = slime_suggest_default ? s:translate_id_to_pid(b:slime_config["jobid"]) : ""
+      let default_pid = slime_suggest_default ? s:translate_id_to_pid(temp_config["jobid"]) : ""
       if default_pid == -1
         let default_pid = ""
       endif
       let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'customlist,Last_channel_to_pid')
       redraw
       let jobid_in = str2nr(s:translate_pid_to_id(pid_in))
-      let b:slime_config["jobid"] = jobid_in
-      let b:slime_config["pid"] = pid_in
+      let temp_config["jobid"] = jobid_in
+      let temp_config["pid"] = pid_in
       let config_set = 1
     endif
 
@@ -46,14 +46,14 @@ function! slime#targets#neovim#config() abort
     if exists("g:slime_get_jobid") && !config_set
       let jobid_in = g:slime_get_jobid()
       let pid_in = s:translate_id_to_pid(jobid_in)
-      let b:slime_config["jobid"] = jobid_in
-      let b:slime_config["pid"] = pid_in
+      let temp_config["jobid"] = jobid_in
+      let temp_config["pid"] = pid_in
       let config_set = 1
     endif
 
     "inputing jobid
     if !config_set
-      let default_jobid = slime_suggest_default ? b:slime_config["jobid"] : ""
+      let default_jobid = slime_suggest_default ? temp_config["jobid"] : ""
       if !empty(default_jobid)
         let default_jobid = str2nr(default_jobid)
       endif
@@ -62,9 +62,11 @@ function! slime#targets#neovim#config() abort
       let jobid_in = str2nr(jobid_in)
       let pid_in = s:translate_id_to_pid(jobid_in)
 
-      let b:slime_config["jobid"] = jobid_in
-      let b:slime_config["pid"] = pid_in
+      let temp_config["jobid"] = jobid_in
+      let temp_config["pid"] = pid_in
     endif
+
+    let b:slime_config = temp_config
 
     call s:protected_validation_and_clear(0,0)
 
@@ -361,7 +363,8 @@ function! s:config_with_menu() abort
 
   let used_config = term_bufinfo[selection - 1]
 
-  let b:slime_config = {"jobid": used_config["jobid"], "pid": used_config["pid"] }
+  let config_out = {"jobid": used_config["jobid"], "pid": used_config["pid"] }
+  return config_out
 endfunction
 
 

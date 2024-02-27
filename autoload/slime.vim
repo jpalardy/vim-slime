@@ -27,7 +27,7 @@ function! s:_EscapeText(text)
   endif
 endfunction
 
-function! slime#GetConfig()
+function! s:SlimeGetConfig()
   " b:slime_config already configured...
   if exists("b:slime_config") && !empty(b:slime_config)
     return
@@ -45,6 +45,7 @@ function! slime#GetConfig()
 endfunction
 
 function! slime#send_op(type, ...) abort
+  call s:SlimeGetConfig()
 
   let sel_save = &selection
   let &selection = "inclusive"
@@ -71,6 +72,7 @@ function! slime#send_op(type, ...) abort
 endfunction
 
 function! slime#send_range(startline, endline) abort
+  call s:SlimeGetConfig()
 
   let rv = getreg('"')
   let rt = getregtype('"')
@@ -80,6 +82,7 @@ function! slime#send_range(startline, endline) abort
 endfunction
 
 function! slime#send_lines(count) abort
+  call s:SlimeGetConfig()
 
   let rv = getreg('"')
   let rt = getregtype('"')
@@ -125,12 +128,11 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! slime#send(text)
-  call slime#GetConfig()
+  call s:SlimeGetConfig()
 
   " this used to return a string, but some receivers (coffee-script)
   " will flush the rest of the buffer given a special sequence (ctrl-v)
   " so we, possibly, send many strings -- but probably just one
-
   let pieces = s:_EscapeText(a:text)
   for piece in pieces
     if type(piece) == 0  " a number
@@ -158,4 +160,3 @@ function! s:SlimeDispatch(name, ...)
   endif
   return call("slime#targets#" . slime#config#resolve("target") . "#" . a:name, a:000)
 endfunction
-
