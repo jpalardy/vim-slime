@@ -3,7 +3,6 @@ function! slime#targets#neovim#config() abort
   let config_set = 0
   if slime#targets#neovim#ValidEnv()
 
-    "1
     call s:protected_validation_and_clear(1,1)
 
     if exists("g:slime_menu_config") && g:slime_menu_config && !config_set
