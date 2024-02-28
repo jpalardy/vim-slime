@@ -25,7 +25,7 @@ To use the terminal's PID as input instead of Neovim's internal job-id of the te
 let g:slime_input_pid=1
 ```
 
-PIDs of processes of potential target terminals are visible to Neovim on Windows as well as MacOS and Linux.
+The `PID` is included in the terminal buffers's name, visible in the default terminal window status bar.
 
 
 ## Menu Prompted Configuration
@@ -63,6 +63,8 @@ No validation is performed on these customization values so be sure they are pro
 
 
 ## Terminal Process Identification
+
+As menioned earlier, the `PID` of a process is included in the name of a terminal buffer.
 
 To manually check the right value of `job-id`  (but not `PID`) try:
 
@@ -127,7 +129,7 @@ Those confused by the syntax of the vimscript string passed as an argument to `v
 
 ## Status-Line Modifications for Configured Buffers
 
-Here is an example snippet of vimscrip to set the status line for buffers that are configured to send code to a terminal:
+Here is an example snippet of vimscript` to set the status line for buffers that are configured to send code to a terminal:
 
 ```vim
 " Function to safely check for b:slime_config and return the jobid
