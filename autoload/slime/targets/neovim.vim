@@ -136,7 +136,7 @@ function! slime#targets#neovim#SlimeClearChannel(buf_in) abort
   endif
 endfunction
 
-"evaluates whether ther is a terminal running; if there isn't then no config can be valid
+" evaluates whether there is a terminal running; if there isn't then no config can be valid
 function! slime#targets#neovim#ValidEnv() abort
   echohl WarningMsg
   if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
