@@ -64,7 +64,7 @@ No validation is performed on these customization values so be sure they are pro
 
 ## Terminal Process Identification
 
-As menioned earlier, the `PID` of a process is included in the name of a terminal buffer.
+As mentioned earlier, the `PID` of a process is included in the name of a terminal buffer.
 
 To manually check the right value of `job-id`  (but not `PID`) try:
 
