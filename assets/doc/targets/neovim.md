@@ -25,7 +25,7 @@ To use the terminal's PID as input instead of Neovim's internal job-id of the te
 let g:slime_input_pid=1
 ```
 
-The `PID` is included in the terminal buffers's name, visible in the default terminal window status bar.
+The `PID` is included in the terminal buffers' name, visible in the default terminal window status bar.
 
 
 ## Menu Prompted Configuration
