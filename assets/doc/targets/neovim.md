@@ -53,7 +53,7 @@ For example:
 let g:slime_neovim_menu_order = [{'name': 'buffer name: '}, {'pid': 'shell process identifier: '}, {'jobid': 'neovim internal job identifier: '}, {'term_title': 'process or pwd: '}]
 ```
 
-The user can also set the delimeter (including whitespace) string between the fields (`, ` by default) with `g:slime_neovim_menu_delimiter`.
+The user can also set the delimiter (including whitespace) string between the fields (`, ` by default) with `g:slime_neovim_menu_delimiter`.
 
 ```vim
 let g:slime_neovim_menu_delimiter = ' | '
