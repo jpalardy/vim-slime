@@ -91,7 +91,7 @@ endfunction
 autocmd TermOpen * setlocal statusline=%{bufname()}%=id:\ %{&channel}\ pid:\ %{Safe_jobpid(&channel)}
 ```
 
-See `h:statusline` in Neovim's documentiation for more details.
+See `h:statusline` in Neovim's documentation for more details.
 
 ### Statusline Plugins
 
