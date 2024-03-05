@@ -50,7 +50,7 @@ function! slime#targets#neovim#config() abort
       let config_set = 1
     endif
 
-    "inputing jobid
+    " inputting jobid
     if !config_set
       let default_jobid = slime_suggest_default ? temp_config["jobid"] : ""
       if !empty(default_jobid)
