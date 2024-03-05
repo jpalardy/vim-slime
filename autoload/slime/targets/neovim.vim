@@ -95,7 +95,7 @@ function! s:protected_validation_and_clear(silent, clear_current)
 endfunction
 
 function! slime#targets#neovim#send(config, text) abort
-  " existence is thecked for in the base function
+  " existence is checked for in the base function
   if slime#targets#neovim#ValidConfig(a:config,0)
     " Neovim jobsend is fully asynchronous, it causes some problems with
     " iPython %cpaste (input buffering: not all lines sent over)
