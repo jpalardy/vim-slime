@@ -95,7 +95,7 @@ See `h:statusline` in Neovim's documentation for more details.
 
 ### Statusline Plugins
 
-If you are using a plugin to manage your status line, see that plugin's documentation to see how to confiugre the status line to display `&channel` and `jobpid(&channel)`.
+If you are using a plugin to manage your status line, see that plugin's documentation to see how to configure the status line to display `&channel` and `jobpid(&channel)`.
 
 Many status line plugins for Neovim are configured in lua.
 
