@@ -138,13 +138,10 @@ endfunction
 
 " evaluates whether there is a terminal running; if there isn't then no config can be valid
 function! slime#targets#neovim#ValidEnv() abort
-  echohl WarningMsg
   if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
-    echo "Terminal not found."
-    echohl none
+    call s:EchoWarningMsg("Terminal not found.")
     return 0
   endif
-  echohl none
   return 1
 endfunction
 
@@ -152,12 +149,10 @@ endfunction
 " returns boolean of whether the supplied config is valid
 function! slime#targets#neovim#ValidConfig(config, silent) abort
 
-  echohl WarningMsg
   if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
     if !a:silent
-      echo "Terminal not found."
+      call s:EchoWarningMsg("Terminal not found.")
     endif
-    echohl none
     return 0
   endif
 
@@ -165,34 +160,30 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
   " Ensure the config is a dictionary and a previous channel exists
   if type(a:config) != v:t_dict
     if !a:silent
-      echo "Config type not valid."
+      call s:EchoWarningMsg("Config type not valid.")
     endif
-    echohl none
     return 0
   endif
 
   if empty(a:config)
     if !a:silent
-      echo "Config is empty."
+      call s:EchoWarningMsg("Config is empty.")
     endif
-    echohl none
     return 0
   endif
 
   " Ensure the correct keys exist within the configuration
   if !(has_key(a:config, 'jobid'))
     if !a:silent
-      echo "Config object lacks 'jobid'."
+      call s:EchoWarningMsg("Config object lacks 'jobid'.")
     endif
-    echohl none
     return 0
   endif
 
   if a:config["jobid"] == -1  "the id wasn't found translate_pid_to_id
     if !a:silent
-      echo "No matching job ID for the provided pid."
+      call s:EchoWarningMsg("No matching job ID for the provided pid.")
     endif
-    echohl none
     return 0
   endif
 
@@ -201,21 +192,18 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
         \a:config['jobid']) >= 0
         \)
     if !a:silent
-      echo "Invalid job ID."
+      call s:EchoWarningMsg("Invalid job ID.")
     endif
-    echohl none
     return 0
   endif
 
   if s:translate_id_to_pid(a:config['jobid']) == -1
     if !a:silent
-      echo "job ID not linked to a PID."
+      call s:EchoWarningMsg("job ID not linked to a PID.")
     endif
-    echohl none
     return 0
   endif
 
-  echohl None
 
   return 1
 endfunction
@@ -372,4 +360,12 @@ function! s:sure_clear_buf_config()
   if exists('b:slime_config')  && type(b:slime_config) == v:t_dict && !empty(b:slime_config) && has_key(b:slime_config, 'jobid') && type(b:slime_config['jobid']) == v:t_number
     call s:clear_related_bufs(b:slime_config['jobid'])
   endif
+endfunction
+
+
+
+function! s:EchoWarningMsg(msg)
+    echohl WarningMsg
+    echo a:msg
+    echohl None
 endfunction
