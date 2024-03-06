@@ -12,14 +12,14 @@ When you invoke `vim-slime` for the first time, `:SlimeConfig` or one of the sen
 
 If the global variable `g:slime_suggest_default` is:
 
-- Nonzero (logical True): The last terminal you opened before calling vim-slime will determine which `job-id` is presented as default. If that terminal is closed, one of the previously opened terminals will be suggested on subsequent configurations. The user can tab through a popup menu of valid configuration values.
+- Nonzero (logical True): The last terminal you opened before calling vim-slime will determine which job ID is presented as default. If that terminal is closed, one of the previously opened terminals will be suggested on subsequent configurations. The user can tab through a popup menu of valid configuration values.
 
 - `0`: (logical False): No default will be suggested.
 
 
 In either case, in Neovim's default configuration, menu-based completion can be activated with `<Tab>`/`<S-Tab>`, and the menu can be navigated with `<Tab>`/`<S-Tab` or `<C-n>`/`<C-p>`.  Autocompletion plugins such as [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) can interfere with this.
 
-To use the terminal's PID as input instead of Neovim's internal job-id of the terminal:
+To use the terminal's PID as input instead of Neovim's internal job ID of the terminal:
 
 ```vim
 let g:slime_input_pid=1
@@ -66,7 +66,7 @@ No validation is performed on these customization values so be sure they are pro
 
 As menioned earlier, the `PID` of a process is included in the name of a terminal buffer.
 
-To manually check the right value of `job-id`  (but not `PID`) try:
+To manually check the right value of the terminal job ID,  (but not pid) try:
 
 ```vim
 echo &channel
@@ -74,7 +74,7 @@ echo &channel
 
 from the buffer running your terminal.
 
-Another way to easily see the `PID` and job ID is to override the status bar of terminals to show the job id and PID.
+Another way to easily see the `PID` and job ID is to override the status bar of terminals to show the job ID and PID.
 
 ```vim
 " in case an external process kills the terminal's shell and &channel doesn't exist anymore
@@ -132,7 +132,7 @@ Those confused by the syntax of the vimscript string passed as an argument to `v
 Here is an example snippet of vimscript to set the status line for buffers that are configured to send code to a terminal:
 
 ```vim
-" Function to safely check for b:slime_config and return the jobid
+" Function to safely check for b:slime_config and return the job ID
 function! GetSlimeJobId()
   if exists("b:slime_config") && type(b:slime_config) == v:t_dict && has_key(b:slime_config, 'jobid') && !empty(b:slime_config['jobid'])
     return ' | jobid: ' . b:slime_config['jobid'] . ' '
@@ -181,11 +181,11 @@ Can be useful for status line plugins.
 
 ## Automatic Configuration
 
-Instead of the prompted job id input method detailed above, you can specify a lua function that will automatically configure vim-slime with a job id:
+Instead of the prompted job ID input method detailed above, you can specify a lua function that will automatically configure vim-slime with a job id:
 
 ```lua
 vim.g.slime_get_jobid = function()
-  -- some way to select and return jobid
+  -- some way to select and return job ID
 end
 ```
 

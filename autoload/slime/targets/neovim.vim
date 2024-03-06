@@ -16,7 +16,7 @@ function! slime#targets#neovim#config() abort
       let slime_suggest_default = 0
     endif
 
-    " unlet current config if its jobid doesn't exist
+    " unlet current config if its job ID doesn't exist
     if !config_set
       let last_channels = get(g:, 'slime_last_channel', [])
       let most_recent_channel = get(last_channels, -1, {})
@@ -182,7 +182,7 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
   " Ensure the correct keys exist within the configuration
   if !(has_key(a:config, 'jobid'))
     if !a:silent
-      echo "Configration object lacks 'jobid'."
+      echo "Config object lacks 'jobid'."
     endif
     echohl none
     return 0
@@ -190,7 +190,7 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
 
   if a:config["jobid"] == -1  "the id wasn't found translate_pid_to_id
     if !a:silent
-      echo "No matching job id for the provided pid."
+      echo "No matching job ID for the provided pid."
     endif
     echohl none
     return 0
@@ -201,7 +201,7 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
         \a:config['jobid']) >= 0
         \)
     if !a:silent
-      echo "Invalid Job ID."
+      echo "Invalid job ID."
     endif
     echohl none
     return 0
@@ -209,7 +209,7 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
 
   if s:translate_id_to_pid(a:config['jobid']) == -1
     if !a:silent
-      echo "Job ID not linked to a PID."
+      echo "job ID not linked to a PID."
     endif
     echohl none
     return 0
@@ -238,7 +238,7 @@ function! s:translate_id_to_pid(id) abort
   return pid_out
 endfunction
 
-" Transforms a channel dictionary with job id and pid into an newline separated string  of job IDs.
+" Transforms a channel dictionary with job ID and pid into an newline separated string  of job IDs.
 " for the purposes of input completion
 function! Last_channel_to_jobid(ArgLead, CmdLine, CursorPos) abort
   let jobids = map(copy(g:slime_last_channel), {_, val -> val["jobid"]})
@@ -246,7 +246,7 @@ function! Last_channel_to_jobid(ArgLead, CmdLine, CursorPos) abort
   return reverse(jobids) " making correct order in menu
 endfunction
 
-" Transforms a channel dictionary with job ida and pid into an newline separated string  of job PIDs.
+" Transforms a channel dictionary with job ID and pid into an newline separated string  of job PIDs.
 " for the purposes of input completion
 function! Last_channel_to_pid(ArgLead, CmdLine, CursorPos) abort
   "they will be transformed into pids so naming them by their final identity
