@@ -144,7 +144,7 @@ function! slime#targets#neovim#ValidEnv() abort
     echohl none
     return 0
   endif
-    echohl none
+  echohl none
   return 1
 endfunction
 
@@ -238,7 +238,7 @@ function! s:translate_id_to_pid(id) abort
   return pid_out
 endfunction
 
-" Transforms a channel dictionary with job ID and pid into an newline separated string  of job IDs.
+" Transforms a channel dictionary with job ID and pid into a newline separated string  of job IDs.
 " for the purposes of input completion
 function! Last_channel_to_jobid(ArgLead, CmdLine, CursorPos) abort
   let jobids = map(copy(g:slime_last_channel), {_, val -> val["jobid"]})
