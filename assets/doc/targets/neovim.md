@@ -115,9 +115,9 @@ local function get_chan_jobpid()
   let pid_out = ""
   
   try
-  let pid_out = string(jobpid(&channel))
-  " in case an external process kills the terminal's shell; jobpid will error
-  catch /^Vim\%((\a\+)\)\=:E900/
+    let pid_out = string(jobpid(&channel))
+    " in case an external process kills the terminal's shell; jobpid will error
+    catch /^Vim\%((\a\+)\)\=:E900/
   endtry
   		echo pid_out
   ]], {output = true})
@@ -129,7 +129,7 @@ Those confused by the syntax of the vimscript string passed as an argument to `v
 
 ## Status-Line Modifications for Configured Buffers
 
-Here is an example snippet of vimscript` to set the status line for buffers that are configured to send code to a terminal:
+Here is an example snippet of vimscript to set the status line for buffers that are configured to send code to a terminal:
 
 ```vim
 " Function to safely check for b:slime_config and return the jobid
