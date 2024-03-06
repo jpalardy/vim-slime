@@ -204,7 +204,6 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
     return 0
   endif
 
-
   return 1
 endfunction
 
