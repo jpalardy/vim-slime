@@ -25,7 +25,7 @@ To use the terminal's PID as input instead of Neovim's internal job ID of the te
 let g:slime_input_pid=1
 ```
 
-The `PID` is included in the terminal buffers's name, visible in the default terminal window status bar.
+The `PID` is included in the terminal buffers' name, visible in the default terminal window status bar.
 
 
 ## Menu Prompted Configuration
@@ -53,7 +53,7 @@ For example:
 let g:slime_neovim_menu_order = [{'name': 'buffer name: '}, {'pid': 'shell process identifier: '}, {'jobid': 'neovim internal job identifier: '}, {'term_title': 'process or pwd: '}]
 ```
 
-The user can also set the delimeter (including whitespace) string between the fields (`, ` by default) with `g:slime_neovim_menu_delimiter`.
+The user can also set the delimiter (including whitespace) string between the fields (`, ` by default) with `g:slime_neovim_menu_delimiter`.
 
 ```vim
 let g:slime_neovim_menu_delimiter = ' | '
@@ -64,7 +64,7 @@ No validation is performed on these customization values so be sure they are pro
 
 ## Terminal Process Identification
 
-As menioned earlier, the `PID` of a process is included in the name of a terminal buffer.
+As mentioned earlier, the `PID` of a process is included in the name of a terminal buffer.
 
 To manually check the right value of the terminal job ID,  (but not pid) try:
 
@@ -91,11 +91,11 @@ endfunction
 autocmd TermOpen * setlocal statusline=%{bufname()}%=id:\ %{&channel}\ pid:\ %{Safe_jobpid(&channel)}
 ```
 
-See `h:statusline` in Neovim's documentiation for more details.
+See `h:statusline` in Neovim's documentation for more details.
 
 ### Statusline Plugins
 
-If you are using a plugin to manage your status line, see that plugin's documentation to see how to confiugre the status line to display `&channel` and `jobpid(&channel)`.
+If you are using a plugin to manage your status line, see that plugin's documentation to see how to configure the status line to display `&channel` and `jobpid(&channel)`.
 
 Many status line plugins for Neovim are configured in lua.
 

@@ -50,7 +50,7 @@ function! slime#targets#neovim#config() abort
       let config_set = 1
     endif
 
-    "inputing jobid
+    " inputting jobid
     if !config_set
       let default_jobid = slime_suggest_default ? temp_config["jobid"] : ""
       if !empty(default_jobid)
@@ -95,7 +95,7 @@ function! s:protected_validation_and_clear(silent, clear_current)
 endfunction
 
 function! slime#targets#neovim#send(config, text) abort
-  " existence is thecked for in the base function
+  " existence is checked for in the base function
   if slime#targets#neovim#ValidConfig(a:config,0)
     " Neovim jobsend is fully asynchronous, it causes some problems with
     " iPython %cpaste (input buffering: not all lines sent over)
@@ -136,7 +136,7 @@ function! slime#targets#neovim#SlimeClearChannel(buf_in) abort
   endif
 endfunction
 
-"evaluates whether ther is a terminal running; if there isn't then no config can be valid
+" evaluates whether there is a terminal running; if there isn't then no config can be valid
 function! slime#targets#neovim#ValidEnv() abort
   echohl WarningMsg
   if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
