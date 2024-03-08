@@ -24,11 +24,8 @@ function! slime#config#resolve(config_name)
   return v:null
 endfunction
 
-
-
 if slime#config#resolve("target") == "neovim"
   if has('nvim')
-    " if true use a prompted menu config to 
     let g:slime_config_defaults["menu_config"] = 0
 
     " whether to populate the command line with an identifier when configuring
@@ -37,15 +34,15 @@ if slime#config#resolve("target") == "neovim"
     "input PID rather than job ID on the command line when configuring
     let g:slime_config_defaults["input_pid"] = 0
 
-    " can be set to a user-defined function to automatically get a job id. Set as zero here to evaluate to false.
+    " can be set to a user-defined function to automatically get a job ID. Set as zero here to evaluate to false.
     let g:slime_config_defaults["get_jobid"] = 0
-
 
     "order of menu if configuring that way
     let g:slime_config_defaults["neovim_menu_order"] = [{'pid': 'pid: '}, {'jobid': 'jobid: '}, {'term_title':''}, {'name': ''}]
 
-    "delimiter of menu
-    let g:slime_config_defaults["neovim_menu_delimiter"] = ','
+    "delimiter of menu if configuring that way
+    let g:slime_config_defaults["neovim_menu_delimiter"] = ', '
+
   else
     call slime#targets#neovim#EchoWarningMsg("Trying to use Neovim target in standard Vim. This won't work.")
   endif
