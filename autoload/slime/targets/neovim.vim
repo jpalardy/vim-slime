@@ -1,23 +1,21 @@
 
 function! slime#targets#neovim#config() abort
   let config_set = 0
+
   if slime#targets#neovim#ValidEnv()
 
     call s:protected_validation_and_clear(1,1)
 
-    if exists("g:slime_menu_config") && g:slime_menu_config && !config_set
+    if !config_set && slime#config#resolve("menu_config")
       let temp_config =  s:config_with_menu()
       let config_set = 1
     endif
 
-    if exists("g:slime_suggest_default") && g:slime_suggest_default
-      let slime_suggest_default = 1
-    else
-      let slime_suggest_default = 0
-    endif
+
 
     " unlet current config if its job ID doesn't exist
     if !config_set
+      let slime_suggest_default = slime#config#resolve("suggest_default")
       let last_channels = get(g:, 'slime_last_channel', [])
       let most_recent_channel = get(last_channels, -1, {})
 
@@ -28,7 +26,7 @@ function! slime#targets#neovim#config() abort
     endif
 
     " include option to input pid
-    if exists("g:slime_input_pid") && g:slime_input_pid && !config_set
+    if !config_set && slime#config#resolve("input_pid")
       let default_pid = slime_suggest_default ? s:translate_id_to_pid(temp_config["jobid"]) : ""
       if default_pid == -1
         let default_pid = ""
@@ -42,7 +40,7 @@ function! slime#targets#neovim#config() abort
     endif
 
 
-    if exists("g:slime_get_jobid") && !config_set
+    if !config_set && slime#config#resolve("get_jobid")
       let jobid_in = g:slime_get_jobid()
       let pid_in = s:translate_id_to_pid(jobid_in)
       let temp_config["jobid"] = jobid_in
@@ -79,7 +77,7 @@ endfunction
 
 "silent if it should output anything
 function! s:protected_validation_and_clear(silent, clear_current)
-  let valid = 0 
+  let valid = 0
   if exists("b:slime_config")
     if !slime#targets#neovim#ValidConfig(b:slime_config, a:silent)
       call s:sure_clear_buf_config()
@@ -102,11 +100,9 @@ function! slime#targets#neovim#send(config, text) abort
     " So this `write_paste_file` can help as a small lock & delay
     call slime#common#write_paste_file(a:text)
     call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
-  else
-    if exists("b:slime_config")
+  elseif exists("b:slime_config") " using exists instead of resolve here because slime_config is explicitly called as b:slime_config in the base send function
       call s:sure_clear_buf_config()
       unlet b:slime_config
-    endif
   endif
 endfunction
 
@@ -139,7 +135,7 @@ endfunction
 " evaluates whether there is a terminal running; if there isn't then no config can be valid
 function! slime#targets#neovim#ValidEnv() abort
   if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
-    call s:EchoWarningMsg("Terminal not found.")
+    call slime#targets#neovim#EchoWarningMsg("Terminal not found.")
     return 0
   endif
   return 1
@@ -149,9 +145,9 @@ endfunction
 " returns boolean of whether the supplied config is valid
 function! slime#targets#neovim#ValidConfig(config, silent) abort
 
-  if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
+  if !exists("g:slime_last_channel") 
     if !a:silent
-      call s:EchoWarningMsg("Terminal not found.")
+      call slime#targets#neovim#EchoWarningMsg("Terminal not found.")
     endif
     return 0
   endif
@@ -160,14 +156,14 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
   " Ensure the config is a dictionary and a previous channel exists
   if type(a:config) != v:t_dict
     if !a:silent
-      call s:EchoWarningMsg("Config type not valid.")
+      call slime#targets#neovim#EchoWarningMsg("Config type not valid.")
     endif
     return 0
   endif
 
   if empty(a:config)
     if !a:silent
-      call s:EchoWarningMsg("Config is empty.")
+      call slime#targets#neovim#EchoWarningMsg("Config is empty.")
     endif
     return 0
   endif
@@ -175,14 +171,14 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
   " Ensure the correct keys exist within the configuration
   if !(has_key(a:config, 'jobid'))
     if !a:silent
-      call s:EchoWarningMsg("Config object lacks 'jobid'.")
+      call slime#targets#neovim#EchoWarningMsg("Config object lacks 'jobid'.")
     endif
     return 0
   endif
 
   if a:config["jobid"] == -1  "the id wasn't found translate_pid_to_id
     if !a:silent
-      call s:EchoWarningMsg("No matching job ID for the provided pid.")
+      call slime#targets#neovim#EchoWarningMsg("No matching job ID for the provided pid.")
     endif
     return 0
   endif
@@ -192,14 +188,14 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
         \a:config['jobid']) >= 0
         \)
     if !a:silent
-      call s:EchoWarningMsg("Invalid job ID.")
+      call slime#targets#neovim#EchoWarningMsg("Invalid job ID.")
     endif
     return 0
   endif
 
   if s:translate_id_to_pid(a:config['jobid']) == -1
     if !a:silent
-      call s:EchoWarningMsg("job ID not linked to a PID.")
+      call slime#targets#neovim#EchoWarningMsg("job ID not linked to a PID.")
     endif
     return 0
   endif
@@ -266,7 +262,7 @@ endfunction
 
 function! s:extend_term_buffer_titles(specific_term_info, all_bufinfo) abort
   " add buffer name and terminal title to a dictionary that already has jobid, pid, buffer number
-  "specific term info is a dictionary that contains jobid, pid, and bufnr
+  " specific term info is a dictionary that contains jobid, pid, and bufnr
   " all_bufinfo is the output of getbufinfo()
 
   " important to use copy here to avoid filtering in calling environment
@@ -282,20 +278,12 @@ endfunction
 function! s:buffer_dictionary_to_string(dict_in) abort
   " dict in is an array of dictionaries that has the values of the menu items
 
-  "menu order is an array of dictionaries
-  "menu entries will follow the order of menu order
+  " menu order is an array of dictionaries
+  " menu entries will follow the order of menu order
   " the labels of each field of the menu entry will be the values of each dictionary in the array
-  if exists('g:slime_neovim_menu_order')
-    let menu_order = g:slime_neovim_menu_order
-  else
-    let menu_order = [{'pid': 'pid: '}, {'jobid': 'jobid: '}, {'term_title':''}, {'name': ''}]
-  endif
+  let menu_order = slime#config#resolve('neovim_menu_order')
 
-  if exists('g:slime_neovim_menu_delimiter')
-    let delimiter = g:slime_neovim_menu_delimiter
-  else
-    let delimiter = ', '
-  endif
+  let delimiter = slime#config#resolve('neovim_menu_delimiter')
 
   let menu_string = ''
 
@@ -363,7 +351,7 @@ endfunction
 
 
 
-function! s:EchoWarningMsg(msg)
+function! slime#targets#neovim#EchoWarningMsg(msg)
     echohl WarningMsg
     echo a:msg
     echohl None

@@ -14,7 +14,8 @@ If the global variable `g:slime_suggest_default` is:
 
 - Nonzero (logical True): The last terminal you opened before calling vim-slime will determine which job ID is presented as default. If that terminal is closed, one of the previously opened terminals will be suggested on subsequent configurations. The user can tab through a popup menu of valid configuration values.
 
-- `0`: (logical False): No default will be suggested.
+- `0` (logical False), or nonexistent: No default will be suggested.
+
 
 
 In either case, in Neovim's default configuration, menu-based completion can be activated with `<Tab>`/`<S-Tab>`, and the menu can be navigated with `<Tab>`/`<S-Tab` or `<C-n>`/`<C-p>`.  Autocompletion plugins such as [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) can interfere with this.
@@ -157,6 +158,8 @@ set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 ### Lua Functions For Returning Config Components
 
 
+Can be useful for status line plugins:
+
 ```lua
 local function get_slime_jobid()
   if vim.b.slime_config and vim.b.slime_config.jobid then
@@ -177,7 +180,6 @@ local function get_slime_pid()
 end
 ```
 
-Can be useful for status line plugins.
 
 ## Automatic Configuration
 
@@ -198,23 +200,23 @@ This is not possible or straightforward to do in pure vimscript due to capitaliz
  ## Example Installation and Configuration with [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 
- ```lua
+```lua
 {
-	"jpalardy/vim-slime",
-	init = function()
-		-- these two should be set before the plugin loads
-		vim.g.slime_target = "neovim"
-		vim.g.slime_no_mappings = true
-	end,
-	config = function()
-		vim.g.slime_input_pid = false
-		vim.g.slime_suggest_default = true
-		vim.g.slime_menu_config = false
-		-- called MotionSend but works with textobjects as well
-		vim.keymap.set("n", "gz", "<Plug>SlimeMotionSend", { remap = true, silent = false })
-		vim.keymap.set("n", "gzz", "<Plug>SlimeLineSend", { remap = true, silent = false })
-		vim.keymap.set("x", "gz", "<Plug>SlimeRegionSend", { remap = true, silent = false })
-		vim.keymap.set("n", "gzc", "<Plug>SlimeConfig", { remap = true, silent = false })
-	end,
+  "jpalardy/vim-slime",
+  init = function()
+    -- these two should be set before the plugin loads
+    vim.g.slime_target = "neovim"
+    vim.g.slime_no_mappings = true
+  end,
+  config = function()
+    vim.g.slime_input_pid = false
+    vim.g.slime_suggest_default = true
+    vim.g.slime_menu_config = false
+    -- called MotionSend but works with textobjects as well
+    vim.keymap.set("n", "gz", "<Plug>SlimeMotionSend", { remap = true, silent = false })
+    vim.keymap.set("n", "gzz", "<Plug>SlimeLineSend", { remap = true, silent = false })
+    vim.keymap.set("x", "gz", "<Plug>SlimeRegionSend", { remap = true, silent = false })
+    vim.keymap.set("n", "gzc", "<Plug>SlimeConfig", { remap = true, silent = false })
+  end,
 }
- ```
+```
