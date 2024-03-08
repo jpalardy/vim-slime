@@ -65,6 +65,8 @@ function! slime#targets#neovim#config() abort
 
     let b:slime_config = temp_config
 
+    " second 0 argument means we are not clearing the config;
+    " we don't clear because base 'send' requires existence of b:sime_config
     call s:protected_validation_and_clear(0,0)
 
 
@@ -93,7 +95,8 @@ function! s:protected_validation_and_clear(silent, clear_current)
 endfunction
 
 function! slime#targets#neovim#send(config, text) abort
-  " existence is checked for in the base function
+  " existence of 'b:config' is implicitly assumed by the base send function
+  " if it doesn't exist there will have been an error before reaching this code
   if slime#targets#neovim#ValidConfig(a:config,0)
     " Neovim jobsend is fully asynchronous, it causes some problems with
     " iPython %cpaste (input buffering: not all lines sent over)
