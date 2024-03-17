@@ -39,11 +39,15 @@ endif
 " for neovim (only), make slime_last_channel contain
 " the channel id of the last opened terminal
 if slime#config#resolve("target") == "neovim"
-  augroup nvim_slime
-    autocmd!
-    " keeping track of channels that are open
-    autocmd TermOpen * call slime#targets#neovim#SlimeAddChannel()
-    " keeping track when terminals are closed
-    autocmd TermClose * call slime#targets#neovim#SlimeClearChannel()
-  augroup END
+  if has('nvim')
+    augroup nvim_slime
+      autocmd!
+      " keeping track of channels that are open
+      autocmd TermOpen * call slime#targets#neovim#SlimeAddChannel(expand('<abuf>'))
+      " keeping track when terminals are closed
+      autocmd TermClose * call slime#targets#neovim#SlimeClearChannel(expand('<abuf>'))
+    augroup END
+  else
+    call slime#targets#neovim#EchoWarningMsg("Trying to use Neovim target in standard Vim. This won't work.")
+  endif
 endif

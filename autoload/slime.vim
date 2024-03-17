@@ -29,7 +29,7 @@ endfunction
 
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
-  if exists("b:slime_config")
+  if exists("b:slime_config") && !empty(b:slime_config)
     return
   endif
   " assume defaults, if they exist
@@ -45,8 +45,6 @@ function! s:SlimeGetConfig()
 endfunction
 
 function! slime#send_op(type, ...) abort
-  call s:SlimeGetConfig()
-
   let sel_save = &selection
   let &selection = "inclusive"
   let rv = getreg('"')
@@ -72,8 +70,6 @@ function! slime#send_op(type, ...) abort
 endfunction
 
 function! slime#send_range(startline, endline) abort
-  call s:SlimeGetConfig()
-
   let rv = getreg('"')
   let rt = getregtype('"')
   silent exe a:startline . ',' . a:endline . 'yank'
@@ -82,8 +78,6 @@ function! slime#send_range(startline, endline) abort
 endfunction
 
 function! slime#send_lines(count) abort
-  call s:SlimeGetConfig()
-
   let rv = getreg('"')
   let rt = getregtype('"')
   silent exe 'normal! ' . a:count . 'yy'
@@ -160,4 +154,3 @@ function! s:SlimeDispatch(name, ...)
   endif
   return call("slime#targets#" . slime#config#resolve("target") . "#" . a:name, a:000)
 endfunction
-
