@@ -111,6 +111,11 @@ endfunction
 
 function! slime#targets#neovim#SlimeAddChannel(buf_in) abort
   let buf_in = str2nr(a:buf_in)
+  " check if the buffer is a terminal and not hidden
+  if !buflisted(buf_in) || getbufvar(buf_in, "&buftype") != "terminal"
+    return
+  endif
+
   let jobid = getbufvar(buf_in, "&channel")
   let job_pid = jobpid(jobid)
 
