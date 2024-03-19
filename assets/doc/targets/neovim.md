@@ -62,6 +62,7 @@ let g:slime_neovim_menu_delimiter = ' | '
 
 No validation is performed on these customization values so be sure they are properly set.
 
+You might set both `g:slime_suggest_default = 0` and `g:slime_menu_config = 0` in cases where other plugins create terminal that you would never want to send text to.
 
 ## Terminal Process Identification
 
