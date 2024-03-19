@@ -32,7 +32,7 @@ function! slime#targets#neovim#config() abort
         let default_pid = ""
       endif
       let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'customlist,Last_channel_to_pid')
-      redraw
+      "redraw
       let jobid_in = str2nr(s:translate_pid_to_id(pid_in))
       let temp_config["jobid"] = jobid_in
       let temp_config["pid"] = pid_in
@@ -55,7 +55,7 @@ function! slime#targets#neovim#config() abort
         let default_jobid = str2nr(default_jobid)
       endif
       let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'customlist,Last_channel_to_jobid')
-      redraw
+      "redraw
       let jobid_in = str2nr(jobid_in)
       let pid_in = s:translate_id_to_pid(jobid_in)
 
@@ -128,15 +128,24 @@ endfunction
 
 function! slime#targets#neovim#SlimeClearChannel(buf_in) abort
   if !exists("g:slime_last_channel")
+    echom "slc doesn't exist"
     call s:clear_all_buffs()
     return
-  elseif len(g:slime_last_channel) <= 1
+  elseif len(g:slime_last_channel) == 0
+    echom "slc len == 0"
     call s:clear_all_buffs()
     unlet g:slime_last_channel
   else
-    let jobid_to_clear = filter(copy(g:slime_last_channel), {_, val -> val['bufnr'] == a:buf_in})[0]['jobid']
-    call s:clear_related_bufs(jobid_to_clear)
-    call filter(g:slime_last_channel, {_, val -> val['bufnr'] != a:buf_in})
+    echom "slc longer"
+    let last_channel_copy =  copy(g:slime_last_channel)
+    let filtered_last_channels = filter(last_channel_copy, {_, val -> val['bufnr'] == a:buf_in})
+
+    if len(filtered_last_channels) > 0
+      let jobid_to_clear = filtered_last_channels[0]['jobid']
+      call s:clear_related_bufs(jobid_to_clear)
+      call filter(g:slime_last_channel, {_, val -> val['bufnr'] != a:buf_in})
+    endif
+
   endif
 endfunction
 
