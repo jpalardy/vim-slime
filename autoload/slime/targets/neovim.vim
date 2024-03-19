@@ -32,7 +32,7 @@ function! slime#targets#neovim#config() abort
         let default_pid = ""
       endif
       let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'customlist,Last_channel_to_pid')
-      "redraw
+      redraw
       let jobid_in = str2nr(s:translate_pid_to_id(pid_in))
       let temp_config["jobid"] = jobid_in
       let temp_config["pid"] = pid_in
@@ -55,7 +55,7 @@ function! slime#targets#neovim#config() abort
         let default_jobid = str2nr(default_jobid)
       endif
       let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'customlist,Last_channel_to_jobid')
-      "redraw
+      redraw
       let jobid_in = str2nr(jobid_in)
       let pid_in = s:translate_id_to_pid(jobid_in)
 
