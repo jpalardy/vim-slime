@@ -128,15 +128,12 @@ endfunction
 
 function! slime#targets#neovim#SlimeClearChannel(buf_in) abort
   if !exists("g:slime_last_channel")
-    echom "slc doesn't exist"
     call s:clear_all_buffs()
     return
   elseif len(g:slime_last_channel) == 0
-    echom "slc len == 0"
     call s:clear_all_buffs()
     unlet g:slime_last_channel
   else
-    echom "slc longer"
     let last_channel_copy =  copy(g:slime_last_channel)
     let filtered_last_channels = filter(last_channel_copy, {_, val -> val['bufnr'] == a:buf_in})
 
