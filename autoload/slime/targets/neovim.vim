@@ -111,12 +111,19 @@ endfunction
 
 function! slime#targets#neovim#SlimeAddChannel(buf_in) abort
   let buf_in = str2nr(a:buf_in)
-  " check if the buffer is a terminal and not hidden
-  if !buflisted(buf_in) || getbufvar(buf_in, "&buftype") != "terminal"
+
+  if slime#config#resolve("neovim_ignore_unlisted") && !buflisted(buf_in)
     return
   endif
 
+  " only interactive terminals havve the &channel option
+  " this is counterintuitive and poorly documented
+  " getbufvar returns "" when the option/variable lit looks for isn't found
   let jobid = getbufvar(buf_in, "&channel")
+  if jobid == ""
+    return
+  endif
+
   let job_pid = jobpid(jobid)
 
   if !exists("g:slime_last_channel")
