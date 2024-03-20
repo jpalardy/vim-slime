@@ -217,6 +217,10 @@ This is not possible or straightforward to do in pure vimscript due to capitaliz
     vim.g.slime_input_pid = false
     vim.g.slime_suggest_default = true
     vim.g.slime_menu_config = false
+    vim.g.slime_neovim_ignore_unlisted = false
+    -- options not set here are g:slime_neovim_menu_order, g:slime_neovim_menu_delimiter, and g:slime_get_jobid
+    -- see the documentation above to learn about those options
+
     -- called MotionSend but works with textobjects as well
     vim.keymap.set("n", "gz", "<Plug>SlimeMotionSend", { remap = true, silent = false })
     vim.keymap.set("n", "gzz", "<Plug>SlimeLineSend", { remap = true, silent = false })
