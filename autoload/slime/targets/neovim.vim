@@ -130,13 +130,19 @@ function! slime#targets#neovim#SlimeClearChannel(buf_in) abort
   if !exists("g:slime_last_channel")
     call s:clear_all_buffs()
     return
-  elseif len(g:slime_last_channel) <= 1
+  elseif len(g:slime_last_channel) == 0
     call s:clear_all_buffs()
     unlet g:slime_last_channel
   else
-    let jobid_to_clear = filter(copy(g:slime_last_channel), {_, val -> val['bufnr'] == a:buf_in})[0]['jobid']
-    call s:clear_related_bufs(jobid_to_clear)
-    call filter(g:slime_last_channel, {_, val -> val['bufnr'] != a:buf_in})
+    let last_channel_copy =  copy(g:slime_last_channel)
+    let filtered_last_channels = filter(last_channel_copy, {_, val -> val['bufnr'] == a:buf_in})
+
+    if len(filtered_last_channels) > 0
+      let jobid_to_clear = filtered_last_channels[0]['jobid']
+      call s:clear_related_bufs(jobid_to_clear)
+      call filter(g:slime_last_channel, {_, val -> val['bufnr'] != a:buf_in})
+    endif
+
   endif
 endfunction
 
