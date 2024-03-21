@@ -43,6 +43,9 @@ if slime#config#resolve("target") == "neovim"
     "delimiter of menu if configuring that way
     let g:slime_config_defaults["neovim_menu_delimiter"] = ', '
 
+    "if set to to a true value, will disable ability to send to unlisted buffers
+    let g:slime_config_defaults["neovim_ignore_unlisted"] = 0
+
   else
     call slime#targets#neovim#EchoWarningMsg("Trying to use Neovim target in standard Vim. This won't work.")
   endif

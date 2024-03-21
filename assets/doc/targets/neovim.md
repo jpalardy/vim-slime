@@ -62,7 +62,11 @@ let g:slime_neovim_menu_delimiter = ' | '
 
 No validation is performed on these customization values so be sure they are properly set.
 
-You might set both `g:slime_suggest_default = 0` and `g:slime_menu_config = 0` in cases where other plugins create terminals that you would never want to send text to.
+## Unlisted Terminals
+
+By default Slime can send send text to unlisted terminals (such as those created by [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim).
+
+To disable this capability, and prevent unisted terminals from being shown in menu configuration and from being suggested as a default set `g:slime_neovim_ignore_unlisted = 1` (or to any other logically true value). Setting `g:slime_neovim_ignore_unlisted = 0` preserves the default of being able to send to unlisted terminals.
 
 ## Terminal Process Identification
 
@@ -213,6 +217,10 @@ This is not possible or straightforward to do in pure vimscript due to capitaliz
     vim.g.slime_input_pid = false
     vim.g.slime_suggest_default = true
     vim.g.slime_menu_config = false
+    vim.g.slime_neovim_ignore_unlisted = false
+    -- options not set here are g:slime_neovim_menu_order, g:slime_neovim_menu_delimiter, and g:slime_get_jobid
+    -- see the documentation above to learn about those options
+
     -- called MotionSend but works with textobjects as well
     vim.keymap.set("n", "gz", "<Plug>SlimeMotionSend", { remap = true, silent = false })
     vim.keymap.set("n", "gzz", "<Plug>SlimeLineSend", { remap = true, silent = false })
