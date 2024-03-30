@@ -24,9 +24,9 @@ function! slime#common#write_paste_file(text)
   if !isdirectory(paste_dir)
     call mkdir(paste_dir, "p")
   endif
-  if &l:shell ==# "cmd"
+  if &l:shell ==# "cmd.exe"
       let output = slime#common#system("type > %s", [slime#config#resolve("paste_file")], a:text)
-  elseif &l:shell ==# "powershell"
+  elseif &l:shell ==# "powershell.exe"
       let output = slime#common#system("echo > %s", [slime#config#resolve("paste_file")], a:text)
   else
       let output = slime#common#system("cat > %s", [slime#config#resolve("paste_file")], a:text)
@@ -41,7 +41,7 @@ function! slime#common#capitalize(text)
 endfunction
 
 function! slime#common#system(cmd_template, args, ...)
-  if &l:shell !=# "cmd"
+  if &l:shell !=# "cmd.exe"
       let escaped_args = map(copy(a:args), "shellescape(v:val)")
   else
       let escaped_args = a:args
