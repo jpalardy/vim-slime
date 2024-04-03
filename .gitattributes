@@ -1,3 +1,12 @@
+.gitattributes text
+.gitignore text
+
 *.vim text
 *.md text
-*          text=auto
+*.txt text
+*.yml text
+
+*.gif binary
+*.png binary
+
+*     text=auto
