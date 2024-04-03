@@ -1,0 +1,3 @@
+*.vim text
+*.md text
+*          text=auto

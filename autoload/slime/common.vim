@@ -24,13 +24,7 @@ function! slime#common#write_paste_file(text)
   if !isdirectory(paste_dir)
     call mkdir(paste_dir, "p")
   endif
-  if &l:shell ==# "cmd.exe"
-      let output = slime#common#system("type > %s", [slime#config#resolve("paste_file")], a:text)
-  elseif &l:shell ==# "powershell.exe"
-      let output = slime#common#system("echo > %s", [slime#config#resolve("paste_file")], a:text)
-  else
-      let output = slime#common#system("cat > %s", [slime#config#resolve("paste_file")], a:text)
-  endif
+  call writefile([a:text], slime#config#resolve("paste_file"))
   if v:shell_error
     echoerr output
   endif
