@@ -105,7 +105,7 @@ function! slime#targets#neovim#send(config, text) abort
     call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
   elseif exists("b:slime_config") " using exists instead of resolve here because slime_config is explicitly called as b:slime_config in the base send function
       call s:sure_clear_buf_config()
-      unlet b:slime_config
+      let b:slime_config = {}
   endif
 endfunction
 
