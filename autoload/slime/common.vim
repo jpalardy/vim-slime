@@ -24,8 +24,8 @@ function! slime#common#write_paste_file(text)
   if !isdirectory(paste_dir)
     call mkdir(paste_dir, "p")
   endif
-  let lines = slime#common#lines(a:text)
-  call writefile(lines, slime#config#resolve("paste_file"))
+  let lines = split(a:text, "\n", 1)
+  call writefile(lines, slime#config#resolve("paste_file"), 'b')
 endfunction
 
 function! slime#common#capitalize(text)
