@@ -14,14 +14,15 @@ function! slime#targets#tmux#send(config, text)
   let target_cmd = s:target_cmd(a:config["socket_name"])
   let [bracketed_paste, text_to_paste, has_crlf] = slime#common#bracketed_paste(a:text)
 
+  " only need to do this once
+  call slime#common#system(target_cmd . " send-keys -X -t %s cancel", [a:config["target_pane"]])
+
   " reasonable hardcode, will become config if needed
   let chunk_size = 1000
 
   for i in range(0, len(text_to_paste) / chunk_size)
     let chunk = text_to_paste[i * chunk_size : (i + 1) * chunk_size - 1]
-    call slime#common#write_paste_file(chunk)
-    call slime#common#system(target_cmd . " load-buffer %s", [slime#config#resolve("paste_file")])
-    call slime#common#system(target_cmd . " send-keys -X -t %s cancel", [a:config["target_pane"]])
+    call slime#common#system(target_cmd . " load-buffer -", [], chunk)
     if bracketed_paste
       call slime#common#system(target_cmd . " paste-buffer -d -p -t %s", [a:config["target_pane"]])
     else
