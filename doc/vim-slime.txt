@@ -304,11 +304,10 @@ g:slime_target		Set to either "screen" (default), "tmux" or "whimrepl".
 g:slime_no_mappings	Set to non zero value to disable the default mappings.
 
 						*g:slime_paste_file*
-g:slime_paste_file	Required to transfer data from vim to GNU screen.
+g:slime_paste_file	Required to transfer data from vim to some targets.
 			Set to "$HOME/.slime_paste" by default. Setting
 			this explicitly can work around some occasional
-			portability issues. whimrepl does not require or
-			support this setting.
+			portability issues.
 
 						*g:slime_preserve_curpos*
 g:slime_preserve_curpos	Set to non zero value to preserve cursor position when

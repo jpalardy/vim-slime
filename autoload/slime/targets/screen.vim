@@ -8,8 +8,7 @@ function! slime#targets#screen#config() abort
 endfunction
 
 function! slime#targets#screen#send(config, text)
-  call slime#common#write_paste_file(a:text)
-  call slime#common#system('screen -S %s -p %s -X eval "readreg p %s"', [a:config["sessionname"], a:config["windowname"], slime#config#resolve("paste_file")])
+  call slime#common#system('screen -S %s -p %s -X readreg p -', [a:config["sessionname"], a:config["windowname"]], a:text)
   call slime#common#system('screen -S %s -p %s -X paste p', [a:config["sessionname"], a:config["windowname"]])
 endfunction
 
