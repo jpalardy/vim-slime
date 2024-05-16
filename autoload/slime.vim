@@ -29,20 +29,38 @@ endfunction
 
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
-  if exists("b:slime_config") && !empty(b:slime_config)
+  if exists("b:slime_config") && s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
     return
   endif
   " assume defaults, if they exist
+
   if exists("g:slime_default_config")
     let b:slime_config = g:slime_default_config
+    if !s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
+      if exists("b:slime_config")
+        unlet b:slime_config
+      endif
+    endif
   endif
+
   " skip confirmation, if configured
   if exists("g:slime_dont_ask_default") && g:slime_dont_ask_default
     return
   endif
   " prompt user
   call s:SlimeDispatch('config')
+
+  if s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
+    return
+  else
+    if exists("b:slime_config")
+      unlet b:slime_config
+    endif
+    throw "invalid config"
+  endif
 endfunction
+
+
 
 function! slime#send_op(type, ...) abort
   let sel_save = &selection
@@ -122,30 +140,63 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! slime#send(text)
-  call s:SlimeGetConfig()
+  if s:SlimeDispatchValidate("ValidEnv")
+    try
+      call s:SlimeGetConfig()
+    catch \invalid config\
+      return
+    endtry
 
-  " this used to return a string, but some receivers (coffee-script)
-  " will flush the rest of the buffer given a special sequence (ctrl-v)
-  " so we, possibly, send many strings -- but probably just one
-  let pieces = s:_EscapeText(a:text)
-  for piece in pieces
-    if type(piece) == 0  " a number
-      if piece > 0  " sleep accepts only positive count
-        execute 'sleep' piece . 'm'
+    " this used to return a string, but some receivers (coffee-script)
+    " will flush the rest of the buffer given a special sequence (ctrl-v)
+    " so we, possibly, send many strings -- but probably just one
+    let pieces = s:_EscapeText(a:text)
+    for piece in pieces
+      if type(piece) == 0  " a number
+        if piece > 0  " sleep accepts only positive count
+          execute 'sleep' piece . 'm'
+        endif
+      else
+        call s:SlimeDispatch('send', b:slime_config, piece)
       endif
-    else
-      call s:SlimeDispatch('send', b:slime_config, piece)
-    endif
-  endfor
+    endfor
+  endif
 endfunction
 
 function! slime#config() abort
   call inputsave()
-  call s:SlimeDispatch('config')
+  if s:SlimeDispatchValidate("ValidEnv")
+    call s:SlimeDispatch('config')
+
+    if !s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
+      if exists("b:slime_config")
+        unlet b:slime_config
+      endif
+    endif
+  endif
   call inputrestore()
 endfunction
 
 " delegation
+function! s:SlimeDispatchValidate(name, ...)
+  " allow custom override
+  let override_fn = "SlimeOverride" . slime#common#capitalize(a:name)
+  if exists("*" . override_fn)
+    return call(override_fn, a:000)
+  endif
+
+  let fun_string = "slime#targets#" . slime#config#resolve("target") . "#" . a:name
+  " using try catch because exists() doesn't detect autoload functions that aren't yet loaded
+  " the idea is to return the interger 1 for true in cases where a target doesn't have
+  " the called validation function implemented. E117 is 'Unknown function'.
+  try
+    return call(fun_string, a:000)
+  catch /^Vim\%((\a\+)\)\=:E117:/
+    return 1
+  endtry
+
+endfunction
+
 function! s:SlimeDispatch(name, ...)
   " allow custom override
   let override_fn = "SlimeOverride" . slime#common#capitalize(a:name)
