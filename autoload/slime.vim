@@ -29,17 +29,15 @@ endfunction
 
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
-  if exists("b:slime_config") && s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
+  if exists("b:slime_config") && s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
     return
   endif
   " assume defaults, if they exist
 
   if exists("g:slime_default_config")
     let b:slime_config = g:slime_default_config
-    if !s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
-      if exists("b:slime_config")
+    if exists("b:slime_config") && !s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
         unlet b:slime_config
-      endif
     endif
   endif
 
@@ -50,7 +48,7 @@ function! s:SlimeGetConfig()
   " prompt user
   call s:SlimeDispatch('config')
 
-  if s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
+  if s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
     return
   else
     if exists("b:slime_config")
@@ -168,10 +166,8 @@ function! slime#config() abort
   if s:SlimeDispatchValidate("ValidEnv")
     call s:SlimeDispatch('config')
 
-    if !s:SlimeDispatchValidate("ValidConfig", "b:slime_config")
-      if exists("b:slime_config")
+    if exists("b:slime_config") && !s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
         unlet b:slime_config
-      endif
     endif
   endif
   call inputrestore()

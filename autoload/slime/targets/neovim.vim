@@ -1,24 +1,27 @@
 
 function! slime#targets#neovim#config() abort
+  let config_set = 0
 
-  if slime#config#resolve("menu_config")
-    call s:config_with_menu()
-    return
-  endif
+    if !config_set && slime#config#resolve("menu_config")
+      let temp_config =  s:config_with_menu()
+      let config_set = 1
+    endif
 
 
   " unlet current config if its job ID doesn't exist
-  let slime_suggest_default = slime#config#resolve("suggest_default")
-  let last_channels = get(g:, 'slime_last_channel', [])
-  let most_recent_channel = get(last_channels, -1, {})
+  if !config_set
+    let slime_suggest_default = slime#config#resolve("suggest_default")
+    let last_channels = get(g:, 'slime_last_channel', [])
+    let most_recent_channel = get(last_channels, -1, {})
 
-  let last_pid = get(most_recent_channel, 'pid', '')
-  let last_job = get(most_recent_channel, 'jobid', '')
+    let last_pid = get(most_recent_channel, 'pid', '')
+    let last_job = get(most_recent_channel, 'jobid', '')
 
-  let b:slime_config =  {"jobid":  last_job, "pid": last_pid }
+    let temp_config =  {"jobid":  last_job, "pid": last_pid }
+  endif
 
   " include option to input pid
-  if slime#config#resolve("input_pid")
+  if !config_set && slime#config#resolve("input_pid")
     let default_pid = slime_suggest_default ? s:translate_id_to_pid(temp_config["jobid"]) : ""
     if default_pid == -1
       let default_pid = ""
@@ -26,32 +29,36 @@ function! slime#targets#neovim#config() abort
     let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'customlist,Last_channel_to_pid')
     redraw
     let jobid_in = str2nr(s:translate_pid_to_id(pid_in))
-    let b:slime_config["jobid"] = jobid_in
-    let b:slime_config["pid"] = pid_in
-    return
+    let temp_config["jobid"] = jobid_in
+    let temp_config["pid"] = pid_in
+    let config_set = 1
   endif
 
 
-  if slime#config#resolve("get_jobid")
+  if !config_set && slime#config#resolve("get_jobid")
     let jobid_in = g:slime_get_jobid()
     let pid_in = s:translate_id_to_pid(jobid_in)
     let temp_config["jobid"] = jobid_in
     let temp_config["pid"] = pid_in
-    return
+    let config_set = 1
   endif
 
   " passed all guard cases, inputting jobid
-  let default_jobid = slime_suggest_default ? temp_config["jobid"] : ""
-  if !empty(default_jobid)
-    let default_jobid = str2nr(default_jobid)
-  endif
-  let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'customlist,Last_channel_to_jobid')
-  redraw
-  let jobid_in = str2nr(jobid_in)
-  let pid_in = s:translate_id_to_pid(jobid_in)
+  if !config_set
+    let default_jobid = slime_suggest_default ? temp_config["jobid"] : ""
+    if !empty(default_jobid)
+      let default_jobid = str2nr(default_jobid)
+    endif
+    let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'customlist,Last_channel_to_jobid')
+    redraw
+    let jobid_in = str2nr(jobid_in)
+    let pid_in = s:translate_id_to_pid(jobid_in)
 
-  let b:slime_config["jobid"] = jobid_in
-  let b:slime_config["pid"] = pid_in
+    let temp_config["jobid"] = jobid_in
+    let temp_config["pid"] = pid_in
+  endif
+
+  let b:slime_config = temp_config
 endfunction
 
 
@@ -123,7 +130,6 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
     endif
     return 0
   endif
-
 
   " Ensure the config is a dictionary and a previous channel exists
   if type(a:config) != v:t_dict
