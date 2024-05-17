@@ -19,6 +19,15 @@ function! slime#common#unlines(lines) abort
   return join(a:lines, "\n") . "\n"
 endfunction
 
+function! slime#common#write_paste_file(text)
+  let paste_dir = fnamemodify(slime#config#resolve("paste_file"), ":p:h")
+  if !isdirectory(paste_dir)
+    call mkdir(paste_dir, "p")
+  endif
+  let lines = split(a:text, "\n", 1)
+  call writefile(lines, slime#config#resolve("paste_file"), 'b')
+endfunction
+
 function! slime#common#capitalize(text)
   return substitute(tolower(a:text), '\(.\)', '\u\1', '')
 endfunction
