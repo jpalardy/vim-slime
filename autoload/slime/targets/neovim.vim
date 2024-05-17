@@ -98,10 +98,6 @@ function! slime#targets#neovim#send(config, text) abort
   " existence of 'b:config' is implicitly assumed by the base send function
   " if it doesn't exist there will have been an error before reaching this code
   if slime#targets#neovim#ValidConfig(a:config,0)
-    " Neovim jobsend is fully asynchronous, it causes some problems with
-    " iPython %cpaste (input buffering: not all lines sent over)
-    " So this `write_paste_file` can help as a small lock & delay
-    call slime#common#write_paste_file(a:text)
     call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
   elseif exists("b:slime_config") " using exists instead of resolve here because slime_config is explicitly called as b:slime_config in the base send function
       call s:sure_clear_buf_config()
