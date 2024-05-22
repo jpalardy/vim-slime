@@ -61,8 +61,6 @@ function! slime#targets#neovim#config() abort
   let b:slime_config = temp_config
 endfunction
 
-
-
 function! slime#targets#neovim#send(config, text) abort
     call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
 endfunction
