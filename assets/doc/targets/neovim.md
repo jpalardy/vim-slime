@@ -72,10 +72,16 @@ To disable this capability, and prevent unisted terminals from being shown in me
 
 As mentioned earlier, the `PID` of a process is included in the name of a terminal buffer.
 
-To manually check the right value of the terminal job ID,  (but not pid) try:
+To manually check the right value of the terminal job ID:
 
 ```vim
-echo &channel
+:echo &channel
+```
+
+To manually check the right value of the terminal job PID:
+
+```vim
+:echo jobpid(&channel)
 ```
 
 from the buffer running your terminal.
