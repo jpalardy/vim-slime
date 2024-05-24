@@ -48,7 +48,7 @@ function! s:SlimeGetConfig()
   " prompt user
   call s:SlimeDispatch('config')
 
-  if s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
+  if exists("b:slime_config") && s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
     return
   else
     if exists("b:slime_config")
