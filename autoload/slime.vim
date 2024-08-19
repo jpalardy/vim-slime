@@ -186,7 +186,6 @@ function! s:SlimeDispatchValidate(name, ...)
   " the idea is to return the interger 1 for true in cases where a target doesn't have
   " the called validation function implemented. E117 is 'Unknown function'.
   try
-    echo a:000
     return call(fun_string, a:000)
   catch /^Vim\%((\a\+)\)\=:E117:/
     return 1
