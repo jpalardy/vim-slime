@@ -175,22 +175,14 @@ endfunction
 
 " delegation
 function! s:SlimeDispatchValidate(name, ...)
-  " allow custom override
-  let override_fn = "SlimeOverride" . slime#common#capitalize(a:name)
-  if exists("*" . override_fn)
-    return call(override_fn, a:000)
-  endif
-
-  let fun_string = "slime#targets#" . slime#config#resolve("target") . "#" . a:name
   " using try catch because exists() doesn't detect autoload functions that aren't yet loaded
   " the idea is to return the interger 1 for true in cases where a target doesn't have
   " the called validation function implemented. E117 is 'Unknown function'.
   try
-    return call(fun_string, a:000)
+    return call ("s:SlimeDispatch", [a:name] + a:000)
   catch /^Vim\%((\a\+)\)\=:E117:/
     return 1
   endtry
-
 endfunction
 
 function! s:SlimeDispatch(name, ...)
