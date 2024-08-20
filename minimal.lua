@@ -19,7 +19,7 @@ require("lazy").setup(
       dir = "~/vim-slime",
       --branch = "dev",
       init = function()
-        vim.g.slime_target = "neovim"
+        vim.g.slime_target = "tmux"
         vim.g.slime_python_ipython = false
         vim.g.slime_no_mappings = true
         vim.g.slime_input_pid = false

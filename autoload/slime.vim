@@ -29,14 +29,14 @@ endfunction
 
 function! s:SlimeGetConfig()
   " b:slime_config already configured...
-  if exists("b:slime_config") && s:SlimeDispatchSafe("ValidConfig", b:slime_config, 0)
+  if exists("b:slime_config") && s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
     return
   endif
   " assume defaults, if they exist
 
   if exists("g:slime_default_config")
     let b:slime_config = g:slime_default_config
-    if exists("b:slime_config") && !s:SlimeDispatchSafe("ValidConfig", b:slime_config, 0)
+    if exists("b:slime_config") && !s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
         unlet b:slime_config
     endif
   endif
@@ -48,7 +48,7 @@ function! s:SlimeGetConfig()
   " prompt user
   call s:SlimeDispatch('config')
 
-  if exists("b:slime_config") && s:SlimeDispatchSafe("ValidConfig", b:slime_config, 0)
+  if exists("b:slime_config") && s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
     return
   else
     if exists("b:slime_config")
@@ -138,7 +138,7 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! slime#send(text)
-  if s:SlimeDispatchSafe("ValidEnv")
+  if s:SlimeDispatchValidate("ValidEnv")
     try
       call s:SlimeGetConfig()
     catch \invalid config\
@@ -163,10 +163,10 @@ endfunction
 
 function! slime#config() abort
   call inputsave()
-  if s:SlimeDispatchSafe("ValidEnv")
+  if s:SlimeDispatchValidate("ValidEnv")
     call s:SlimeDispatch('config')
 
-    if exists("b:slime_config") && !s:SlimeDispatchSafe("ValidConfig", b:slime_config, 0)
+    if exists("b:slime_config") && !s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
         unlet b:slime_config
     endif
   endif
@@ -174,12 +174,12 @@ function! slime#config() abort
 endfunction
 
 " delegation
-function! s:SlimeDispatchSafe(name, ...)
+function! s:SlimeDispatchValidate(name, ...)
   " using try catch because exists() doesn't detect autoload functions that aren't yet loaded
   " the idea is to return the interger 1 for true in cases where a target doesn't have
   " the called validation function implemented. E117 is 'Unknown function'.
   try
-    return s:SlimeDispatch(a:name, unpack(a:000))
+    return call ("s:SlimeDispatch", [a:name] + a:000)
   catch /^Vim\%((\a\+)\)\=:E117:/
     return 1
   endtry
