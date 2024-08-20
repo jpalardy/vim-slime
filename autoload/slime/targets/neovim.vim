@@ -313,7 +313,7 @@ function! s:config_with_menu() abort
 
   let used_config = term_bufinfo[selection - 1]
 
-  let b:slime_config = {"jobid": used_config["jobid"], "pid": used_config["pid"] }
+  return {"jobid": used_config["jobid"], "pid": used_config["pid"] }
 endfunction
 
 
