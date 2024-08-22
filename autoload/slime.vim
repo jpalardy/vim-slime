@@ -176,7 +176,10 @@ function! slime#config() abort
     endif
 
     if exists("old_config")
+      echo "--Restoring previous config.--"
+      echohl WarningMsg
       let b:slime_config = old_config
+      echohl None
     endif
 
   endif
