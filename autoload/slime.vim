@@ -163,7 +163,6 @@ endfunction
 
 function! slime#config() abort
   call inputsave()
-
   if s:SlimeDispatchValidate("ValidEnv")
 
     if exists("b:slime_config")
@@ -182,7 +181,6 @@ function! slime#config() abort
       endif
     endif
   endif
-
   call inputrestore()
 endfunction
 
