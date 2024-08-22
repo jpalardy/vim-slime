@@ -175,7 +175,7 @@ function! slime#config() abort
         unlet b:slime_config
     endif
 
-    if exists(old_config)
+    if exists("old_config")
       let b:slime_config = old_config
     endif
 
