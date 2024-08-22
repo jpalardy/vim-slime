@@ -164,11 +164,21 @@ endfunction
 function! slime#config() abort
   call inputsave()
   if s:SlimeDispatchValidate("ValidEnv")
+
+    if exists("b:slime_config")
+        let old_config = b:slime_config
+    endif
+
     call s:SlimeDispatch('config')
 
     if exists("b:slime_config") && !s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
         unlet b:slime_config
     endif
+
+    if exists(old_config)
+      let b:slime_config = old_config
+    endif
+
   endif
   call inputrestore()
 endfunction
