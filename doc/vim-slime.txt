@@ -165,7 +165,7 @@ for more configuration.
 
 jobid~
 
-In the neovim terminal buffer type ":echo b:terminal_job_id" to get the
+In the neovim terminal buffer type ":echo &channel" to get the
 job_id for that terminal
 
 ==============================================================================
