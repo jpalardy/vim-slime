@@ -181,7 +181,6 @@ function! slime#config() abort
         let b:slime_config = old_config
       endif
     endif
-
   endif
 
   call inputrestore()
