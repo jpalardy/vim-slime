@@ -50,3 +50,9 @@ if slime#config#resolve("target") == "neovim"
     call slime#targets#neovim#EchoWarningMsg("Trying to use Neovim target in standard Vim. This won't work.")
   endif
 endif
+
+
+
+if slime#config#resolve("target") == "tmux"
+    let g:slime_config_defaults["menu_config"] = 0
+endif

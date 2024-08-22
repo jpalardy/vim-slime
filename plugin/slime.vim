@@ -13,6 +13,7 @@ command -nargs=+ SlimeSend1 call slime#send(<q-args> . "\r")
 command -nargs=+ SlimeSend0 call slime#send(<args>)
 command! SlimeSendCurrentLine call slime#send(getline(".") . "\r")
 
+
 noremap <SID>Operator :<c-u>call slime#store_curpos()<cr>:set opfunc=slime#send_op<cr>g@
 
 noremap <unique> <script> <silent> <Plug>SlimeRegionSend :<c-u>call slime#send_op(visualmode(), 1)<cr>

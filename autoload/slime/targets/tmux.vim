@@ -2,9 +2,31 @@
 function! slime#targets#tmux#config() abort
   if !exists("b:slime_config")
     let b:slime_config = {"socket_name": "default", "target_pane": ""}
-  end
+  endif
   let b:slime_config["socket_name"] = input("tmux socket name or absolute path: ", b:slime_config["socket_name"])
-  let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,slime#targets#tmux#pane_names")
+
+  if slime#config#resolve("menu_config")
+    let panes_list = split(slime#targets#tmux#pane_names("","",""), "\n")
+    call insert(panes_list, ":")
+    let menu_strings = copy(panes_list)
+    for i in range(0, len(menu_strings) - 1)
+      let menu_strings[i] = i . '. ' . menu_strings[i]
+    endfor
+    call insert(menu_strings, "Select a target tmux pane:")
+    let selection = str2nr(inputlist(menu_strings))
+    if selection < 0 || selection >= len(menu_strings)
+      echohl WarningMsg
+      echo "Selection out of bounds. Setting pane to \":\"."
+      echohl None
+      let b:slime_config["target_pane"] = ":"
+      return
+    endif
+    let b:slime_config["target_pane"] = panes_list[selection]
+  else
+    let b:slime_config["target_pane"] = input("tmux target pane: ", b:slime_config["target_pane"], "custom,slime#targets#tmux#pane_names")
+  endif
+
+  " processing pane string
   if b:slime_config["target_pane"] =~ '\s\+'
     let b:slime_config["target_pane"] = split(b:slime_config["target_pane"])[0]
   endif
@@ -27,13 +49,13 @@ function! slime#targets#tmux#send(config, text)
       call slime#common#system(target_cmd . " paste-buffer -d -p -t %s", [a:config["target_pane"]])
     else
       call slime#common#system(target_cmd . " paste-buffer -d -t %s", [a:config["target_pane"]])
-    end
+    endif
   endfor
 
   " trailing newline
   if has_crlf
     call slime#common#system(target_cmd . " send-keys -t %s Enter", [a:config["target_pane"]])
-  end
+  endif
 endfunction
 
 " -------------------------------------------------
