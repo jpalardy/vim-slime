@@ -2,107 +2,67 @@
 function! slime#targets#neovim#config() abort
   let config_set = 0
 
-  if slime#targets#neovim#ValidEnv()
-
-    call s:protected_validation_and_clear(1,1)
-
     if !config_set && slime#config#resolve("menu_config")
       let temp_config =  s:config_with_menu()
       let config_set = 1
     endif
 
 
+  " unlet current config if its job ID doesn't exist
+  if !config_set
+    let slime_suggest_default = slime#config#resolve("suggest_default")
+    let last_channels = get(g:, 'slime_last_channel', [])
+    let most_recent_channel = get(last_channels, -1, {})
 
-    " unlet current config if its job ID doesn't exist
-    if !config_set
-      let slime_suggest_default = slime#config#resolve("suggest_default")
-      let last_channels = get(g:, 'slime_last_channel', [])
-      let most_recent_channel = get(last_channels, -1, {})
+    let last_pid = get(most_recent_channel, 'pid', '')
+    let last_job = get(most_recent_channel, 'jobid', '')
 
-      let last_pid = get(most_recent_channel, 'pid', '')
-      let last_job = get(most_recent_channel, 'jobid', '')
-
-      let temp_config =  {"jobid":  last_job, "pid": last_pid }
-    endif
-
-    " include option to input pid
-    if !config_set && slime#config#resolve("input_pid")
-      let default_pid = slime_suggest_default ? s:translate_id_to_pid(temp_config["jobid"]) : ""
-      if default_pid == -1
-        let default_pid = ""
-      endif
-      let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'customlist,Last_channel_to_pid')
-      redraw
-      let jobid_in = str2nr(s:translate_pid_to_id(pid_in))
-      let temp_config["jobid"] = jobid_in
-      let temp_config["pid"] = pid_in
-      let config_set = 1
-    endif
-
-
-    if !config_set && slime#config#resolve("get_jobid")
-      let jobid_in = g:slime_get_jobid()
-      let pid_in = s:translate_id_to_pid(jobid_in)
-      let temp_config["jobid"] = jobid_in
-      let temp_config["pid"] = pid_in
-      let config_set = 1
-    endif
-
-    " inputting jobid
-    if !config_set
-      let default_jobid = slime_suggest_default ? temp_config["jobid"] : ""
-      if !empty(default_jobid)
-        let default_jobid = str2nr(default_jobid)
-      endif
-      let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'customlist,Last_channel_to_jobid')
-      redraw
-      let jobid_in = str2nr(jobid_in)
-      let pid_in = s:translate_id_to_pid(jobid_in)
-
-      let temp_config["jobid"] = jobid_in
-      let temp_config["pid"] = pid_in
-    endif
-
-    let b:slime_config = temp_config
-
-    " second 0 argument means we are not clearing the config;
-    " we don't clear because base 'send' requires existence of b:sime_config
-    call s:protected_validation_and_clear(0,0)
-
-
-  else
-    " so we don't get an error from the base send function
-    let b:slime_config = {}
+    let temp_config =  {"jobid":  last_job, "pid": last_pid }
   endif
-endfunction
 
-
-"silent if it should output anything
-function! s:protected_validation_and_clear(silent, clear_current)
-  let valid = 0
-  if exists("b:slime_config")
-    if !slime#targets#neovim#ValidConfig(b:slime_config, a:silent)
-      call s:sure_clear_buf_config()
-      if a:clear_current
-        unlet b:slime_config
-      endif
-      return valid
-    else
-      let valid = 1
+  " include option to input pid
+  if !config_set && slime#config#resolve("input_pid")
+    let default_pid = slime_suggest_default ? s:translate_id_to_pid(temp_config["jobid"]) : ""
+    if default_pid == -1
+      let default_pid = ""
     endif
+    let pid_in = input("Configuring vim-slime. Input pid: ", default_pid , 'customlist,Last_channel_to_pid')
+    redraw
+    let jobid_in = str2nr(s:translate_pid_to_id(pid_in))
+    let temp_config["jobid"] = jobid_in
+    let temp_config["pid"] = pid_in
+    let config_set = 1
   endif
-  return valid
+
+
+  if !config_set && slime#config#resolve("get_jobid")
+    let jobid_in = g:slime_get_jobid()
+    let pid_in = s:translate_id_to_pid(jobid_in)
+    let temp_config["jobid"] = jobid_in
+    let temp_config["pid"] = pid_in
+    let config_set = 1
+  endif
+
+  " passed all guard cases, inputting jobid
+  if !config_set
+    let default_jobid = slime_suggest_default ? temp_config["jobid"] : ""
+    if !empty(default_jobid)
+      let default_jobid = str2nr(default_jobid)
+    endif
+    let jobid_in = input("Configuring vim-slime. Input jobid: ", default_jobid, 'customlist,Last_channel_to_jobid')
+    redraw
+    let jobid_in = str2nr(jobid_in)
+    let pid_in = s:translate_id_to_pid(jobid_in)
+
+    let temp_config["jobid"] = jobid_in
+    let temp_config["pid"] = pid_in
+  endif
+
+  let b:slime_config = temp_config
 endfunction
 
 function! slime#targets#neovim#send(config, text) abort
-  " existence of 'b:config' is implicitly assumed by the base send function
-  " if it doesn't exist there will have been an error before reaching this code
-  if slime#targets#neovim#ValidConfig(a:config,0)
     call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
-  elseif exists("b:slime_config") " using exists instead of resolve here because slime_config is explicitly called as b:slime_config in the base send function
-      call s:sure_clear_buf_config()
-      let b:slime_config = {}
-  endif
 endfunction
 
 function! slime#targets#neovim#SlimeAddChannel(buf_in) abort
@@ -168,7 +128,6 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
     endif
     return 0
   endif
-
 
   " Ensure the config is a dictionary and a previous channel exists
   if type(a:config) != v:t_dict
@@ -348,14 +307,13 @@ function! s:config_with_menu() abort
   let selection = str2nr(inputlist(menu_strings))
 
   if selection <= 0 || selection >= len(menu_strings)
-  let b:slime_config = {}
+    let b:slime_config = {}
     return
   endif
 
   let used_config = term_bufinfo[selection - 1]
 
-  let config_out = {"jobid": used_config["jobid"], "pid": used_config["pid"] }
-  return config_out
+  return {"jobid": used_config["jobid"], "pid": used_config["pid"] }
 endfunction
 
 
@@ -369,7 +327,7 @@ endfunction
 
 
 function! slime#targets#neovim#EchoWarningMsg(msg)
-    echohl WarningMsg
-    echo a:msg
-    echohl None
+  echohl WarningMsg
+  echo a:msg
+  echohl None
 endfunction
