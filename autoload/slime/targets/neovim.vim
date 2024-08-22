@@ -307,8 +307,7 @@ function! s:config_with_menu() abort
   let selection = str2nr(inputlist(menu_strings))
 
   if selection <= 0 || selection >= len(menu_strings)
-    let b:slime_config = {}
-    return
+    return {}
   endif
 
   let used_config = term_bufinfo[selection - 1]
