@@ -20,15 +20,17 @@ function! slime#targets#tmux#send(config, text)
   " reasonable hardcode, will become config if needed
   let chunk_size = 1000
 
-  for i in range(0, len(text_to_paste) / chunk_size)
-    let chunk = text_to_paste[i * chunk_size : (i + 1) * chunk_size - 1]
-    call slime#common#system(target_cmd . " load-buffer -", [], chunk)
-    if bracketed_paste
-      call slime#common#system(target_cmd . " paste-buffer -d -p -t %s", [a:config["target_pane"]])
-    else
-      call slime#common#system(target_cmd . " paste-buffer -d -t %s", [a:config["target_pane"]])
-    end
-  endfor
+  if len(text_to_paste) > 0
+    for i in range(0, len(text_to_paste) / chunk_size)
+      let chunk = text_to_paste[i * chunk_size : (i + 1) * chunk_size - 1]
+      call slime#common#system(target_cmd . " load-buffer -", [], chunk)
+      if bracketed_paste
+        call slime#common#system(target_cmd . " paste-buffer -d -p -t %s", [a:config["target_pane"]])
+      else
+        call slime#common#system(target_cmd . " paste-buffer -d -t %s", [a:config["target_pane"]])
+      end
+    endfor
+  endif
 
   " trailing newline
   if has_crlf
