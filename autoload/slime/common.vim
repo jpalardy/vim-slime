@@ -25,7 +25,12 @@ function! slime#common#write_paste_file(text)
     call mkdir(paste_dir, "p")
   endif
   let lines = split(a:text, "\n", 1)
-  call writefile(lines, slime#config#resolve("paste_file"), 'b')
+  let paste_file = slime#config#resolve("paste_file")
+  let result = writefile(lines, paste_file, 'bS')
+  if result != 0
+    echoerr "Couldn't write to slime paste file."
+  endif
+  return paste_file
 endfunction
 
 function! slime#common#capitalize(text)
