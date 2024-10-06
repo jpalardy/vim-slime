@@ -14,6 +14,10 @@ function! slime#targets#tmux#send(config, text)
   let target_cmd = s:target_cmd(a:config["socket_name"])
   let [bracketed_paste, text_to_paste, has_crlf] = slime#common#bracketed_paste(a:text)
 
+  if len(text_to_paste) == 0
+    return
+  end
+
   " only need to do this once
   call slime#common#system(target_cmd . " send-keys -X -t %s cancel", [a:config["target_pane"]])
 
