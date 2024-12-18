@@ -13,6 +13,7 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
+      actions: write
 
     steps:
       - uses: actions/stale@v9
