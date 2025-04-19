@@ -161,7 +161,7 @@ function! GetSlimePid()
 endfunction
 
 
-"default statuslin with :set ruler
+"default statusline with :set ruler
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 " Append the custom function outputs to the right side of the status line, with " | " as a separator
 ```
