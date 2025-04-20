@@ -18,7 +18,7 @@ If the global variable `g:slime_suggest_default` is:
 
 
 
-In either case, in Neovim's default configuration, menu-based completion can be activated with `<Tab>`/`<S-Tab>`, and the menu can be navigated with `<Tab>`/`<S-Tab` or `<C-n>`/`<C-p>`.  Autocompletion plugins such as [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) can interfere with this.
+In either case, in Neovim's default configuration, menu-based completion can be activated with `<Tab>`/`<S-Tab>`, and the menu can be navigated with `<Tab>`/`<S-Tab>` or `<C-n>`/`<C-p>`.  Autocompletion plugins such as [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) can interfere with this.
 
 To use the terminal's PID as input instead of Neovim's internal job ID of the terminal:
 
@@ -46,7 +46,7 @@ The default order of fields in each terminal description in the menu is
 3. `term_title` Usually either the systemname, username, and current directory of the shell, or the name of the currently running process in that shell. (unlabeled by default)
 4. `name` The name of the terminal buffer (unlabeled by default).
 
-The user can reorder these items and set their labels in the menu in the menu by setting a global variable,  `g:slime_neovim_menu_order`, that should be an array of dictionaries. Keys should be exactly the names of the fields, shown above, and the values (which should  be strings) will be the labels in the menu, according to user preference.  Use empty strings for no label.  The dictionaries in the array can be in the user's preferred order.
+The user can reorder these items and set their labels in the menu by setting a global variable,  `g:slime_neovim_menu_order`, that should be an array of dictionaries. Keys should be exactly the names of the fields, shown above, and the values (which should  be strings) will be the labels in the menu, according to user preference.  Use empty strings for no label.  The order of the dictionaries in the array will be the order used in the menu.
 
 For example:
 
@@ -64,9 +64,9 @@ No validation is performed on these customization values so be sure they are pro
 
 ## Unlisted Terminals
 
-By default Slime can send send text to unlisted terminals (such as those created by [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim).
+By default, Slime can send text to unlisted terminals (such as those created by [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim).
 
-To disable this capability, and prevent unisted terminals from being shown in menu configuration and from being suggested as a default set `g:slime_neovim_ignore_unlisted = 1` (or to any other logically true value). Setting `g:slime_neovim_ignore_unlisted = 0` preserves the default of being able to send to unlisted terminals.
+To disable this capability, and prevent unlisted terminals from being shown in menu configuration and from being suggested as a default set `g:slime_neovim_ignore_unlisted = 1` (or to any other logically true value). Setting `g:slime_neovim_ignore_unlisted = 0` preserves the default of being able to send to unlisted terminals.
 
 ## Terminal Process Identification
 
@@ -109,7 +109,7 @@ See `h:statusline` in Neovim's documentation for more details.
 
 If you are using a plugin to manage your status line, see that plugin's documentation to see how to configure the status line to display `&channel` and `jobpid(&channel)`.
 
-Many status line plugins for Neovim are configured in lua.
+Many status line plugins for Neovim are configured using Lua.
 
 A useful Lua function to return the Job ID of a terminal is:
 
@@ -147,6 +147,7 @@ Here is an example snippet of vimscript to set the status line for buffers that 
 " Function to safely check for b:slime_config and return the job ID
 function! GetSlimeJobId()
   if exists("b:slime_config") && type(b:slime_config) == v:t_dict && has_key(b:slime_config, 'jobid') && !empty(b:slime_config['jobid'])
+    " vertical bar appended to left as a separator
     return ' | jobid: ' . b:slime_config['jobid'] . ' '
   endif
   return ''
@@ -161,9 +162,10 @@ function! GetSlimePid()
 endfunction
 
 
-"default statusline with :set ruler
+"default statuslin with :set ruler
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
-" Append the custom function outputs to the right side of the status line, with " | " as a separator
+" Append the custom function outputs to the right side of the status line
+set statusline+=%{GetSlimeJobId()}\ %{GetSlimePid()}
 ```
 
 ### Lua Functions For Returning Config Components
