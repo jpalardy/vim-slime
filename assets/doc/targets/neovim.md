@@ -196,15 +196,22 @@ end
 
 ## Automatic Configuration
 
-Instead of the prompted job ID input method detailed above, you can specify a lua function that will automatically configure vim-slime with a job id:
+Instead of the prompted job ID input method detailed above, you can specify a Lua function that will automatically configure vim-slime with a job id. For example, here is a function that iterates over all buffers and returns the job id of the first terminal it finds.
 
 ```lua
 vim.g.slime_get_jobid = function()
-  -- some way to select and return job ID
+  -- iterate over all buffers to find the first terminal with a valid job
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_get_option_value('buftype',{buf = bufnr}) == "terminal" then
+      local chan = vim.api.nvim_get_option_value( "channel",{buf = bufnr,})
+      if chan and chan > 0 then
+        return chan
+      end
+    end
+  end
+  return nil
 end
 ```
-
-The details of how to implement this are left to the user.
 
 This is not possible or straightforward to do in pure vimscript due to capitalization rules of functions stored as variables in Vimscript.
 
