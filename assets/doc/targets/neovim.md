@@ -46,7 +46,7 @@ The default order of fields in each terminal description in the menu is
 3. `term_title` Usually either the systemname, username, and current directory of the shell, or the name of the currently running process in that shell. (unlabeled by default)
 4. `name` The name of the terminal buffer (unlabeled by default).
 
-The user can reorder these items and set their labels in the menu by setting a global variable,  `g:slime_neovim_menu_order`, that should be an array of dictionaries. Keys should be exactly the names of the fields, shown above, and the values (which should  be strings) will be the labels in the menu, according to user preference.  Use empty strings for no label.  The order of the dictionaries in the array will be the order used in the menu.
+The user can reorder these items and set their labels in the menu by setting a global variable,  `g:slime_neovim_menu_order`, that should be an array of dictionaries. Keys should be exactly the names of the fields, shown above, and the values (which must be strings) will be the labels in the menu, according to user preference.  Use empty strings for no label.  The order of the dictionaries in the array will be the order used in the menu.
 
 For example:
 
@@ -64,7 +64,7 @@ No validation is performed on these customization values so be sure they are pro
 
 ## Unlisted Terminals
 
-By default, Slime can send text to unlisted terminals (such as those created by [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim).
+By default, Slime can send text to unlisted terminals (such as those created by [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim)).
 
 To disable this capability, and prevent unlisted terminals from being shown in menu configuration and from being suggested as a default set `g:slime_neovim_ignore_unlisted = 1` (or to any other logically true value). Setting `g:slime_neovim_ignore_unlisted = 0` preserves the default of being able to send to unlisted terminals.
 
@@ -162,7 +162,7 @@ function! GetSlimePid()
 endfunction
 
 
-"default statuslin with :set ruler
+"default statusline with :set ruler
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 " Append the custom function outputs to the right side of the status line
 set statusline+=%{GetSlimeJobId()}\ %{GetSlimePid()}
