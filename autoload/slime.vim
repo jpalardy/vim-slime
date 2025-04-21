@@ -35,7 +35,7 @@ function! s:SlimeGetConfig()
   " assume defaults, if they exist
 
   if exists("g:slime_default_config")
-    let b:slime_config = g:slime_default_config
+    let b:slime_config = copy(g:slime_default_config)
     if exists("b:slime_config") && !s:SlimeDispatchValidate("ValidConfig", b:slime_config, 0)
         unlet b:slime_config
     endif
