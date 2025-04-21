@@ -34,9 +34,8 @@ function! slime#targets#neovim#config() abort
     let config_set = 1
   endif
 
-
-  if !config_set && slime#config#resolve("get_jobid")
-    let jobid_in = g:slime_get_jobid()
+  if !config_set && exists('g:slime_get_jobid') && type(g:slime_get_jobid) == v:t_func
+    let jobid_in = luaeval('vim.g.slime_get_jobid()')
     let pid_in = s:translate_id_to_pid(jobid_in)
     let temp_config["jobid"] = jobid_in
     let temp_config["pid"] = pid_in
