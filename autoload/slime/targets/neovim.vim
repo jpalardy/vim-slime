@@ -61,7 +61,18 @@ function! slime#targets#neovim#config() abort
 endfunction
 
 function! slime#targets#neovim#send(config, text) abort
-    call chansend(str2nr(a:config["jobid"]), split(a:text, "\n", 1))
+  let [bracketed_paste, text_to_paste, has_crlf] = slime#common#bracketed_paste(a:text)
+  let job_id = str2nr(a:config["jobid"])
+  if bracketed_paste
+    call chansend(job_id, "\e[200~")
+    call chansend(job_id, text_to_paste)
+    call chansend(job_id, "\e[201~")
+    if has_crlf
+      call chansend(job_id, "\n")
+    end
+  else
+    call chansend(job_id, split(a:text, "\n", 1))
+  end
 endfunction
 
 function! slime#targets#neovim#SlimeAddChannel(buf_in) abort
