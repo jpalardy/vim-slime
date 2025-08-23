@@ -40,6 +40,10 @@ endif
 " the channel id of the last opened terminal
 if slime#config#resolve("target") == "neovim"
   if has('nvim')
+    " Add existing buffers (SlimeAddChannel will check if it's a terminal)
+    for buf in getbufinfo()
+      call slime#targets#neovim#SlimeAddChannel(buf.bufnr)
+    endfor
     augroup nvim_slime
       autocmd!
       " keeping track of channels that are open
