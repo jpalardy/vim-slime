@@ -71,9 +71,9 @@ function! slime#targets#neovim#SlimeAddChannel(buf_in) abort
     return
   endif
 
-  " only interactive terminals havve the &channel option, it is one of their defining properties
+  " only interactive terminals have the &channel option, it is one of their defining properties
   " this is poorly documented
-  " getbufvar returns "" when the option/variable lit looks for isn't found
+  " getbufvar returns "" when the option/varible it looks for isn't found
   let jobid = getbufvar(buf_in, "&channel")
   if jobid == ""
     return
@@ -110,11 +110,28 @@ endfunction
 
 " evaluates whether there is a terminal running; if there isn't then no config can be valid
 function! slime#targets#neovim#ValidEnv() abort
-  if (!exists("g:slime_last_channel") || (len(g:slime_last_channel)) < 1) || empty(g:slime_last_channel)
-    call slime#targets#neovim#EchoWarningMsg("Terminal not found.")
-    return 0
+  let valid_env = 0
+
+  if exists("g:slime_last_channel") && (len(g:slime_last_channel) >= 1) && !empty(g:slime_last_channel)
+    let valid_env  = 1
   endif
-  return 1
+
+  if !valid_env
+    for buf in getbufinfo()
+      call slime#targets#neovim#SlimeAddChannel(buf.bufnr)
+    endfor
+  endif
+
+
+  if exists("g:slime_last_channel") && (len(g:slime_last_channel) >= 1) && !empty(g:slime_last_channel)
+    let valid_env  = 1
+  endif
+
+  if !valid_env
+    call slime#targets#neovim#EchoWarningMsg("Terminal not found.")
+  endif
+
+  return valid_env
 endfunction
 
 " "checks that a configuration is valid
