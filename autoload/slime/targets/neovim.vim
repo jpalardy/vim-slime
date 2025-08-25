@@ -73,7 +73,7 @@ function! slime#targets#neovim#SlimeAddChannel(buf_in) abort
 
   " only interactive terminals have the &channel option, it is one of their defining properties
   " this is poorly documented
-  " getbufvar returns "" when the option/varible it looks for isn't found
+  " getbufvar returns "" when the option/variable it looks for isn't found
   let jobid = getbufvar(buf_in, "&channel")
   if jobid == ""
     return
