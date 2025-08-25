@@ -121,28 +121,23 @@ endfunction
 
 " evaluates whether there is a terminal running; if there isn't then no config can be valid
 function! slime#targets#neovim#ValidEnv() abort
-  let valid_env = 0
 
-  if exists("g:slime_last_channel") && len(g:slime_last_channel) >= 1 && !empty(g:slime_last_channel)
-    let valid_env = 1
+  if exists("g:slime_last_channel")  && !empty(g:slime_last_channel)
+    return 1
   endif
 
-  if !valid_env
-    for buf in getbufinfo()
-      call slime#targets#neovim#SlimeAddChannel(buf.bufnr)
-    endfor
+  for buf in getbufinfo()
+    call slime#targets#neovim#SlimeAddChannel(buf.bufnr)
+  endfor
+
+
+  if exists("g:slime_last_channel")  && !empty(g:slime_last_channel)
+    return 1
   endif
 
+  call slime#targets#neovim#EchoWarningMsg("Terminal not found.")
+  return 0
 
-  if exists("g:slime_last_channel") && (len(g:slime_last_channel) >= 1) && !empty(g:slime_last_channel)
-    let valid_env  = 1
-  endif
-
-  if !valid_env
-    call slime#targets#neovim#EchoWarningMsg("Terminal not found.")
-  endif
-
-  return valid_env
 endfunction
 
 " "checks that a configuration is valid
@@ -308,7 +303,7 @@ endfunction
 
 "get full bufinfo only of terminal buffers
 function! s:get_terminal_bufinfo() abort
-  if !exists("g:slime_last_channel") || len(g:slime_last_channel) == 0 || empty(g:slime_last_channel)
+  if !exists("g:slime_last_channel") ||  empty(g:slime_last_channel)
     "there are no valid terminal buffers
     return []
   endif
