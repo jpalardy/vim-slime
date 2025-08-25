@@ -113,7 +113,7 @@ function! slime#targets#neovim#ValidEnv() abort
   let valid_env = 0
 
   if exists("g:slime_last_channel") && (len(g:slime_last_channel) >= 1) && !empty(g:slime_last_channel)
-    let valid_env  = 1
+    let valid_env = 1
   endif
 
   if !valid_env
