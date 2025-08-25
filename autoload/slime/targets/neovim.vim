@@ -2,11 +2,10 @@
 function! slime#targets#neovim#config() abort
   let config_set = 0
 
-    if !config_set && slime#config#resolve("menu_config")
-      let temp_config =  s:config_with_menu()
-      let config_set = 1
-    endif
-
+  if !config_set && slime#config#resolve("menu_config")
+    let temp_config = s:config_with_menu()
+    let config_set = 1
+  endif
 
   " unlet current config if its job ID doesn't exist
   if !config_set
@@ -17,7 +16,7 @@ function! slime#targets#neovim#config() abort
     let last_pid = get(most_recent_channel, 'pid', '')
     let last_job = get(most_recent_channel, 'jobid', '')
 
-    let temp_config =  {"jobid":  last_job, "pid": last_pid }
+    let temp_config = {"jobid": last_job, "pid": last_pid }
   endif
 
   " include option to input pid
@@ -107,7 +106,7 @@ function! slime#targets#neovim#SlimeClearChannel(buf_in) abort
     call s:clear_all_buffs()
     unlet g:slime_last_channel
   else
-    let last_channel_copy =  copy(g:slime_last_channel)
+    let last_channel_copy = copy(g:slime_last_channel)
     let filtered_last_channels = filter(last_channel_copy, {_, val -> val['bufnr'] == a:buf_in})
 
     if len(filtered_last_channels) > 0
@@ -115,14 +114,12 @@ function! slime#targets#neovim#SlimeClearChannel(buf_in) abort
       call s:clear_related_bufs(jobid_to_clear)
       call filter(g:slime_last_channel, {_, val -> val['bufnr'] != a:buf_in})
     endif
-
   endif
 endfunction
 
 " evaluates whether there is a terminal running; if there isn't then no config can be valid
 function! slime#targets#neovim#ValidEnv() abort
-
-  if exists("g:slime_last_channel")  && !empty(g:slime_last_channel)
+  if exists("g:slime_last_channel") && !empty(g:slime_last_channel)
     return 1
   endif
 
@@ -130,21 +127,18 @@ function! slime#targets#neovim#ValidEnv() abort
     call slime#targets#neovim#SlimeAddChannel(buf.bufnr)
   endfor
 
-
-  if exists("g:slime_last_channel")  && !empty(g:slime_last_channel)
+  if exists("g:slime_last_channel") && !empty(g:slime_last_channel)
     return 1
   endif
 
   call slime#targets#neovim#EchoWarningMsg("Terminal not found.")
   return 0
-
 endfunction
 
 " "checks that a configuration is valid
 " returns boolean of whether the supplied config is valid
 function! slime#targets#neovim#ValidConfig(config, silent) abort
-
-  if !exists("g:slime_last_channel") 
+  if !exists("g:slime_last_channel")
     if !a:silent
       call slime#targets#neovim#EchoWarningMsg("Terminal not found.")
     endif
@@ -174,7 +168,7 @@ function! slime#targets#neovim#ValidConfig(config, silent) abort
     return 0
   endif
 
-  if a:config["jobid"] == -1  "the id wasn't found translate_pid_to_id
+  if a:config["jobid"] == -1 "the id wasn't found translate_pid_to_id
     if !a:silent
       call slime#targets#neovim#EchoWarningMsg("No matching job ID for the provided pid.")
     endif
@@ -219,7 +213,7 @@ function! s:translate_id_to_pid(id) abort
   return pid_out
 endfunction
 
-" Transforms a channel dictionary with job ID and pid into a newline separated string  of job IDs.
+" Transforms a channel dictionary with job ID and pid into a newline separated string of job IDs.
 " for the purposes of input completion
 function! Last_channel_to_jobid(ArgLead, CmdLine, CursorPos) abort
   let jobids = map(copy(g:slime_last_channel), {_, val -> val["jobid"]})
@@ -227,7 +221,7 @@ function! Last_channel_to_jobid(ArgLead, CmdLine, CursorPos) abort
   return reverse(jobids) " making correct order in menu
 endfunction
 
-" Transforms a channel dictionary with job ID and pid into an newline separated string  of job PIDs.
+" Transforms a channel dictionary with job ID and pid into an newline separated string of job PIDs.
 " for the purposes of input completion
 function! Last_channel_to_pid(ArgLead, CmdLine, CursorPos) abort
   "they will be transformed into pids so naming them by their final identity
@@ -237,7 +231,6 @@ function! Last_channel_to_pid(ArgLead, CmdLine, CursorPos) abort
   call map(jobpids, {_, val -> string(val)})
   return reverse(jobpids) "making most recent the first selected
 endfunction
-
 
 " clears all buffers with a certain invalid configuration
 function! s:clear_related_bufs(id_in) abort
@@ -272,7 +265,6 @@ function! s:extend_term_buffer_titles(specific_term_info, all_bufinfo) abort
   return extend(specific_term_info_in, {'name': wanted_term['name'], 'term_title': wanted_term['variables']['term_title']})
 endfunction
 
-
 function! s:buffer_dictionary_to_string(dict_in) abort
   " dict in is an array of dictionaries that has the values of the menu items
 
@@ -280,9 +272,7 @@ function! s:buffer_dictionary_to_string(dict_in) abort
   " menu entries will follow the order of menu order
   " the labels of each field of the menu entry will be the values of each dictionary in the array
   let menu_order = slime#config#resolve('neovim_menu_order')
-
   let delimiter = slime#config#resolve('neovim_menu_delimiter')
-
   let menu_string = ''
 
   for i in range(len(menu_order))
@@ -300,10 +290,9 @@ function! s:buffer_dictionary_to_string(dict_in) abort
   return menu_string
 endfunction
 
-
 "get full bufinfo only of terminal buffers
 function! s:get_terminal_bufinfo() abort
-  if !exists("g:slime_last_channel") ||  empty(g:slime_last_channel)
+  if !exists("g:slime_last_channel") || empty(g:slime_last_channel)
     "there are no valid terminal buffers
     return []
   endif
@@ -312,14 +301,13 @@ function! s:get_terminal_bufinfo() abort
   return map(copy(g:slime_last_channel), { _, val -> s:extend_term_buffer_titles(val, buf_info)})
 endfunction
 
-
 function! s:config_with_menu() abort
   " get info of running terminals, array of dictionaries
   " reversing to make it appear in the right order in the menu
-  let term_bufinfo =  s:get_terminal_bufinfo()
+  let term_bufinfo = s:get_terminal_bufinfo()
 
   " turn each item into a string for the menu
-  let menu_strings =  map(copy(term_bufinfo), {_, val -> s:buffer_dictionary_to_string(val)})
+  let menu_strings = map(copy(term_bufinfo), {_, val -> s:buffer_dictionary_to_string(val)})
 
   for i in range(1, len(menu_strings))
     let menu_strings[i - 1] = i . '. ' . menu_strings[i - 1]
@@ -337,15 +325,12 @@ function! s:config_with_menu() abort
   return {"jobid": used_config["jobid"], "pid": used_config["pid"] }
 endfunction
 
-
 "really make sure the config is cleared from the current buffer, and from all buffers with the same config
 function! s:sure_clear_buf_config()
-  if exists('b:slime_config')  && type(b:slime_config) == v:t_dict && !empty(b:slime_config) && has_key(b:slime_config, 'jobid') && type(b:slime_config['jobid']) == v:t_number
+  if exists('b:slime_config') && type(b:slime_config) == v:t_dict && !empty(b:slime_config) && has_key(b:slime_config, 'jobid') && type(b:slime_config['jobid']) == v:t_number
     call s:clear_related_bufs(b:slime_config['jobid'])
   endif
 endfunction
-
-
 
 function! slime#targets#neovim#EchoWarningMsg(msg)
   echohl WarningMsg

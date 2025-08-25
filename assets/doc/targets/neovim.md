@@ -39,7 +39,7 @@ let g:slime_menu_config=1
 
 This takes precedence over `g:slime_input_pid`.
 
-The default order of fields in each terminal description in the menu is 
+The default order of fields in each terminal description in the menu is
 
 1. `pid`  The system process identifier of the shell.
 2. `jobid` The Neovim internal job number of the terminal.
@@ -125,13 +125,13 @@ A useful Lua function to return the Job PID of a terminal is:
 local function get_chan_jobpid()
   local out = vim.api.nvim_exec2([[
   let pid_out = ""
-  
+
   try
     let pid_out = string(jobpid(&channel))
     " in case an external process kills the terminal's shell; jobpid will error
     catch /^Vim\%((\a\+)\)\=:E900/
   endtry
-  		echo pid_out
+  echo pid_out
   ]], {output = true})
   return out["output"] --returns as string
 end

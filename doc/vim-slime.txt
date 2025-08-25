@@ -24,8 +24,8 @@ benefits of using Vim (familiar environment, syntax highlighting, persistence
 4. dtach Configuration			|slime-dtach|
 5. Neovim Configuration			|slime-neovim|
 6. Kitty Configuration			|slime-kitty|
-7. Zellij Configuration			|slime-zellij|	
-8. Wezterm Configuration	        |slime-wezterm|	
+7. Zellij Configuration			|slime-zellij|
+8. Wezterm Configuration	        |slime-wezterm|
 9. X11 Configuration			|slime-x11|
 10. whimrepl Configuration		|slime-whimrepl|
 11. vimterminal Configuration		|slime-vimterminal|
