@@ -66,8 +66,8 @@ function! slime#send_op(type, ...) abort
   let rv = getreg('"')
   let rt = getregtype('"')
 
-  if a:0  " Invoked from Visual mode, use '< and '> marks.
-    silent exe "normal! `<" . a:type . '`>y'
+  if a:0  " Invoked from Visual mode.
+    silent exe "normal! gvy"
   elseif a:type == 'line'
     silent exe "normal! '[V']y"
   elseif a:type == 'block'
