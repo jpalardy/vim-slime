@@ -40,6 +40,12 @@ function! slime#targets#tmux#send(config, text)
   end
 endfunction
 
+" experimental "sidedoor" for direct send-keys
+function! slime#targets#tmux#send_keys(config, text) abort
+  let target_cmd = s:target_cmd(a:config["socket_name"])
+  call slime#common#system(target_cmd . " send-keys -t %s %s", [a:config["target_pane"], a:text])
+endfunction
+
 " -------------------------------------------------
 
 function! slime#targets#tmux#pane_names(A,L,P)
